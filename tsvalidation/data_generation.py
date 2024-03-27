@@ -1,65 +1,87 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def sinusoid_ts(length:int, frequency:float = 1, amplitude:float = 1, phase:float = 0) -> np.array:
+
+def sinusoid_ts(max_interval_size, number_samples, amplitude=1, frequency=1, phase=0):
     """
-    Generate a sinusoidal time series.
+    Generate a sinusoidal wave based on given parameters.
 
     Parameters:
-    - length (int): Length of the time series.
-    - frequency (float, optional): Frequency of the sinusoidal wave in cycles per unit time. Default is 1.
-    - amplitude (float, optional): Amplitude of the sinusoidal wave. Default is 1.
-    - phase (float, optional): Phase shift of the sinusoidal wave in radians. Default is 0.
+        length (float): Length of the window of values starting at 0.
+        number_samples (int): Number of samples to generate.
+        amplitude (float): Amplitude of the sinusoid. Default is 1.
+        frequency (float): Frequency of the sinusoid in Hz. Default is 1.
+        phase (float): Phase angle of the sinusoid in radians. Default is 0.
 
     Returns:
-    - time_series (ndarray): Sinusoidal time series.
+        numpy.ndarray: Array of generated sinusoidal values.
     """
-    time = np.arange(length)
-    sine_wave = amplitude * np.sin(2 * np.pi * frequency * time + phase)
-    time_series = sine_wave
+    # Calculate the time values
+    time_values = np.linspace(0, max_interval_size, number_samples)
+
+    # Generate the sinusoid
+    sinusoid = amplitude * np.sin(2 * np.pi * frequency * time_values + phase)
+
+    return sinusoid
+
+def frequency_modulation_with_step(time, t_split, freq_init):
+    initial_period = (1/freq_init)
+    t_split_adjusted = (t_split // initial_period)* initial_period
+    return np.where(time > t_split_adjusted, freq_init*2, freq_init)
+
+def time_varying_sinusoid_ts(max_interval_size: float, 
+                             number_samples: int, 
+                             frequency_initial: float = 1, 
+                             amplitude: float = 1, 
+                             phase_initial: float = 0, 
+                             t_split: float = 0) -> np.array:
+    """
+    Generate a time series of a sinusoid with varying frequency.
+
+    Parameters:
+    - max_interval_size (float): The maximum interval size for the time series.
+    - number_samples (int): The number of samples in the time series.
+    - frequency_initial (float, optional): Initial frequency of the sinusoid. Default is 1.
+    - amplitude (float, optional): Amplitude of the sinusoid. Default is 1.
+    - phase_initial (float, optional): Initial phase of the sinusoid in radians. Default is 0.
+    - t_split (float, optional): Time point at which the frequency of the sinusoid changes. Default is 0.
+
+    Returns:
+    - np.array: Time series data representing the sinusoid with varying frequency.
+    """
+
+    time = np.linspace(0, max_interval_size, number_samples)
+    initial_period = (1/frequency_initial)
+    t_split_adjusted = (t_split // initial_period)* initial_period
+    frequency = np.where(time > t_split_adjusted, frequency_initial*2, frequency_initial)
+    time_series = amplitude * np.sin(2 * np.pi * frequency * time + phase_initial)
     return time_series
 
 
-def time_varying_sinusoid_ts(length: int, frequency: float = 1, amplitude: float = 1, phase: float = 0, frequency_slope: float = 0) -> np.array:
+def time_varying_sinusoid_ts(max_interval_size: float, 
+                             number_samples: int,
+                             frequency_func: callable,  
+                             frequency_args: tuple = (),  
+                             amplitude: float = 1, 
+                             phase_initial: float = 0) -> np.array:
     """
-    Generate a time-varying sinusoidal time series.
+    Generate a time series of a sinusoid with varying frequency.
 
     Parameters:
-    - length (int): Length of the time series.
-    - frequency (float, optional): Frequency of the sinusoidal wave in cycles per unit time. Default is 1.
-    - amplitude (float, optional): Amplitude of the sinusoidal wave. Default is 1.
-    - phase (float, optional): Phase shift of the sinusoidal wave in radians. Default is 0.
-    - phase_variation (float, optional): Variation of phase over time in radians. Default is 0.
+    - max_interval_size (float): The maximum interval size for the time series.
+    - number_samples (int): The number of samples in the time series.
+    - frequency_initial (float, optional): Initial frequency of the sinusoid. Default is 1.
+    - amplitude (float, optional): Amplitude of the sinusoid. Default is 1.
+    - phase_initial (float, optional): Initial phase of the sinusoid in radians. Default is 0.
+    - t_split (float, optional): Time point at which the frequency of the sinusoid changes. Default is 0.
 
     Returns:
-    - time_series (ndarray): Sinusoidal time series.
+    - np.array: Time series data representing the sinusoid with varying frequency.
     """
-    time = np.linspace(0, 10, length)
-    frequency = frequency + frequency_slope * time
-    time_series = amplitude * np.sin(2 * np.pi * frequency * time + phase)
-    return time_series
 
-def time_varying_sinusoid_ts(length: int, frequency_initial: float = 1, amplitude: float = 1, phase_initial: float = 0, t_split: float = 0) -> np.array:
-    """
-    Generate a time-varying sinusoidal time series.
-
-    Parameters:
-    - length (int): Length of the time series.
-    - frequency (float, optional): Frequency of the sinusoidal wave in cycles per unit time. Default is 1.
-    - amplitude (float, optional): Amplitude of the sinusoidal wave. Default is 1.
-    - phase (float, optional): Phase shift of the sinusoidal wave in radians. Default is 0.
-    - phase_variation (float, optional): Variation of phase over time in radians. Default is 0.
-
-    Returns:
-    - time_series (ndarray): Sinusoidal time series.
-    """
-    time = np.linspace(0, length, length)
-    #fase = time % (2 * np.pi)
-    period_phase = t_split/(1/frequency_initial) % 1
-    frequency = np.where(time > t_split, frequency_initial*2, frequency_initial)
-    phase = np.where(time > t_split, phase_initial + period_phase, phase_initial)
-    
-    time_series = amplitude * np.sin(2 * np.pi * frequency * time + phase)
+    time = np.linspace(0, max_interval_size, number_samples)
+    frequency = frequency_func(time,*frequency_args)
+    time_series = amplitude * np.sin(2 * np.pi * frequency * time + phase_initial)
     return time_series
 
 
@@ -143,8 +165,19 @@ def exponential_function(length, decay_rate=1, initial_value=1):
 
 if __name__=='__main__':
     #plt.plot(sinusoid_ts(100, frequency=0.05, amplitude=1, phase=np.pi/2), )
-    time_series = time_varying_sinusoid_ts(100, frequency_initial=5, t_split=50, amplitude=1, phase_initial=0)
-    plt.plot(time_series)
+    max_interval_size = 1
+    samples = 1000
+    sample_interval = max_interval_size/samples
+    #time_series = time_varying_sinusoid_ts(max_interval_size, samples, frequency_initial=5, t_split=0.5, amplitude=1, phase_initial=0.5)
+    #time_series = sinusoid_ts(max_interval_size, samples, frequency=5, amplitude=1, phase=0)
+    time_series = time_varying_sinusoid_ts(max_interval_size, 
+                             samples,
+                             amplitude = 5, 
+                             frequency_func = frequency_modulation_with_step,
+                             frequency_args = (0.5, 5),
+                             phase_initial = 0,
+                             )
+    plt.scatter(np.arange(0,max_interval_size,max_interval_size/samples),time_series)
     #plt.plot(indicator_ts(100, 10, 20))
     plt.show()
     print()
