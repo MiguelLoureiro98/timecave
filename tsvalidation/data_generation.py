@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import Dict, Union
+from statsmodels.tsa.arima_process import ArmaProcess
 
 
 def sinusoid_ts(max_interval_size: float, 
@@ -242,6 +243,25 @@ def generate_random_parameters(interval: dict, seed=1):
         raise ValueError("Invalid interval type. Must be tuple or list.")
     return value
 
+def generate_random_arma_parameters(lags, max_root, seed =1):
+    np.random.seed(seed)
+    if max_root <= 1.1:
+        raise ValueError("max_root has to be bigger than 1.1")
+
+    s = np.sign(np.random.uniform(-1, 1, lags)) # random signs
+    poly_roots = s * np.random.uniform(1.1, max_root, lags) # random roots
+
+    # Calculate coefficients
+    coeff = np.array([1])
+    for root in poly_roots:
+        coeff = np.polymul(coeff, np.array([root*-1, 1])) # get the polynomial coefficients
+
+
+    n_coeff = coeff / coeff[0]
+    params = -n_coeff[1:] #remove the bias
+
+    return params
+
 
 def generate_from_func(number_samples, func: callable, generate_func: callable, param_intervals: dict, nb_ts: int, seed = 1 ) -> np.ndarray:
     """Generate time series data by invoking a specified function with randomly generated parameters.
@@ -267,6 +287,26 @@ def generate_from_func(number_samples, func: callable, generate_func: callable, 
     
     print(params)
     return ts_list
+
+def arma_ts(length, params_ar = None, params_ma = None, **kwargs):
+    ar = params_ar is not None
+    ma = params_ma is not None
+    ar_coeff = np.r_[1, -params_ar]
+    ma_coeff = np.r_[1, params_ma]
+
+    if ar and not ma:
+        model = "AR"
+        ts = ArmaProcess(ma=ar_coeff).generate_sample(nsample=length, **kwargs)
+    elif not ar and ma:
+        model = "MA"
+        ts = ArmaProcess(ar=[1], ma=ma_coeff).generate_sample(nsample=length, **kwargs)
+    elif ar and ma:
+        model = "ARMA"
+        ts = ArmaProcess(ar=ar_coeff, ma=ma_coeff).generate_sample(nsample=length, **kwargs)
+
+
+    return {"params_ar": params_ar, "params_ma": params_ma, "model": model, "ts": ts}
+
 
 if __name__=='__main__':
     max_interval_size = 1
