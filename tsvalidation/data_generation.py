@@ -266,7 +266,7 @@ def generate_from_func(number_samples, func: callable, generate_func: callable, 
         ts_list.append(func(number_samples = number_samples, **params))
     
     print(params)
-    return np.array(ts_list)
+    return ts_list
 
 if __name__=='__main__':
     max_interval_size = 1
@@ -290,7 +290,7 @@ if __name__=='__main__':
                     'decay_rate': [1, 25], 
                     'initial_value': [1, 25]}, nb_ts = 2)
 
-    time_series = linear_combination([0.2, 0.2, 0.3, 0.3], ts_linear + ts_exponential)
+    time_series = linear_combination([0.2, 0.2, 0.3], ts_linear + ts_exponential)
     
     
     
