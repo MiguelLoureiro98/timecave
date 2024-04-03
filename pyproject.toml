@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tsvalidation"
-version = "0.0.3"
+version = "0.1.0"
 authors=[
     {name = "Miguel Santos Loureiro", email = "miguel.santos.loureiro@tecnico.ulisboa.pt"},
     {name = "Beatriz Pereira Lourenço", email = "beatriz.p.lourenco@tecnico.ulisboa.pt"}
