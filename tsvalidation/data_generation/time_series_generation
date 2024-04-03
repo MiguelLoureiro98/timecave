@@ -1,6 +1,5 @@
 import numpy as np
 import random
-from time_series_functions import 
 
 def linear_combination(weight_vector: list, ts_matrix: list) -> np.ndarray:
 
@@ -44,5 +43,4 @@ def generate_from_func(number_samples,
         params = generate_param(param_possibilities, seed = seed)
         ts_list.append(ts_func(number_samples = number_samples, **params))
     
-    print(params)
     return ts_list

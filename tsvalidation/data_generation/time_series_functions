@@ -1,6 +1,6 @@
 import numpy as np
 from statsmodels.tsa.arima_process import ArmaProcess
-from _utils import FrequencyModulation
+from _utils import FrequencyModulation, nonlin_func, get_arma_parameters
 
 def sinusoid_ts(max_interval_size: float, 
                  number_samples: int, 
@@ -11,20 +11,6 @@ def sinusoid_ts(max_interval_size: float,
     sinusoid = amplitude * np.sin(2 * np.pi * frequency * time_values + phase)
 
     return sinusoid
-
-
-def frequency_modulation_with_step(time: np.ndarray, 
-                                    t_split: float, 
-                                    freq_init: float) -> np.ndarray:
-    initial_period = (1 / freq_init)
-    t_split_adjusted = (t_split // initial_period) * initial_period
-    return np.where(time > t_split_adjusted, freq_init * 2, freq_init)
-
-
-def frequency_modulation_linear(time: np.ndarray, 
-                                 slope: float, 
-                                 freq_init: float) -> np.ndarray:
-    return freq_init + slope * time
 
 
 def frequency_varying_sinusoid_ts(max_interval_size: float, 
@@ -48,7 +34,7 @@ def scaled_right_indicator_ts(number_samples: int, idx: int, constant: float = 1
     return constant*indicator_ts(number_samples, idx, number_samples - 1)
        
 
-def scaled_unit_impulse_function(number_samples: int, idx: int, constant: float = 1) -> np.ndarray:
+def scaled_unit_impulse_function_ts(number_samples: int, idx: int, constant: float = 1) -> np.ndarray:
     return constant*indicator_ts(number_samples, idx, idx)
 
 
@@ -70,29 +56,11 @@ def exponential_ts(max_interval_size: float,
     return exponential_series
 
 
-def white_noise(number_samples: int, 
+def white_noise_ts(number_samples: int, 
                  mean: float = 0, 
                  std_dev: float = 1) -> np.ndarray:
     return np.random.normal(loc=mean, scale=std_dev, size=number_samples)
 
-
-
-def get_arma_parameters(lags, max_root, seed =1):
-    np.random.seed(seed)
-    if max_root <= 1.1:
-        raise ValueError("max_root has to be bigger than 1.1")
-
-    s = np.sign(np.random.uniform(-1, 1, lags)) # random signs
-    poly_roots = s * np.random.uniform(1.1, max_root, lags) # random roots
-    # Calculate coefficients
-    coeff = np.array([1])
-    for root in poly_roots:
-        coeff = np.polymul(coeff, np.array([root*-1, 1])) # get the polynomial coefficients
-
-    n_coeff = coeff / coeff[0]
-    params = -n_coeff[1:] #remove the bias
-
-    return params
 
 
 def arma_ts(number_samples, lags, max_root, ar = True, ma = True, seed = 1, **kwargs):
@@ -112,7 +80,7 @@ def arma_ts(number_samples, lags, max_root, ar = True, ma = True, seed = 1, **kw
         ts = ArmaProcess(ar=ar_coeff, ma=ma_coeff).generate_sample(nsample=number_samples, **kwargs)
 
 
-    return {"params_ar": params_ar, "params_ma": params_ma, "model": model, "ts": ts}
+    return ts
 
 
 
