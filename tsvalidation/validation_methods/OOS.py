@@ -1,6 +1,7 @@
 from ._base import base_splitter
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 """
 This module contains all the Out-of-Sample (OOS) validation methods supported by this package.
@@ -118,9 +119,12 @@ class Holdout(base_splitter):
         _extended_summary_
         """
 
+        split = self.split();
+        training, validation = next(split);
+
         return;
 
-    def plot(self) -> None:
+    def plot(self, height: int, width: int) -> None:
         
         """
         _summary_
@@ -128,4 +132,9 @@ class Holdout(base_splitter):
         _extended_summary_
         """
         
+        split = self.split();
+        training, validation = next(split);
+
+        fig = plt.figure(size=(height, width));
+
         return;

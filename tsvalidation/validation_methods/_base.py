@@ -264,23 +264,35 @@ class base_splitter(ABC):
         pass
 
     @abstractmethod
-    def statistics(self) -> None:
+    def statistics(self) -> pd.DataFrame:
         
         """
         Compute and plot relevant statistics for both training and validation sets.
 
         Abstract method. The implementation differs for each validation method.
+
+        Returns
+        -------
+        pd.DataFrame
+            Relevant statistics and features for training and validation sets.
         """
 
         pass
 
     @abstractmethod
-    def plot(self) -> None:
-        
+    def plot(self, height: int, width: int) -> None:
         """
         Plot the partitioned time series.
 
         Abstract method. The implementation differs for each validation method.
+
+        Parameters
+        ----------
+        height : int
+            Figure height.
+
+        width : int
+            Figure width.
         """
 
         pass
