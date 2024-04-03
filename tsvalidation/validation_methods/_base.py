@@ -29,10 +29,22 @@ class base_splitter(ABC):
     _n_samples : int
         Number of samples in the time series.
 
+    _indices : np.ndarray
+        Array containing the time series' indices.
+
     Methods
     -------
     __init__(self, splits: int) -> None
         Class constructor.
+
+    _splits_check(self, splits: int) -> None
+        Performs type and value checks on the 'splits' parameter.
+
+    _ts_check(self, ts: np.ndarray | pd.Series) -> None
+        Performs type and value checks on the 'ts' parameter.
+
+    _dim_check(self) -> None
+        Checks whether '_n_splits' <= '_n_samples'.
 
     n_splits(self) -> int
         Returns the number of splits (set during initialisation).
@@ -61,6 +73,9 @@ class base_splitter(ABC):
         ----------
         splits : int
             The number of splits.
+
+        ts : np.ndarray | pd.Series
+            Univariate time series.
         """
 
         super().__init__();
@@ -70,6 +85,7 @@ class base_splitter(ABC):
         self._series = ts;
         self._n_samples = self._series.shape[0];
         self._dim_check();
+        self._indices = np.arange(0, self._n_samples);
     
         return;
 
