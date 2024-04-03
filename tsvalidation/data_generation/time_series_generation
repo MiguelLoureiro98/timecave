@@ -1,0 +1,48 @@
+import numpy as np
+import random
+from time_series_functions import 
+
+def linear_combination(weight_vector: list, ts_matrix: list) -> np.ndarray:
+
+    nb_ts = len(ts_matrix)
+    len_ts = len(ts_matrix[0])
+    
+    w = np.array(weight_vector)
+    T = np.array(ts_matrix).T
+    
+    assert nb_ts == len(weight_vector)
+    assert np.shape(T) == (len_ts, nb_ts )
+    
+    return np.matmul(T, w)
+
+
+def generate_random_parameters(param_possibilities: dict, seed=1):
+    random.seed(seed)
+    params = {}
+    for param_name, values in param_possibilities.items():
+        if isinstance(values, tuple):
+            value = random.choice(values)
+        elif isinstance(values, list):
+            value = random.uniform(values[0], values[1])
+        else:
+            raise ValueError("Invalid interval type. Must be tuple or list.")
+        params[param_name] = value
+    
+    return params
+
+
+def generate_from_func(number_samples, 
+                       ts_func: callable, 
+                       param_possibilities: dict, 
+                       nb_ts: int, 
+                       generate_param: callable = generate_random_parameters, 
+                       seed = 1 ) -> np.ndarray:
+    ts_list = []
+    
+    for _ in range(nb_ts):
+        params = {}
+        params = generate_param(param_possibilities, seed = seed)
+        ts_list.append(ts_func(number_samples = number_samples, **params))
+    
+    print(params)
+    return ts_list
