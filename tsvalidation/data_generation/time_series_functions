@@ -78,10 +78,7 @@ def arma_ts(number_samples, lags, max_root, ar = True, ma = True, seed = 1, **kw
     elif ar and ma:
         model = "ARMA"
         ts = ArmaProcess(ar=ar_coeff, ma=ma_coeff).generate_sample(nsample=number_samples, **kwargs)
-
-
     return ts
-
 
 
 def nonlinear_ar_ts(number_samples, init_array, params, func_idxs):
