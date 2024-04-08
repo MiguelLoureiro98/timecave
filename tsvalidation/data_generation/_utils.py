@@ -28,22 +28,6 @@ class FrequencyModulationLinear(FrequencyModulation):
     def modulate(self, time):
         return self.freq_init + self.slope * time
 
-#############################################
-    
-def frequency_modulation_with_step(time: np.ndarray, 
-                                    t_split: float, 
-                                    freq_init: float) -> np.ndarray:
-    initial_period = (1 / freq_init)
-    t_split_adjusted = (t_split // initial_period) * initial_period
-    return np.where(time > t_split_adjusted, freq_init * 2, freq_init)
-
-
-def frequency_modulation_linear(time: np.ndarray, 
-                                 slope: float, 
-                                 freq_init: float) -> np.ndarray:
-    return freq_init + slope * time
-
-
 
 def nonlin_func(nb, x):
         nonlin_x = {
