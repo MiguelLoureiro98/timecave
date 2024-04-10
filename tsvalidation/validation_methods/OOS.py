@@ -98,9 +98,9 @@ class Holdout(base_splitter):
     def info(self) -> None:
         
         """
-        _summary_
+        Provide some basic information on the training and validation sets.
 
-        _extended_summary_
+        This method ... .
         """
 
         print(f"Holdout method\
@@ -130,11 +130,27 @@ class Holdout(base_splitter):
         _summary_
 
         _extended_summary_
+
+        Parameters
+        ----------
+        height : int
+            The figure's height.
+
+        width : int
+            The figure's width.
         """
         
         split = self.split();
         training, validation = next(split);
 
-        fig = plt.figure(size=(height, width));
+        fig = plt.figure(figsize=(height, width));
+        ax = fig.add_subplot(1, 1, 1);
+        ax.plot(training, self._series[training], label="Training set");
+        ax.plot(validation, self._series[validation], label="Validation set");
+        ax.set_xlabel("Samples");
+        ax.set_ylabel("Time Series");
+        ax.set_title("Holdout method");
+        ax.legend();
+        plt.show();
 
         return;
