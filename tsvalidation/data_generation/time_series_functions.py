@@ -1,6 +1,6 @@
 import numpy as np
 from statsmodels.tsa.arima_process import ArmaProcess
-from _utils import FrequencyModulation, nonlin_func, get_arma_parameters
+from tsvalidation.data_generation.utils import FrequencyModulation, nonlin_func, get_arma_parameters
 
 def sinusoid_ts(max_interval_size: float, 
                  number_samples: int, 
@@ -19,7 +19,7 @@ def frequency_varying_sinusoid_ts(max_interval_size: float,
                              amplitude: float = 1, 
                              phase_initial: float = 0) -> np.ndarray:
     time = np.linspace(0, max_interval_size, number_samples)
-    frequency = frequency.modulate(time)
+    frequency = frequency.modulate(time = time)
     time_series = amplitude * np.sin(2 * np.pi * frequency * time + phase_initial)
     return time_series
 
