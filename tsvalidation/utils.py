@@ -39,23 +39,35 @@ def Nyquist_min_samples(fs: float | int, freq_limit: float | int) -> int:
         Minimum number of samples required to capture freq_limit
         with a sampling frequency of fs, according to the Nyquist
         sampling theorem.
+
+    Raises
+    ------
+    TypeError
+        If either 'fs' or 'freq_limit' is neither a float nor an integer.
+
+    ValueError
+        If either 'fs' or 'freq_limit' are non-positive.
+
+    Warning
+        If the choice of 'fs' and 'freq_limit' does not satisfy the Nyquist sampling theorem.
     """
 
     _check_frequencies(fs, freq_limit);
+    _check_Nyquist(fs, freq_limit);
 
     ts = 1 / fs;
     T_limit = 1 / freq_limit;
     t_final = 2 * T_limit;
-    n_samples = np.ceil(t_final / ts, dtype=np.int128);
+    n_samples = int(np.ceil(t_final / ts));
 
-    print("Nyquist theorem results \
-           -----------------------");
+    print("Nyquist theorem results");
+    print("-----------------------");
 
-    print(f"Maximum frequency that can be extracted using a sampling frequency of {fs} Hz : {fs/2} Hz \
-            Sampling rate required to capture a frequency of {freq_limit} Hz : {2*freq_limit} Hz \
-            ----------------------------------------------------------------------------------------- \
-            Minimum number of samples required to capture a frequency of {freq_limit} Hz with a \
-            sampling frequency of {fs} Hz: {n_samples} samples");
+    print(f"Maximum frequency that can be extracted using a sampling frequency of {fs} Hz : {fs/2} Hz");
+    print(f"Sampling rate required to capture a frequency of {freq_limit} Hz : {2*freq_limit} Hz");
+    print("------------------------------------------------------------------------------------------");
+    print(f"Minimum number of samples required to capture a frequency of {freq_limit} Hz with a");
+    print(f"sampling frequency of {fs} Hz: {n_samples} samples");
 
     return n_samples;
 
@@ -87,25 +99,37 @@ def heuristic_min_samples(fs: float | int, freq_limit: float | int) -> dict:
         Minimum and maximum number of samples (Min_samples and Max_samples, respectively)
         required to capture freq_limit with a sampling frequency of fs, 
         according to the 10 / 20 heuristic rule.
+
+    Raises
+    ------
+    TypeError
+        If either 'fs' or 'freq_limit' is neither a float nor an integer.
+
+    ValueError
+        If either 'fs' or 'freq_limit' are non-positive.
+
+    Warning
+        If the choice of 'fs' and 'freq_limit' does not abide by the 10 / 20 heuristic.
     """
 
     _check_frequencies(fs, freq_limit);
+    _check_heuristic(fs, freq_limit);
 
     ts = 1 / fs;
     T_limit = 1 / freq_limit;
     t_lower = 10 * T_limit;
     t_upper = 20 * T_limit;
-    n_lower = np.ceil(t_lower / ts, dtype=np.int128);
-    n_upper = np.ceil(t_upper / ts, dtype=np.int128);
+    n_lower = int(np.ceil(t_lower / ts));
+    n_upper = int(np.ceil(t_upper / ts));
 
-    print("10 / 20 sampling heuristic results \
-           ----------------------------------");
+    print("10 / 20 sampling heuristic results");
+    print("----------------------------------");
     
-    print(f"Minimum sampling rate required to capture a frequency of {freq_limit} Hz : {10*freq_limit} Hz \
-            Maximum sampling rate required to capture a frequency of {freq_limit} Hz : {20*freq_limit} Hz \
-            --------------------------------------------------------------------------------------------- \
-            Capturing a frequency of {freq_limit} Hz with a sampling frequency of {fs} Hz would require: \
-            {n_lower} to {n_upper} samples");
+    print(f"Minimum sampling rate required to capture a frequency of {freq_limit} Hz : {10*freq_limit} Hz");
+    print(f"Maximum sampling rate required to capture a frequency of {freq_limit} Hz : {20*freq_limit} Hz");
+    print("----------------------------------------------------------------------------------------------");
+    print(f"Capturing a frequency of {freq_limit} Hz with a sampling frequency of {fs} Hz would require:");
+    print(f"{n_lower} to {n_upper} samples");
 
     return {"Min_samples": n_lower, "Max_samples": n_upper};
 
@@ -126,12 +150,38 @@ def _check_frequencies(fs: float | int, freq_limit: float | int) -> None:
 
     return;
 
+def _check_Nyquist(fs: float | int, freq_limit: float | int) -> None:
+
+    """
+    Check whether 'fs' and 'freq_limit' satisfy the Nyquist theorem.
+    """
+
+    if(fs < 2 * freq_limit):
+
+        raise Warning("According to the Nyquist theorem, the selected frequency cannot be captured using this sampling frequency.");
+
+    return;
+
+def _check_heuristic(fs: float | int, freq_limit: float | int) -> None:
+    
+    """
+    Check whether 'fs' and 'freq_limit' ... .
+    """
+
+    if(fs < 10 * freq_limit or fs > 20 * freq_limit):
+
+        raise Warning("This choice of sampling frequency and frequency of interest is not compliant with the 10 / 20 sampling heuristic.");
+
+    return;
+
 def true_test_indices(test_ind: np.ndarray, model_order: int) -> np.ndarray:
     
     """
-    _summary_
+    Modify an array of validation indices for modelling purposes.
 
-    _extended_summary_
+    This function modifies the array of validation indices yielded by a 
+    splitter so that it includes the previous time steps that should be passed 
+    as inputs to the model in order for it to predict the series' next value.
 
     Parameters
     ----------
@@ -139,12 +189,14 @@ def true_test_indices(test_ind: np.ndarray, model_order: int) -> np.ndarray:
         Array of test (validation, really) indices yielded by a splitter.
 
     model_order : int
-        _description_
+        The number of previous time steps the model needs to take as input in order
+        to predict the series' value at the next time step.
 
     Returns
     -------
     np.ndarray
-        Array of validation indices including ... .
+        Array of validation indices including the time steps required by the model
+        to predict the series' value at the first validation index.
     """
 
     new_ind = np.arange(test_ind[0] - model_order, test_ind[0]);
