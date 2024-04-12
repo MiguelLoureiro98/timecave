@@ -1,5 +1,5 @@
 """
-This module contains utility functions to help the user.
+This module contains utility functions to help the user make the most of this package.
 """
 
 def Nyquist_min_samples(fs: float | int, freq_limit: float | int) -> int:
