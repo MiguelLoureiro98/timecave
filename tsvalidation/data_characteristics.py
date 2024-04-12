@@ -1,7 +1,3 @@
-import numpy as np
-import pandas as pd
-import tsfel
-
 """
 This module contains functions to compute time series features.
 
@@ -9,7 +5,15 @@ The 'get_features' function extracts all features supported by this package.
 Functions to extract the strength of trend, mean-crossing rate, and median-crossing
 rate are also provided.
 For the remaining features, the tsfel package should be used.
+
+Functions
+---------
+
 """
+
+import numpy as np
+import pandas as pd
+import tsfel
 
 def get_features(ts: np.ndarray | pd.Series, fs: float | int) -> pd.DataFrame:
     
@@ -165,19 +169,8 @@ def median_crossing_rate(ts: np.ndarray | pd.Series) -> float:
 def _check_type(ts: np.ndarray | pd.Series) -> None:
     
     """
-    Check the time series' type.
-
-    This function performs a type check on the parameter passed as the time series.
-
-    Parameters
-    ----------
-    ts : np.ndarray | pd.Series
-        Univariate time series.
-
-    Raises
-    ------
-    TypeError
-        If the time series is not a Numpy array nor a Pandas series.
+    Check the time series' type. Raises a TypeError if the series is not a 
+    Numpy array nor a Pandas series.
     """
 
     if(isinstance(ts, np.ndarray) is False and isinstance(ts, pd.Series) is False):
@@ -190,24 +183,6 @@ def _check_feature_list(feature_list: list, n_features_max: int) -> None:
     
     """
     Perform checks on the feature list.
-
-    This function performs type and value checks on the feature list.
-
-    Parameters
-    ----------
-    feature_list : list
-        List of features that should be extracted.
-
-    n_features_max : int
-        The number of features supported by this package.
-
-    Raises
-    ------
-    TypeError
-        If the list of features is not a list.
-
-    ValueError
-        If the length of the list of features is larger than the number of features supported by this package.
     """
 
     if(isinstance(feature_list, list) is False):
@@ -223,22 +198,8 @@ def _check_feature_list(feature_list: list, n_features_max: int) -> None:
 def _check_sampling_rate(fs: float | int) -> None:
     
     """
-    Perform checks on the sampling rate.
-
-    Helper function that performs type and value checks on the sampling frequency.
-
-    Parameters
-    ----------
-    fs : float | int
-        Sampling frequency (Hz).
-
-    Raises
-    ------
-    TypeError
-        If the sampling frequency is not a float nor an integer.
-
-    ValueError
-        If the sampling frequency is less than or equal to zero.
+    Perform checks on the sampling rate. Raises a TypeError if the sampling rate is neither a float
+    or an integer and a ValueError if the sampling frequency is negative (or zero).
     """
 
     if((isinstance(fs, float) or isinstance(fs, int)) is False):

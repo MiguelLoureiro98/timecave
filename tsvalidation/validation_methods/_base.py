@@ -208,8 +208,10 @@ class base_splitter(ABC):
         """
         Get the number of splits for a given instance of a validation method.
 
-        This method can be used to retrieve the number of splits for a given instance of a validation method (this is set on initialisation).
-        Since the method is implemented as a property, this information can simply be accessed as an attribute using dot notation.
+        This method can be used to retrieve the number of splits for a given 
+        instance of a validation method (this is set on initialisation).
+        Since the method is implemented as a property, this information can 
+        simply be accessed as an attribute using dot notation.
 
         Returns
         -------

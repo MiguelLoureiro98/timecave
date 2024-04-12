@@ -1,5 +1,11 @@
 """
 This module contains utility functions to help the user.
+
+Functions
+---------
+Nyquist_min_samples
+heuristic_min_samples
+true_test_indices
 """
 
 import numpy as np
@@ -35,6 +41,8 @@ def Nyquist_min_samples(fs: float | int, freq_limit: float | int) -> int:
         sampling theorem.
     """
 
+    _check_frequencies(fs, freq_limit);
+
     ts = 1 / fs;
     T_limit = 1 / freq_limit;
     t_final = 2 * T_limit;
@@ -57,7 +65,13 @@ def heuristic_min_samples(fs: float | int, freq_limit: float | int) -> dict:
     Compute the minimum number of samples each partition should have
     according to the 10 / 20 sampling heuristic.
 
-    _extended_summary_
+    This function computes the minimum and maximum lengths for each 
+    training and validation partition, assuming the time series was 
+    sampled at a frequency of 'fs' Hertz and the largest frequency 
+    of interest for modelling purposes is 'freq_limit' Hertz. The
+    interval in which the sampling frequency should lie for 'freq_limit' 
+    to be effectively captured is also derived. The 10 / 20 sampling 
+    heuristic is used to derive both results.
 
     Parameters
     ----------
@@ -74,6 +88,8 @@ def heuristic_min_samples(fs: float | int, freq_limit: float | int) -> dict:
         required to capture freq_limit with a sampling frequency of fs, 
         according to the 10 / 20 heuristic rule.
     """
+
+    _check_frequencies(fs, freq_limit);
 
     ts = 1 / fs;
     T_limit = 1 / freq_limit;
@@ -95,8 +111,43 @@ def heuristic_min_samples(fs: float | int, freq_limit: float | int) -> dict:
 
 def _check_frequencies(fs: float | int, freq_limit: float | int) -> None:
 
-    pass
+    """
+    Perform type and value checks on frequencies. Raises a TypeError if the frequencies are neither floats nor integers.
+    If either frequency is not positive, a ValueError is raised.
+    """
 
-def true_test_indices(test_ind: list, model_order: int) -> list:
+    if((isinstance(fs, float) or isinstance(fs, int)) is False or (isinstance(freq_limit, float) or isinstance(freq_limit, int)) is False):
 
-    raise NotImplementedError("Not implemented yet.");
+        raise TypeError("Both 'fs' and 'freq_limit' should be either integers or floats.");
+
+    if(fs <= 0 or freq_limit <= 0):
+
+        raise ValueError("Frequencies should be non-negative.");
+
+    return;
+
+def true_test_indices(test_ind: np.ndarray, model_order: int) -> np.ndarray:
+    
+    """
+    _summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    test_ind : np.ndarray
+        Array of test (validation, really) indices yielded by a splitter.
+
+    model_order : int
+        _description_
+
+    Returns
+    -------
+    np.ndarray
+        Array of validation indices including ... .
+    """
+
+    new_ind = np.arange(test_ind[0] - model_order, test_ind[0]);
+    full_test_ind = np.hstack((new_ind, test_ind));
+    
+    return full_test_ind;
