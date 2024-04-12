@@ -9,19 +9,20 @@ class FrequencyModulation:
 
 
 class FrequencyModulationWithStep(FrequencyModulation):
-    def __init__(self, freq_init):
+    def __init__(self, freq_init, t_split):
         super().__init__()
         self.freq_init = freq_init
+        self.t_split = t_split
 
-    def modulate(self, time, t_split):
+    def modulate(self, time):
         initial_period = 1 / self.freq_init
-        t_split_adjusted = (t_split // initial_period) * initial_period
+        t_split_adjusted = (self.t_split // initial_period) * initial_period
         return np.where(time > t_split_adjusted, self.freq_init * 2, self.freq_init)
 
 
 class FrequencyModulationLinear(FrequencyModulation):
     def __init__(self, freq_init, slope):
-        super().__init__(freq_init)
+        super().__init__()
         self.slope = slope
         self.freq_init = freq_init
 
