@@ -1,12 +1,17 @@
+"""
+This module contains the base class for all time series validation methods provided / supported by this package.
+This class is simply an abstract class and should not be used directly (i.e. should not be made available to the user).
+
+Classes
+-------
+base_splitter
+    Abstract base class for every validation method supported by this package.
+"""
+
 from abc import ABC, abstractmethod
 from typing import Generator
 import numpy as np
 import pandas as pd
-
-"""
-This module contains the base class for all time series validation methods provided / supported by this package.
-This class is simply an abstract class and should not be used directly (i.e. should not be made available to the user).
-"""
 
 # This should work with sklearn's Hyperparameter Search algorithms. If not, install sklearn and inherit from the BaseCrossValidator class (maybe?).
 # For now, leave it as it is, as this approach will most likely work with said search algorithms and leads to fewer requirements.
@@ -23,7 +28,7 @@ class base_splitter(ABC):
     _n_splits : int
         Number of splits for this instance of the validation method.
 
-    _ts : np.ndarray | pd.Series
+    _series : np.ndarray | pd.Series
         Univariate time series.
 
     _n_samples : int
@@ -62,7 +67,7 @@ class base_splitter(ABC):
         Abstract method. The implementation differs for each validation method.
     """
 
-    def __init__(self, splits: int, ts: np.ndarray | pd.Series) -> None:
+    def __init__(self, splits: int, ts: np.ndarray | pd.Series, fs: float | int) -> None:
 
         """
         Class constructor.
@@ -76,6 +81,9 @@ class base_splitter(ABC):
 
         ts : np.ndarray | pd.Series
             Univariate time series.
+
+        fs : float | int
+            The series' sampling frequency (Hz).
         """
 
         super().__init__();
@@ -83,6 +91,7 @@ class base_splitter(ABC):
         self._ts_check(ts);
         self._n_splits = splits;
         self._series = ts;
+        self._fs = fs;
         self._n_samples = self._series.shape[0];
         self._dim_check();
         self._indices = np.arange(0, self._n_samples);
@@ -220,6 +229,25 @@ class base_splitter(ABC):
         """
 
         return self._n_splits;
+    
+    @property
+    def sampling_freq(self) -> int | float:
+
+        """
+        Get the time series' sampling frequency.
+
+        This method can be used to access the time series' sampling
+        frequency, in Hertz (this is set on intialisation).
+        Since the method is implemented as a property, this information can 
+        simply be accessed as an attribute using dot notation. 
+
+        Returns
+        -------
+        int | float
+            The time series' sampling frequency (Hz).
+        """
+
+        return self._fs;
 
     # If the sklearn-like interface is to be kept, then this version of the 'get_n_splits' should be implemented.
 
@@ -266,7 +294,7 @@ class base_splitter(ABC):
         pass
 
     @abstractmethod
-    def statistics(self) -> pd.DataFrame:
+    def statistics(self) -> tuple[pd.DataFrame]:
         
         """
         Compute and plot relevant statistics for both training and validation sets.
