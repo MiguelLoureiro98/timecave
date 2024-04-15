@@ -21,6 +21,9 @@ class TestUtils(unittest.TestCase):
         self.heuristic_max1 = np.ceil((20 / self.freq_limit1) * self.fs1);
         self.heuristic_max2 = np.ceil((20 / self.freq_limit2) * self.fs1);
 
+        self.ind_seq = np.array([6, 7, 8]);
+        self.correct_res = [3, 4, 5, 6, 7, 8];
+
         return;
 
     def tearDown(self) -> None:
@@ -35,6 +38,8 @@ class TestUtils(unittest.TestCase):
         del self.heuristic_min2;
         del self.heuristic_max1;
         del self.heuristic_max2;
+        del self.ind_seq;
+        del self.correct_res;
 
         return;
     
@@ -81,7 +86,17 @@ class TestUtils(unittest.TestCase):
         Test the 'true_test_indices' function.
         """
 
-        pass
+        res = true_test_indices(self.ind_seq, 3);
+
+        # Exceptions
+        self.assertRaises(TypeError, true_test_indices, self.ind_seq, "a");
+        self.assertRaises(ValueError, true_test_indices, self.ind_seq, -1);
+        self.assertRaises(ValueError, true_test_indices, self.ind_seq, 10);
+
+        # Functionality
+        self.assertListEqual(res.tolist(), self.correct_res);
+
+        return;
 
 if __name__ == "__main__":
 

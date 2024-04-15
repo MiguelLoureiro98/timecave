@@ -197,9 +197,51 @@ def true_test_indices(test_ind: np.ndarray, model_order: int) -> np.ndarray:
     np.ndarray
         Array of validation indices including the time steps required by the model
         to predict the series' value at the first validation index.
+
+    Raises
+    ------
+    TypeError
+        If 'model_order' is not an integer.
+
+    ValueError
+        If 'model_order' is not positive.
+
+    ValueError
+        If 'model_order' is larger than the amount of samples in the training set, assuming it precedes the validation set.
     """
+
+    _check_order(model_order);
+    _check_ind(test_ind, model_order);
 
     new_ind = np.arange(test_ind[0] - model_order, test_ind[0]);
     full_test_ind = np.hstack((new_ind, test_ind));
     
     return full_test_ind;
+
+def _check_order(model_order: int) -> None:
+
+    """
+    Perform type and value checks on the 'model_order' parameter.
+    """
+
+    if(isinstance(model_order, int) is False):
+
+        raise TypeError("'model_order' should be an integer.");
+
+    if(model_order <= 0):
+
+        raise ValueError("'model_order' should be positive.");
+
+    return;
+
+def _check_ind(test_ind: np.ndarray, model_order: int) -> None:
+
+    """
+    Check whether the order of model is smaller than the amount of samples on the training set (assuming it precedes the validation set).
+    """
+
+    if(test_ind[0] < model_order):
+
+        raise ValueError("'model_order' should be smaller than the amount of samples in the training set.");
+
+    return;
