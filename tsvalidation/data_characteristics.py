@@ -51,7 +51,7 @@ def get_features(ts: np.ndarray | pd.Series, fs: float | int) -> pd.DataFrame:
     relevant_feat_df["Trend_slope"] = tsfel.slope(ts);
     relevant_feat_df["Spectral_centroid"] = tsfel.spectral_centroid(ts);
     relevant_feat_df["Spectral_rolloff"] = tsfel.spectral_roll_off(ts);
-    relevant_feat_df["Spectral_entropy"] = tsfel.spectral_roll_off(ts);
+    relevant_feat_df["Spectral_entropy"] = tsfel.spectral_entropy(ts);
     relevant_feat_df["Strength_of_trend"] = strength_of_trend(ts);
     relevant_feat_df["Mean_crossing_rate"] = mean_crossing_rate(ts);
     relevant_feat_df["Median_crossing_rate"] = median_crossing_rate(ts);
