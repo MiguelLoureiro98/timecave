@@ -49,9 +49,9 @@ def get_features(ts: np.ndarray | pd.Series, fs: float | int) -> pd.DataFrame:
     
     relevant_feat_df = stat_feat_df[feature_list].copy();
     relevant_feat_df["Trend_slope"] = tsfel.slope(ts);
-    relevant_feat_df["Spectral_centroid"] = tsfel.spectral_centroid(ts);
-    relevant_feat_df["Spectral_rolloff"] = tsfel.spectral_roll_off(ts);
-    relevant_feat_df["Spectral_entropy"] = tsfel.spectral_entropy(ts);
+    relevant_feat_df["Spectral_centroid"] = tsfel.spectral_centroid(ts, fs);
+    relevant_feat_df["Spectral_rolloff"] = tsfel.spectral_roll_off(ts, fs);
+    relevant_feat_df["Spectral_entropy"] = tsfel.spectral_entropy(ts, fs);
     relevant_feat_df["Strength_of_trend"] = strength_of_trend(ts);
     relevant_feat_df["Mean_crossing_rate"] = mean_crossing_rate(ts);
     relevant_feat_df["Median_crossing_rate"] = median_crossing_rate(ts);
@@ -156,11 +156,11 @@ def median_crossing_rate(ts: np.ndarray | pd.Series) -> float:
 
     _check_type(ts);
 
-    new_ts = ts - ts.median();
-
     if(isinstance(ts, pd.Series) is True):
 
         ts = ts.to_numpy();
+
+    new_ts = ts - np.median(ts);
     
     mcr = np.nonzero(np.diff(np.sign(new_ts)))[0].shape[0] / (ts.shape[0] - 1);
 
