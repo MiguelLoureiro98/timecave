@@ -101,13 +101,13 @@ class TestDataChar(unittest.TestCase):
         self.assertEqual(res_numpy.shape[1], n_features);
         self.assertEqual(res_pandas.shape[1], n_features);
 
-        self.assertEqual(res_numpy["0_Mean"].to_numpy().item(), mean);
-        self.assertEqual(res_numpy["0_Median"].to_numpy().item(), median);
-        self.assertEqual(res_numpy["0_Min"].to_numpy().item(), minimum);
-        self.assertEqual(res_numpy["0_Max"].to_numpy().item(), maximum);
-        self.assertEqual(res_numpy["0_Peak to peak distance"].to_numpy().item(), p2p);
-        self.assertEqual(res_numpy["0_Variance"].to_numpy().item(), var_numpy);
-        self.assertEqual(res_pandas["0_Variance"].to_numpy().item(), var_numpy);
+        self.assertEqual(res_numpy["Mean"].to_numpy().item(), mean);
+        self.assertEqual(res_numpy["Median"].to_numpy().item(), median);
+        self.assertEqual(res_numpy["Min"].to_numpy().item(), minimum);
+        self.assertEqual(res_numpy["Max"].to_numpy().item(), maximum);
+        self.assertEqual(res_numpy["P2P_amplitude"].to_numpy().item(), p2p);
+        self.assertEqual(res_numpy["Variance"].to_numpy().item(), var_numpy);
+        self.assertEqual(res_pandas["Variance"].to_numpy().item(), var_numpy);
 
         sloped_series = np.array([1, 2, 3, 4, 5]);
         res_slope = get_features(sloped_series, 1000);

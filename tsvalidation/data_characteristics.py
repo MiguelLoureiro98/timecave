@@ -48,6 +48,10 @@ def get_features(ts: np.ndarray | pd.Series, fs: float | int) -> pd.DataFrame:
     stat_feat_df = tsfel.time_series_features_extractor(cfg, ts);
     
     relevant_feat_df = stat_feat_df[feature_list].copy();
+    new_names = [feat[2:] for feat in feature_list];
+    cols = {name: new_name for (name, new_name) in zip(feature_list, new_names)};
+    relevant_feat_df = relevant_feat_df.rename(columns=cols);
+    relevant_feat_df = relevant_feat_df.rename(columns={"Peak to peak distance": "P2P_amplitude"});
     relevant_feat_df["Trend_slope"] = tsfel.slope(ts);
     relevant_feat_df["Spectral_centroid"] = tsfel.spectral_centroid(ts, fs);
     relevant_feat_df["Spectral_rolloff"] = tsfel.spectral_roll_off(ts, fs);
