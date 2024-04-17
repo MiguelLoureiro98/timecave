@@ -13,11 +13,11 @@ def sinusoid_ts(max_interval_size: float,
     return sinusoid
 
 
-def frequency_varying_sinusoid_ts(max_interval_size: float, 
-                             number_samples: int,
-                             frequency: FrequencyModulation,  
-                             amplitude: float = 1, 
-                             phase_initial: float = 0) -> np.ndarray:
+def frequency_varying_sinusoid_ts(number_samples: int,
+                                  max_interval_size: float, 
+                                    frequency: FrequencyModulation,  
+                                    amplitude: float = 1, 
+                                    phase_initial: float = 0) -> np.ndarray:
     time = np.linspace(0, max_interval_size, number_samples)
     frequency = frequency.modulate(time = time)
     time_series = amplitude * np.sin(2 * np.pi * frequency * time + phase_initial)
@@ -38,8 +38,8 @@ def scaled_unit_impulse_function_ts(number_samples: int, idx: int, constant: flo
     return constant*indicator_ts(number_samples, idx, idx)
 
 
-def linear_ts(max_interval_size: float, 
-               number_samples: int, 
+def linear_ts(number_samples: int,
+              max_interval_size: float, 
                slope: float = 1, 
                intercept: float = 0) -> np.ndarray:
     time = np.linspace(0, max_interval_size, number_samples)
@@ -47,8 +47,8 @@ def linear_ts(max_interval_size: float,
     return linear_series
 
 
-def exponential_ts(max_interval_size: float, 
-                    number_samples: int, 
+def exponential_ts(number_samples: int,
+                   max_interval_size: float, 
                     decay_rate: float = 1, 
                     initial_value: float = 1) -> np.ndarray:
     time = np.linspace(0, max_interval_size, number_samples)
