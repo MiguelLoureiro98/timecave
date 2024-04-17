@@ -1,8 +1,3 @@
-from ._base import base_splitter
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
 """
 This module contains all the Out-of-Sample (OOS) validation methods supported by this package.
 
@@ -15,9 +10,16 @@ Repeated_Holdout
     Implements the Repeated Holdout approach.
 """
 
+from ._base import base_splitter
+from ..data_characteristics import get_features
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from typing import Generator
+
 class Holdout(base_splitter):
 
-    def __init__(self, ts: np.ndarray | pd.Series, validation_size: float=0.3) -> None:
+    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, validation_size: float=0.3) -> None:
         
         """
         Class constructor.
@@ -31,9 +33,18 @@ class Holdout(base_splitter):
 
         validation_size : float, optional
             Validation set size (relative to the time series size), by default 0.3.
+
+        Raises
+        ------
+        TypeError
+            If the validation size is not a float.
+        
+        ValueError
+            If the validation size does not lie in the ]0, 1[ interval.
         """
 
-        super().__init__(2, ts);
+        super().__init__(2, ts, fs);
+        self._check_validation_size(validation_size);
         self._val_size = validation_size;
 
         return;
@@ -106,23 +117,32 @@ class Holdout(base_splitter):
         print(f"Holdout method\
                 --------------\
                 Time series size: {self._n_samples}\
-                Training size: {1 - self._val_size} ({(1 - self._val_size) * self._n_samples} samples)\
-                Validation size: {self._val_size} ({self._val_size * self._n_samples} samples)");
+                Training size: {np.round(1 - self._val_size, 2)} ({(1 - self._val_size) * self._n_samples} samples)\
+                Validation size: {np.round(self._val_size, 2)} ({self._val_size * self._n_samples} samples)");
 
         return;
 
-    def statistics(self) -> None:
+    def statistics(self) -> tuple[pd.DataFrame]:
         
         """
         _summary_
 
         _extended_summary_
+
+        Returns
+        -------
+        tuple[pd.DataFrame]
+            Relevant features for the entire time series, the training set, and the validation set.
         """
 
         split = self.split();
         training, validation = next(split);
 
-        return;
+        full_feat = get_features(self._series, self.sampling_freq);
+        training_feat = get_features(self._series[training], self.sampling_freq);
+        validation_feat = get_features(self._series[validation], self.sampling_freq);
+
+        return (full_feat, training_feat, validation_feat);
 
     def plot(self, height: int, width: int) -> None:
         
@@ -154,3 +174,81 @@ class Holdout(base_splitter):
         plt.show();
 
         return;
+
+class Repeated_Holdout(base_splitter):
+
+    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, iterations: int, splitting_interval: list=[0.7, 0.8]) -> None:
+
+        super().__init__(2, ts, fs);
+        self._check_iterations(iterations);
+        self._check_splits(splitting_interval);
+        self._iter = iterations;
+        self._interval = self._convert_interval(splitting_interval);
+
+        return;
+
+    def _check_iterations(self, iterations: int) -> None:
+
+        """
+        Perform type and value checks on the number of iterations.
+        """
+
+        if(isinstance(iterations, int) is False):
+
+            raise TypeError("The number of iterations must be an integer.");
+
+        if(iterations <= 0):
+
+            raise ValueError("The number of iterations must be positive.");
+
+    def _check_splits(self, splitting_interval: list) -> None:
+
+        if(isinstance(splitting_interval, list) is False):
+
+            raise TypeError("The splitting interval must be a list.");
+
+        if(len(splitting_interval) > 2):
+
+            raise ValueError("The splitting interval should be composed of two elements.");
+
+        for element in splitting_interval:
+            
+            if((isinstance(element, int) or isinstance(element, float)) is False):
+                
+                raise TypeError("The interval must be entirely composed of integers or floats.");
+    
+        if(splitting_interval[0] > splitting_interval[1]):
+
+            raise ValueError("'splitting_interval' should have the [smaller_value, larger_value] format.");
+
+        return;
+
+    def _convert_interval(self, splitting_interval: list) -> list:
+        
+        """
+        Convert intervals of floats (percentages) into intervals of integers (indices).
+        """
+
+        for ind, element in enumerate(splitting_interval):
+
+            if(isinstance(element, float) is True):
+
+                splitting_interval[ind] = int(np.round(element * self._n_samples));
+            
+        return splitting_interval;
+
+    def split(self) -> np.Generator[np.ndarray, np.ndarray]:
+
+        pass
+
+    def info(self) -> None:
+
+        pass
+
+    def statistics(self) -> tuple[pd.DataFrame]:
+        
+        pass
+
+    def plot(self, height: int, width: int) -> None:
+        
+        pass
