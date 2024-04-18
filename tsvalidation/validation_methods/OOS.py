@@ -81,21 +81,16 @@ class Holdout(base_splitter):
 
         return;
 
-    def split(self) -> np.Generator[np.ndarray, np.ndarray]:
+    def split(self) -> Generator[np.ndarray, np.ndarray]:
         
         """
         _summary_
 
         _extended_summary_
 
-        Returns
-        -------
-        np.Generator[np.ndarray, np.ndarray]
-            _description_
-
         Yields
         ------
-        Iterator[np.Generator[np.ndarray, np.ndarray]]
+        Generator[np.ndarray, np.ndarray]
             _description_
         """
 
@@ -177,13 +172,38 @@ class Holdout(base_splitter):
 
 class Repeated_Holdout(base_splitter):
 
-    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, iterations: int, splitting_interval: list=[0.7, 0.8]) -> None:
+    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, iterations: int, splitting_interval: list[int | float]=[0.7, 0.8], seed: int=0) -> None:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Parameters
+        ----------
+        ts : np.ndarray | pd.Series
+            _description_
+
+        fs : float | int
+            _description_
+
+        iterations : int
+            _description_
+
+        splitting_interval : list[int | float], optional
+            _description_, by default [0.7, 0.8]
+
+        seed : int, optional
+            _description_, by default 0
+        """
 
         super().__init__(2, ts, fs);
         self._check_iterations(iterations);
         self._check_splits(splitting_interval);
         self._iter = iterations;
         self._interval = self._convert_interval(splitting_interval);
+        self._seed = seed;
+        self._splitting_ind = self._get_splitting_ind();
 
         return;
 
@@ -202,6 +222,10 @@ class Repeated_Holdout(base_splitter):
             raise ValueError("The number of iterations must be positive.");
 
     def _check_splits(self, splitting_interval: list) -> None:
+
+        """
+        Perform several type and value checks on the splitting interval.
+        """
 
         if(isinstance(splitting_interval, list) is False):
 
@@ -237,13 +261,229 @@ class Repeated_Holdout(base_splitter):
             
         return splitting_interval;
 
-    def split(self) -> np.Generator[np.ndarray, np.ndarray]:
+    def _check_seed(self, seed: int) -> None:
 
-        pass
+        """
+        Perform a type check on the seed.
+        """
+
+        if(isinstance(seed, int) is False):
+
+            raise TypeError("'seed' should be an integer.");
+
+        return;
+
+    def _get_splitting_ind(self) -> np.ndarray:
+
+        """
+        Generate the splitting indices.
+        """
+
+        np.random.seed(self._seed);
+        rand_ind = np.random.randint(low=self._interval[0], high=self._interval[1], size=self._iter);
+
+        return rand_ind;
+
+    def split(self) -> Generator[tuple]:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Yields
+        ------
+        Generator[tuple]
+            _description_
+        """
+
+        for ind in self._splitting_ind:
+
+            training = self._indices[:ind];
+            validation = self._indices[ind:];
+
+            yield (training, validation);
 
     def info(self) -> None:
+        
+        """
+        _summary_
 
-        pass
+        _extended_summary_
+        """
+
+        mean_size = self._n_samples - self._splitting_ind.mean();
+        max_size = self._n_samples - self._splitting_ind.max();
+        min_size = self._n_samples - self._splitting_ind.min();
+
+        mean_pct = np.round(mean_size / self._n_samples, 2) * 100;
+        max_pct = np.round(max_size / self._n_samples, 2) * 100;
+        min_pct = np.round(min_size / self._n_samples, 2) * 100;
+
+        print("Repeated Holdout method");
+        print("-----------------------");
+        print(f"Time series size: {self._n_samples} samples");
+        print(f"Average validation set size: {mean_size} samples ({mean_pct} %)");
+        print(f"Maximum validation set size: {max_size} samples ({max_pct} %)");
+        print(f"Minimum validation set size: {min_size} samples ({min_pct} %)");
+
+    def statistics(self) -> tuple[pd.DataFrame]:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Returns
+        -------
+        tuple[pd.DataFrame]
+            _description_
+        """
+
+        full_features = get_features(self._series, self.sampling_freq);
+
+        training_stats = [];
+        validation_stats = [];
+
+        #for ind in self._splitting_ind:
+
+        #    training_feat = get_features(self._series[:ind], self.sampling_freq);
+        #    validation_feat = get_features(self._series[ind:], self.sampling_freq);
+        #    training_stats.append(training_feat);
+        #    validation_stats.append(validation_feat);
+
+        for (training, validation) in self.split():
+
+            training_feat = get_features(self._series[training], self.sampling_freq);
+            validation_feat = get_features(self._series[validation], self.sampling_freq);
+            training_stats.append(training_feat);
+            validation_stats.append(validation_feat);
+        
+        training_features = pd.concat(training_stats);
+        validation_features = pd.concat(validation_stats);
+
+        return (full_features, training_features, validation_features);
+
+    def plot(self, height: int, width: int) -> None:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Parameters
+        ----------
+        height : int
+            The figure's height.
+
+        width : int
+            The figure's width.
+        """
+        
+        fig, axs = plt.subplots(self._iter, 1, sharex=True);
+        fig.set_figheight(height);
+        fig.set_figwidth(width);
+        fig.supxlabel("Samples");
+        fig.supylabel("Time Series");
+
+        for it, (training, validation) in enumerate(self.split()):
+
+            axs[it, 0].plot(training, self._series[training], label="Training set");
+            axs[it, 0].plot(validation, self._series[validation], label="Validation set");
+            axs[it, 0].set_title("Repeated Holdout method - iteration {}".format(it+1));
+            axs[it, 0].legend();
+        
+        plt.show();
+
+        return;
+
+class Rolling_Origin_Update(base_splitter):
+
+    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float=0.7) -> None:
+
+        super().__init__(2, ts, fs);
+        self._check_origin(origin);
+        self._origin = self._convert_origin(origin);
+        self._splitting_ind = np.arange(self._origin, self._n_samples - 1);
+
+        return;
+
+    def _check_origin(self, origin: int | float) -> None:
+
+        """
+        Perform type and value checks on the origin.
+        """
+
+        is_int = isinstance(origin, int);
+        is_float = isinstance(origin, float);
+
+        if((is_int or is_float) is False):
+
+            raise TypeError("'origin' must be an integer or a float.");
+    
+        if(is_float and (origin >= 1 or origin <= 0)):
+
+            raise ValueError("If 'origin' is a float, it must lie in the interval of ]0, 1[.");
+    
+        if(is_int and (origin >= self._n_samples or origin <= 0)):
+
+            raise ValueError("If 'origin' is an integer, it must lie in the interval of ]0, n_samples[.");
+
+        return;
+
+    def _convert_origin(self, origin: int | float) -> int:
+
+        """
+        Cast the origin from float (proportion) to integer (index).
+        """
+
+        if(isinstance(origin, float) is True):
+
+            origin = int(np.round(origin * self._n_samples));
+
+        return origin;
+
+    def split(self) -> Generator[tuple]:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Yields
+        ------
+        Generator[tuple]
+            _description_
+        """
+
+        for ind in self._splitting_ind:
+
+            training = self._indices[:self._origin];
+            validation = self._indices[ind:];
+            
+            yield (training, validation);
+
+    def info(self) -> None:
+        
+        """
+        _summary_
+
+        _extended_summary_
+        """
+
+        max_size = self._n_samples - self._origin;
+        min_size = 1;
+
+        max_pct = np.round(max_size / self._n_samples, 2) * 100;
+        min_pct = np.round(1 / self._n_samples, 2) * 100;
+
+        print("Rolling Origin Update");
+        print("---------------------");
+        print(f"Time series size: {self._n_samples} samples");
+        print(f"Maximum validation set size: {max_size} samples ({max_pct} %)");
+        print(f"Minimum validation set size: {min_size} sample ({min_pct} %)");
+
+        return;
 
     def statistics(self) -> tuple[pd.DataFrame]:
         
