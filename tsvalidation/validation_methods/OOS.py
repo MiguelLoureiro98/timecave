@@ -8,6 +8,17 @@ Holdout
 
 Repeated_Holdout
     Implements the Repeated Holdout approach.
+
+Rolling_Origin_Update
+    Implements the Rolling Origin Update method.
+
+Rolling_Origin_Recalibration
+    Implements the Rolling Origin Recalibration method.
+
+Fixed_Size_Rolling_Window
+    Implements the Fixed-size Rolling Window method.
+
+TODO: Add Tashman reference to the last 3/4 methods.
 """
 
 from ._base import base_splitter
@@ -109,11 +120,11 @@ class Holdout(base_splitter):
         This method ... .
         """
 
-        print(f"Holdout method\
-                --------------\
-                Time series size: {self._n_samples}\
-                Training size: {np.round(1 - self._val_size, 2)} ({(1 - self._val_size) * self._n_samples} samples)\
-                Validation size: {np.round(self._val_size, 2)} ({self._val_size * self._n_samples} samples)");
+        print("Holdout method");
+        print("--------------");
+        print(f"Time series size: {self._n_samples}");
+        print(f"Training size: {np.round(1 - self._val_size, 2)} ({(1 - self._val_size) * self._n_samples} samples)");
+        print(f"Validation size: {np.round(self._val_size, 2)} ({self._val_size * self._n_samples} samples)");
 
         return;
 
@@ -197,6 +208,7 @@ class Repeated_Holdout(base_splitter):
             _description_, by default 0
         """
 
+        # ! The number of splits is not 2. It should be equal to 'self._iter' (maybe).
         super().__init__(2, ts, fs);
         self._check_iterations(iterations);
         self._check_splits(splitting_interval);
@@ -385,12 +397,13 @@ class Repeated_Holdout(base_splitter):
         fig.set_figwidth(width);
         fig.supxlabel("Samples");
         fig.supylabel("Time Series");
+        fig.suptitle("Repeated Holdout method");
 
         for it, (training, validation) in enumerate(self.split()):
 
             axs[it, 0].plot(training, self._series[training], label="Training set");
             axs[it, 0].plot(validation, self._series[validation], label="Validation set");
-            axs[it, 0].set_title("Repeated Holdout method - iteration {}".format(it+1));
+            axs[it, 0].set_title("Iteration {}".format(it+1));
             axs[it, 0].legend();
         
         plt.show();
@@ -400,7 +413,25 @@ class Repeated_Holdout(base_splitter):
 class Rolling_Origin_Update(base_splitter):
 
     def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float=0.7) -> None:
+        
+        """
+        _summary_
 
+        _extended_summary_
+
+        Parameters
+        ----------
+        ts : np.ndarray | pd.Series
+            _description_
+
+        fs : float | int
+            _description_
+
+        origin : int | float, optional
+            _description_, by default 0.7
+        """
+
+        # ! The number of splits is not 2! What should we consider then?
         super().__init__(2, ts, fs);
         self._check_origin(origin);
         self._origin = self._convert_origin(origin);
@@ -471,15 +502,18 @@ class Rolling_Origin_Update(base_splitter):
         _extended_summary_
         """
 
+        training_size = self._origin;
         max_size = self._n_samples - self._origin;
         min_size = 1;
 
+        training_pct = np.round(training_size / self._n_samples, 2) * 100;
         max_pct = np.round(max_size / self._n_samples, 2) * 100;
         min_pct = np.round(1 / self._n_samples, 2) * 100;
 
-        print("Rolling Origin Update");
-        print("---------------------");
+        print("Rolling Origin Update method");
+        print("----------------------------");
         print(f"Time series size: {self._n_samples} samples");
+        print(f"Training set size (fixed parameter): {training_size} samples ({training_pct} %)");
         print(f"Maximum validation set size: {max_size} samples ({max_pct} %)");
         print(f"Minimum validation set size: {min_size} sample ({min_pct} %)");
 
@@ -487,8 +521,413 @@ class Rolling_Origin_Update(base_splitter):
 
     def statistics(self) -> tuple[pd.DataFrame]:
         
-        pass
+        """
+        _summary_
+
+        _extended_summary_
+
+        Returns
+        -------
+        tuple[pd.DataFrame]
+            _description_
+        """
+
+        full_features = get_features(self._series, self.sampling_freq);
+        it_1 = True;
+        validation_stats = [];
+
+        for (training, validation) in self.split():
+
+            if(it_1 is True):
+
+                training_features = get_features(self._series[training], self.sampling_freq);
+                it_1 = False;
+            
+            validation_feat = get_features(self._series[validation], self.sampling_freq);
+            validation_stats.append(validation_feat);
+        
+        validation_features = pd.concat(validation_stats);
+
+        return (full_features, training_features, validation_features);
 
     def plot(self, height: int, width: int) -> None:
         
-        pass
+        """
+        _summary_
+
+        _extended_summary_
+
+        Parameters
+        ----------
+        height : int
+            The figure's height.
+
+        width : int
+            The figure's width.
+        """
+
+        fig, axs = plt.subplots(self._n_samples - self._origin, 1, sharex=True);
+        fig.set_figheight(height);
+        fig.set_figwidth(width);
+        fig.supxlabel("Samples");
+        fig.supylabel("Time Series");
+        fig.suptitle("Rolling Origin Update method");
+
+        for it, (training, validation) in enumerate(self.split()):
+
+            axs[it, 0].plot(training, self._series[training], label="Training set");
+            axs[it, 0].plot(validation, self._series[validation], label="Validation set");
+            axs[it, 0].set_title("Iteration {}".format(it+1));
+            axs[it, 0].legend();
+        
+        plt.show();
+
+        return;
+
+class Rolling_Origin_Recalibration(base_splitter):
+
+    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float=0.7) -> None:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Parameters
+        ----------
+        ts : np.ndarray | pd.Series
+            _description_
+
+        fs : float | int
+            _description_
+
+        origin : int | float, optional
+            _description_, by default 0.7
+        """
+
+        # ? What should be passed as the number of splits?
+        super().__init__(2, ts, fs);
+        self._check_origin(origin);
+        self._origin = self._convert_origin(origin);
+        self._splitting_ind = np.arange(self._origin, self._n_samples - 1);
+
+        return;
+
+    def _check_origin(self, origin: int | float) -> None:
+
+        """
+        Perform type and value checks on the origin.
+        """
+
+        is_int = isinstance(origin, int);
+        is_float = isinstance(origin, float);
+
+        if((is_int or is_float) is False):
+
+            raise TypeError("'origin' must be an integer or a float.");
+    
+        if(is_float and (origin >= 1 or origin <= 0)):
+
+            raise ValueError("If 'origin' is a float, it must lie in the interval of ]0, 1[.");
+    
+        if(is_int and (origin >= self._n_samples or origin <= 0)):
+
+            raise ValueError("If 'origin' is an integer, it must lie in the interval of ]0, n_samples[.");
+
+        return;
+
+    def _convert_origin(self, origin: int | float) -> int:
+
+        """
+        Cast the origin from float (proportion) to integer (index).
+        """
+
+        if(isinstance(origin, float) is True):
+
+            origin = int(np.round(origin * self._n_samples));
+
+        return origin;
+
+    def split(self) -> Generator[tuple]:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Yields
+        ------
+        Generator[tuple]
+            _description_
+        """
+
+        for ind in self._splitting_ind:
+
+            training = self._indices[:ind];
+            validation = self._indices[ind:];
+        
+            yield (training, validation);
+
+    def info(self) -> None:
+        
+        """
+        _summary_
+
+        _extended_summary_
+        """
+
+        max_training_size = self._n_samples - 1;
+        min_training_size = self._origin;
+        max_validation_size = self._n_samples - self._origin;
+        min_validation_size = 1;
+
+        max_training_pct = np.round(max_training_size / self._n_samples, 2) * 100;
+        min_training_pct = np.round(min_training_size / self._n_samples, 2) * 100;
+        max_validation_pct = np.round(max_validation_size / self._n_samples, 2) * 100;
+        min_validation_pct = np.round(min_validation_size / self._n_samples, 2) * 100;
+
+        print("Rolling Origin Recalibration method");
+        print("-----------------------------------");
+        print(f"Time series size: {self._n_samples} samples");
+        print(f"Minimum training set size: {min_training_size} samples ({min_training_pct} %)");
+        print(f"Maximum validation set size: {max_validation_size} samples ({max_validation_pct} %)");
+        print(f"Maximum training set size: {max_training_size} samples ({max_training_pct} %)");
+        print(f"Minimum validation set size: {min_validation_size} samples ({min_validation_pct} %)");
+
+        return;
+
+    def statistics(self) -> tuple[pd.DataFrame]:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Returns
+        -------
+        tuple[pd.DataFrame]
+            _description_
+        """
+        
+        full_features = get_features(self._series, self.sampling_freq);
+        training_stats = [];
+        validation_stats = [];
+
+        for (training, validation) in self.split():
+
+            training_feat = get_features(self._series[training], self.sampling_freq);
+            training_stats.append(training_feat);
+            validation_feat = get_features(self._series[validation], self.sampling_freq);
+            validation_stats.append(validation_feat);
+        
+        training_features = pd.concat(training_stats);
+        validation_features = pd.concat(validation_stats);
+
+        return (full_features, training_features, validation_features);
+
+    def plot(self, height: int, width: int) -> None:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Parameters
+        ----------
+        height : int
+            _description_
+
+        width : int
+            _description_
+        """
+
+        fig, axs = plt.subplots(self._n_samples - self._origin, 1, sharex=True);
+        fig.set_figheight(height);
+        fig.set_figwidth(width);
+        fig.supxlabel("Samples");
+        fig.supylabel("Time Series");
+        fig.suptitle("Rolling Origin Recalibration method");
+
+        for it, (training, validation) in enumerate(self.split()):
+
+            axs[it, 0].plot(training, self._series[training], label="Training set");
+            axs[it, 0].plot(validation, self._series[validation], label="Validation set");
+            axs[it, 0].set_title("Iteration {}".format(it+1));
+            axs[it, 0].legend();
+        
+        plt.show();
+
+        return;
+
+class Fixed_Size_Rolling_Window(base_splitter):
+
+    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float=0.7) -> None:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Parameters
+        ----------
+        ts : np.ndarray | pd.Series
+            Univariate time series.
+
+        fs : float | int
+            Sampling frequency (Hz).
+
+        origin : int | float, optional
+            _description_, by default 0.7
+        """
+
+        # ? Should the number of splits be 2?
+        super().__init__(2, ts, fs);
+        self._check_origin(origin);
+        self._origin = self._convert_origin(origin);
+        self._splitting_ind = np.arange(self._origin, self._n_samples - 1);
+
+        return;
+
+    def _check_origin(self, origin: int | float) -> None:
+
+        """
+        Perform type and value checks on the origin.
+        """
+
+        is_int = isinstance(origin, int);
+        is_float = isinstance(origin, float);
+
+        if((is_int or is_float) is False):
+
+            raise TypeError("'origin' must be an integer or a float.");
+    
+        if(is_float and (origin >= 1 or origin <= 0)):
+
+            raise ValueError("If 'origin' is a float, it must lie in the interval of ]0, 1[.");
+    
+        if(is_int and (origin >= self._n_samples or origin <= 0)):
+
+            raise ValueError("If 'origin' is an integer, it must lie in the interval of ]0, n_samples[.");
+
+        return;
+
+    def _convert_origin(self, origin: int | float) -> int:
+
+        """
+        Cast the origin from float (proportion) to integer (index).
+        """
+
+        if(isinstance(origin, float) is True):
+
+            origin = int(np.round(origin * self._n_samples));
+
+        return origin;
+
+    def split(self) -> Generator[tuple]:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Yields
+        ------
+        Generator[tuple]
+            _description_
+        """
+        start_training_ind = self._splitting_ind - self._origin;
+        
+        for start_ind, end_ind in zip(start_training_ind, self._splitting_ind):
+
+            training = self._indices[start_ind:end_ind];
+            validation = self._indices[:end_ind];
+
+            yield (training, validation);
+
+    def info(self) -> None:
+        
+        """
+        _summary_
+
+        _extended_summary_
+        """
+
+        training_size = self._origin;
+        max_size = self._n_samples - self._origin;
+        min_size = 1;
+
+        training_pct = np.round(training_size / self._n_samples, 2) * 100;
+        max_pct = np.round(max_size / self._n_samples, 2) * 100;
+        min_pct = np.round(1 / self._n_samples, 2) * 100;
+
+        print("Fixed-size Rolling Window method");
+        print("--------------------------------");
+        print(f"Time series size: {self._n_samples} samples");
+        print(f"Training set size (fixed parameter): {training_size} samples ({training_pct} %)");
+        print(f"Maximum validation set size: {max_size} samples ({max_pct} %)");
+        print(f"Minimum validation set size: {min_size} sample ({min_pct} %)");
+
+        return;
+
+    def statistics(self) -> tuple[pd.DataFrame]:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Returns
+        -------
+        tuple[pd.DataFrame]
+            _description_
+        """
+
+        full_features = get_features(self._series, self.sampling_freq);
+        training_stats = [];
+        validation_stats = [];
+
+        for (training, validation) in self.split():
+
+            training_feat = get_features(self._series[training], self.sampling_freq);
+            training_stats.append(training_feat);
+            validation_feat = get_features(self._series[validation], self.sampling_freq);
+            validation_stats.append(validation_feat);
+        
+        training_features = pd.concat(training_stats);
+        validation_features = pd.concat(validation_stats);
+
+        return (full_features, training_features, validation_features);
+
+    def plot(self, height: int, width: int) -> None:
+        
+        """
+        _summary_
+
+        _extended_summary_
+
+        Parameters
+        ----------
+        height : int
+            _description_
+
+        width : int
+            _description_
+        """
+
+        fig, axs = plt.subplots(self._n_samples - self._origin, 1, sharex=True);
+        fig.set_figheight(height);
+        fig.set_figwidth(width);
+        fig.supxlabel("Samples");
+        fig.supylabel("Time Series");
+        fig.suptitle("Fixed-size Rolling Window method");
+
+        for it, (training, validation) in enumerate(self.split()):
+
+            axs[it, 0].plot(training, self._series[training], label="Training set");
+            axs[it, 0].plot(validation, self._series[validation], label="Validation set");
+            axs[it, 0].set_title("Iteration {}".format(it+1));
+            axs[it, 0].legend();
+        
+        plt.show();
+
+        return;

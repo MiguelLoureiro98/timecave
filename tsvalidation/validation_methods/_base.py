@@ -267,7 +267,7 @@ class base_splitter(ABC):
         return self._n_splits;
 
     @abstractmethod
-    def split(self) -> Generator[np.ndarray, np.ndarray]:
+    def split(self) -> Generator[tuple]:
         
         """
         Split the time series into training and validation sets.
@@ -276,8 +276,8 @@ class base_splitter(ABC):
 
         Yields
         ------
-        Generator[np.ndarray, np.ndarray]
-            Numpy arrays containing the training and validation indices.
+        Generator[tuple]
+            A tuple of Numpy arrays containing the training and validation indices.
         """
 
         pass
