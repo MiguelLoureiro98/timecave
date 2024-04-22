@@ -42,6 +42,9 @@ class Holdout(base_splitter):
         ts : np.ndarray | pd.Series
             Univariate time series.
 
+        fs : float | int
+            Sampling frequency (Hz).
+
         validation_size : float, optional
             Validation set size (relative to the time series size), by default 0.3.
 
@@ -92,7 +95,7 @@ class Holdout(base_splitter):
 
         return;
 
-    def split(self) -> Generator[np.ndarray, np.ndarray]:
+    def split(self) -> Generator[tuple, None, None]:
         
         """
         _summary_
@@ -101,7 +104,7 @@ class Holdout(base_splitter):
 
         Yields
         ------
-        Generator[np.ndarray, np.ndarray]
+        Generator[tuple, None, None]
             _description_
         """
 
@@ -110,7 +113,7 @@ class Holdout(base_splitter):
         train = self._indices[:split_ind];
         validation = self._indices[split_ind:];
 
-        yield train, validation;
+        yield (train, validation);
 
     def info(self) -> None:
         
@@ -208,10 +211,9 @@ class Repeated_Holdout(base_splitter):
             _description_, by default 0
         """
 
-        # ! The number of splits is not 2. It should be equal to 'self._iter' (maybe).
-        super().__init__(2, ts, fs);
         self._check_iterations(iterations);
         self._check_splits(splitting_interval);
+        super().__init__(iterations, ts, fs);
         self._iter = iterations;
         self._interval = self._convert_interval(splitting_interval);
         self._seed = seed;
@@ -296,7 +298,7 @@ class Repeated_Holdout(base_splitter):
 
         return rand_ind;
 
-    def split(self) -> Generator[tuple]:
+    def split(self) -> Generator[tuple, None, None]:
         
         """
         _summary_
@@ -305,7 +307,7 @@ class Repeated_Holdout(base_splitter):
 
         Yields
         ------
-        Generator[tuple]
+        Generator[tuple, None, None]
             _description_
         """
 
@@ -431,11 +433,11 @@ class Rolling_Origin_Update(base_splitter):
             _description_, by default 0.7
         """
 
-        # ! The number of splits is not 2! What should we consider then?
         super().__init__(2, ts, fs);
         self._check_origin(origin);
         self._origin = self._convert_origin(origin);
-        self._splitting_ind = np.arange(self._origin, self._n_samples - 1);
+        self._splitting_ind = np.arange(self._origin + 1, self._n_samples);
+        self._n_splits = self._splitting_ind.shape[0];
 
         return;
 
@@ -470,11 +472,11 @@ class Rolling_Origin_Update(base_splitter):
 
         if(isinstance(origin, float) is True):
 
-            origin = int(np.round(origin * self._n_samples));
+            origin = int(np.round(origin * self._n_samples)) - 1;
 
         return origin;
 
-    def split(self) -> Generator[tuple]:
+    def split(self) -> Generator[np.ndarray, None, None]:
         
         """
         _summary_
@@ -483,7 +485,7 @@ class Rolling_Origin_Update(base_splitter):
 
         Yields
         ------
-        Generator[tuple]
+        Generator[tuple, None, None]
             _description_
         """
 
@@ -605,11 +607,11 @@ class Rolling_Origin_Recalibration(base_splitter):
             _description_, by default 0.7
         """
 
-        # ? What should be passed as the number of splits?
         super().__init__(2, ts, fs);
         self._check_origin(origin);
         self._origin = self._convert_origin(origin);
-        self._splitting_ind = np.arange(self._origin, self._n_samples - 1);
+        self._splitting_ind = np.arange(self._origin + 1, self._n_samples);
+        self._n_splits = self._splitting_ind.shape[0];
 
         return;
 
@@ -644,11 +646,11 @@ class Rolling_Origin_Recalibration(base_splitter):
 
         if(isinstance(origin, float) is True):
 
-            origin = int(np.round(origin * self._n_samples));
+            origin = int(np.round(origin * self._n_samples)) - 1;
 
         return origin;
 
-    def split(self) -> Generator[tuple]:
+    def split(self) -> Generator[tuple, None, None]:
         
         """
         _summary_
@@ -657,7 +659,7 @@ class Rolling_Origin_Recalibration(base_splitter):
 
         Yields
         ------
-        Generator[tuple]
+        Generator[tuple, None, None]
             _description_
         """
 
@@ -780,11 +782,11 @@ class Fixed_Size_Rolling_Window(base_splitter):
             _description_, by default 0.7
         """
 
-        # ? Should the number of splits be 2?
         super().__init__(2, ts, fs);
         self._check_origin(origin);
         self._origin = self._convert_origin(origin);
-        self._splitting_ind = np.arange(self._origin, self._n_samples - 1);
+        self._splitting_ind = np.arange(self._origin + 1, self._n_samples);
+        self._n_splits = self._splitting_ind.shape[0];
 
         return;
 
@@ -819,11 +821,11 @@ class Fixed_Size_Rolling_Window(base_splitter):
 
         if(isinstance(origin, float) is True):
 
-            origin = int(np.round(origin * self._n_samples));
+            origin = int(np.round(origin * self._n_samples)) - 1;
 
         return origin;
 
-    def split(self) -> Generator[tuple]:
+    def split(self) -> Generator[tuple, None, None]:
         
         """
         _summary_
@@ -832,7 +834,7 @@ class Fixed_Size_Rolling_Window(base_splitter):
 
         Yields
         ------
-        Generator[tuple]
+        Generator[tuple, None, None]
             _description_
         """
         start_training_ind = self._splitting_ind - self._origin;

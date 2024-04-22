@@ -89,6 +89,7 @@ class base_splitter(ABC):
         super().__init__();
         self._splits_check(splits);
         self._ts_check(ts);
+        self._fs_check(fs);
         self._n_splits = splits;
         self._series = ts;
         self._fs = fs;
@@ -191,6 +192,22 @@ class base_splitter(ABC):
 
         return;
 
+    def _fs_check(self, fs: int | float) -> None:
+
+        """
+        Perform type and value checks on the series' sampling frequency.
+        """
+
+        if((isinstance(fs, float) or isinstance(fs, int)) is False):
+
+            raise TypeError("The sampling frequency should be either a float or an integer.");
+
+        if(fs <= 0):
+
+            raise ValueError("The sampling frequency should be larger than zero.");
+
+        return;
+
     # This should only be defined for prequential and CV methods!
     #def _split_folds(self) -> list[np.ndarray]:
 
@@ -267,7 +284,7 @@ class base_splitter(ABC):
         return self._n_splits;
 
     @abstractmethod
-    def split(self) -> Generator[tuple]:
+    def split(self) -> Generator[tuple, None, None]:
         
         """
         Split the time series into training and validation sets.
@@ -276,7 +293,7 @@ class base_splitter(ABC):
 
         Yields
         ------
-        Generator[tuple]
+        Generator[tuple, None, None]
             A tuple of Numpy arrays containing the training and validation indices.
         """
 
