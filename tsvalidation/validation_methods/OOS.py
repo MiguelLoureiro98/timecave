@@ -491,7 +491,7 @@ class Rolling_Origin_Update(base_splitter):
 
         for ind in self._splitting_ind:
 
-            training = self._indices[:self._origin];
+            training = self._indices[:self._origin + 1];
             validation = self._indices[ind:];
             
             yield (training, validation);
@@ -837,12 +837,12 @@ class Fixed_Size_Rolling_Window(base_splitter):
         Generator[tuple, None, None]
             _description_
         """
-        start_training_ind = self._splitting_ind - self._origin;
+        start_training_ind = self._splitting_ind - self._origin - 1;
         
         for start_ind, end_ind in zip(start_training_ind, self._splitting_ind):
 
             training = self._indices[start_ind:end_ind];
-            validation = self._indices[:end_ind];
+            validation = self._indices[end_ind:];
 
             yield (training, validation);
 

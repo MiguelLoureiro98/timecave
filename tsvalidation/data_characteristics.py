@@ -45,7 +45,7 @@ def get_features(ts: np.ndarray | pd.Series, fs: float | int) -> pd.DataFrame:
     feature_list = ["0_Mean", "0_Median", "0_Min", "0_Max", "0_Variance", "0_Peak to peak distance"];
 
     cfg = tsfel.get_features_by_domain("statistical");
-    stat_feat_df = tsfel.time_series_features_extractor(cfg, ts);
+    stat_feat_df = tsfel.time_series_features_extractor(cfg, ts, fs);
     
     relevant_feat_df = stat_feat_df[feature_list].copy();
     new_names = [feat[2:] for feat in feature_list];
