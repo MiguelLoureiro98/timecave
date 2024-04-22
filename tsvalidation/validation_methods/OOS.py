@@ -174,8 +174,8 @@ class Holdout(base_splitter):
 
         fig = plt.figure(figsize=(height, width));
         ax = fig.add_subplot(1, 1, 1);
-        ax.plot(training, self._series[training], label="Training set");
-        ax.plot(validation, self._series[validation], label="Validation set");
+        ax.scatter(training, self._series[training], label="Training set");
+        ax.scatter(validation, self._series[validation], label="Validation set");
         ax.set_xlabel("Samples");
         ax.set_ylabel("Time Series");
         ax.set_title("Holdout method");
@@ -403,10 +403,10 @@ class Repeated_Holdout(base_splitter):
 
         for it, (training, validation) in enumerate(self.split()):
 
-            axs[it, 0].plot(training, self._series[training], label="Training set");
-            axs[it, 0].plot(validation, self._series[validation], label="Validation set");
-            axs[it, 0].set_title("Iteration {}".format(it+1));
-            axs[it, 0].legend();
+            axs[it].scatter(training, self._series[training], label="Training set");
+            axs[it].scatter(validation, self._series[validation], label="Validation set");
+            axs[it].set_title("Iteration {}".format(it+1));
+            axs[it].legend();
         
         plt.show();
 
@@ -568,7 +568,7 @@ class Rolling_Origin_Update(base_splitter):
             The figure's width.
         """
 
-        fig, axs = plt.subplots(self._n_samples - self._origin, 1, sharex=True);
+        fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True);
         fig.set_figheight(height);
         fig.set_figwidth(width);
         fig.supxlabel("Samples");
@@ -577,10 +577,10 @@ class Rolling_Origin_Update(base_splitter):
 
         for it, (training, validation) in enumerate(self.split()):
 
-            axs[it, 0].plot(training, self._series[training], label="Training set");
-            axs[it, 0].plot(validation, self._series[validation], label="Validation set");
-            axs[it, 0].set_title("Iteration {}".format(it+1));
-            axs[it, 0].legend();
+            axs[it].scatter(training, self._series[training], label="Training set");
+            axs[it].scatter(validation, self._series[validation], label="Validation set");
+            axs[it].set_title("Iteration {}".format(it+1));
+            axs[it].legend();
         
         plt.show();
 
@@ -743,7 +743,7 @@ class Rolling_Origin_Recalibration(base_splitter):
             _description_
         """
 
-        fig, axs = plt.subplots(self._n_samples - self._origin, 1, sharex=True);
+        fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True);
         fig.set_figheight(height);
         fig.set_figwidth(width);
         fig.supxlabel("Samples");
@@ -752,10 +752,10 @@ class Rolling_Origin_Recalibration(base_splitter):
 
         for it, (training, validation) in enumerate(self.split()):
 
-            axs[it, 0].plot(training, self._series[training], label="Training set");
-            axs[it, 0].plot(validation, self._series[validation], label="Validation set");
-            axs[it, 0].set_title("Iteration {}".format(it+1));
-            axs[it, 0].legend();
+            axs[it].scatter(training, self._series[training], label="Training set");
+            axs[it].scatter(validation, self._series[validation], label="Validation set");
+            axs[it].set_title("Iteration {}".format(it+1));
+            axs[it].legend();
         
         plt.show();
 
@@ -916,7 +916,7 @@ class Fixed_Size_Rolling_Window(base_splitter):
             _description_
         """
 
-        fig, axs = plt.subplots(self._n_samples - self._origin, 1, sharex=True);
+        fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True);
         fig.set_figheight(height);
         fig.set_figwidth(width);
         fig.supxlabel("Samples");
@@ -925,10 +925,10 @@ class Fixed_Size_Rolling_Window(base_splitter):
 
         for it, (training, validation) in enumerate(self.split()):
 
-            axs[it, 0].plot(training, self._series[training], label="Training set");
-            axs[it, 0].plot(validation, self._series[validation], label="Validation set");
-            axs[it, 0].set_title("Iteration {}".format(it+1));
-            axs[it, 0].legend();
+            axs[it].scatter(training, self._series[training], label="Training set");
+            axs[it].scatter(validation, self._series[validation], label="Validation set");
+            axs[it].set_title("Iteration {}".format(it+1));
+            axs[it].legend();
         
         plt.show();
 

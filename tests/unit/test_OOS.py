@@ -319,10 +319,10 @@ class TestOOS(unittest.TestCase):
         width = 10;
 
         self.Holdout1.plot(height, width);
-        #self.Repeated_Holdout1.plot(height, width);
-        #self.Update1.plot(height, width);
-        #self.Recalibration1.plot(height, width);
-        #self.Window1.plot(height, width);
+        self.Repeated_Holdout2.plot(height, width);
+        self.Update1.plot(height, width);
+        self.Recalibration1.plot(height, width);
+        self.Window1.plot(height, width);
 
         return;
 
