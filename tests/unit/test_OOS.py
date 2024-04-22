@@ -125,9 +125,114 @@ class TestOOS(unittest.TestCase):
 
     def test_split(self) -> None:
 
-        
+        # Holdout
+        holdout1_train = [0, 1, 2, 3, 4, 5, 6];
+        holdout1_val = [7, 8, 9];
+        holdout2_train = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        holdout2_val = [10, 11, 12, 13, 14];
+        holdout3_train = np.arange(0, 500).tolist();
+        holdout3_val = np.arange(500, 1000).tolist();
+        indices = np.arange(0, 1000).tolist();
+        holdout1_split = self.Holdout1.split();
+        holdout2_split = self.Holdout2.split();
+        holdout3_split = self.Holdout3.split();
+        train1, val1 = next(holdout1_split);
+        train2, val2 = next(holdout2_split);
+        train3, val3 = next(holdout3_split);
 
-        pass
+        self.assertEqual(train1.tolist(), holdout1_train);
+        self.assertEqual(val1.tolist(), holdout1_val);
+        self.assertEqual(train2.tolist(), holdout2_train);
+        self.assertEqual(val2.tolist(), holdout2_val);
+        self.assertEqual(train3.tolist(), holdout3_train);
+        self.assertEqual(val3.tolist(), holdout3_val);
+
+        # Repeated Holdout
+        holdout1_lower = 0.7;
+        holdout1_upper = 0.8;
+        holdout2_lower = 7;
+        holdout2_upper = 10;
+        holdout3_lower = 0.5;
+        holdout3_upper = 0.6;
+
+        for (train, val) in self.Repeated_Holdout1.split():
+
+            pass
+
+        # Validation sets
+        rolling1_val = [[7, 8, 9], [8, 9], [9]];
+        rolling2_val = [[10, 11, 12, 13, 14], [11, 12, 13, 14], [12, 13, 14], [13, 14], [14]];
+        rolling3_val = [holdout3_val[ind:] for ind in range(500)];
+
+        # Rolling Origin Update
+        update1_train = [0, 1, 2, 3, 4, 5, 6];
+        update2_train = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        update3_train = holdout3_train;
+
+        for (train, val) in self.Update1.split():
+
+            self.assertEqual(train, update1_train);
+            self.assertEqual(val, rolling1_val);
+
+        for (train, val) in self.Update2.split():
+
+            self.assertEqual(train, update2_train);
+            self.assertEqual(val, rolling2_val);
+
+        for (train, val) in self.Update3.split():
+
+            self.assertEqual(train, update3_train);
+            self.assertEqual(val, rolling3_val);
+
+        # Rolling Origin Recalibration
+        rec1_train = [[0, 1, 2, 3, 4, 5, 6], [0, 1, 2, 3, 4, 5, 6, 7], [0, 1, 2, 3, 4, 5, 6, 7, 8]];
+        rec2_train = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], \
+                      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], \
+                      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], \
+                      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], \
+                      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]];
+        rec3_train = [indices[:500+ind] for ind in range(500)];
+
+        for (train, val) in self.Recalibration1.split():
+
+            self.assertEqual(train, rec1_train);
+            self.assertEqual(val, rolling1_val);
+
+        for (train, val) in self.Recalibration2.split():
+
+            self.assertEqual(train, rec2_train);
+            self.assertEqual(val, rolling2_val);
+
+        for (train, val) in self.Recalibration3.split():
+
+            self.assertEqual(train, rec3_train);
+            self.assertEqual(val, rolling3_val);
+
+        # Fixed-size Rolling Window
+        window1_train = [[0, 1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6, 7], [2, 3, 4, 5, 6, 7, 8]];
+        window2_train = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], \
+                         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], \
+                         [2, 3, 4, 5, 6, 7, 8, 9, 10, 11], \
+                         [3, 4, 5, 6, 7, 8, 9, 10, 11, 12], \
+                         [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]];
+        window3_train = [indices[ind:500+ind] for ind in range(500)];
+
+        for (train, val) in self.Window1.split():
+
+            self.assertEqual(train, window1_train);
+            self.assertEqual(val, rolling1_val);
+
+        for (train, val) in self.Window2.split():
+
+            self.assertEqual(train, window2_train);
+            self.assertEqual(val, rolling2_val);
+
+        for (train, val) in self.Window3.split():
+
+            self.assertEqual(train, window3_train);
+            self.assertEqual(val, rolling3_val);
+
+        return;
 
     def test_info(self) -> None:
 
