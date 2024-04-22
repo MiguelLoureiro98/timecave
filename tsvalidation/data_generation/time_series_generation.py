@@ -1,7 +1,6 @@
 import numpy as np
 import random
 from tsvalidation.data_generation import time_series_functions as tsf
-import inspect
 
 def linear_combination(weight_vector: list, ts_matrix: list) -> np.ndarray:
 
@@ -16,22 +15,18 @@ def linear_combination(weight_vector: list, ts_matrix: list) -> np.ndarray:
     
     return np.matmul(T, w)
 
-def get_parameter_types(func):
-    signature = inspect.signature(func)
-    parameter_types = [param.annotation for param in signature.parameters.values()]
-    return parameter_types
 
-def generate_random_parameters(param_possibilities: list, seed=1):
+def generate_random_parameters(param_possibilities: dict, seed=1):
     random.seed(seed)
-    params = []
-    for values in param_possibilities:
+    params = {}
+    for key, values in param_possibilities.items():
         if isinstance(values, tuple):
             value = random.choice(values)
         elif isinstance(values, list):
             value = random.uniform(values[0], values[1])
         else:
             value = values
-        params.append(value)
+        params[key] = value
     
     return params
 
@@ -55,27 +50,44 @@ import numpy as np
 
 
 class TimeSeriesGenerator:
-    def __init__(self, functions, length=100, noise_level=0.1, parameter_values=None):
+    def __init__(self, functions,  length=100, noise_level=0.1, weights = None, parameter_values = None):
         self.functions = functions
         self.length = length
         self.noise_level = noise_level
         self.parameter_values = parameter_values
+        self.weights = weights
+        if weights == None:
+            self.weights = np.ones(len(functions))
+        self.time_series = np.zeros(length)
 
     def generate(self, seed=1):
         time_series = np.zeros(self.length)
         
-        for func in self.functions:
+        for i in range(len(self.functions)):
             # Generate random parameters within specified values
-            parameters = generate_random_parameters(self.parameter_values[func.__name__])
+            parameters = generate_random_parameters(self.parameter_values[i], seed = seed)
             
             # Evaluate the function with the random parameters
-            time_series += func(self.length, *parameters)
+            time_series += self.weights[i]*self.functions[i](self.length, **parameters)
         
         # Add noise
         noise = np.random.normal(scale=self.noise_level, size=self.length)
         time_series += noise
 
+        self.time_series = time_series
+
         return time_series
+    
+    def viz(self):
+        # Plot the generated time series
+        plt.plot(self.time_series)
+        plt.xlabel('Time')
+        plt.ylabel('Value')
+        plt.title('Generated Time Series')
+        plt.show()
+
+        return
+
 
 # Example usage
 if __name__ == "__main__":
@@ -83,14 +95,11 @@ if __name__ == "__main__":
 
 
     # Initialize TimeSeriesGenerator with the list of functions and parameter values
-    generator = TimeSeriesGenerator([tsf.linear_ts], parameter_values={'linear_ts': [5, [5, 30]] })
+    generator = TimeSeriesGenerator([tsf.linear_ts, tsf.linear_ts], 
+                                    parameter_values= [{'max_interval_size':1, 'slope':5, 'intercept':[5, 30]}, {'max_interval_size':1, 'slope':5, 'intercept':[5, 30]}],
+                                    weights = [2,1])
     
     # Generate a time series
     time_series = generator.generate()
 
-    # Plot the generated time series
-    plt.plot(time_series)
-    plt.xlabel('Time')
-    plt.ylabel('Value')
-    plt.title('Generated Time Series')
-    plt.show()
+    generator.viz()
