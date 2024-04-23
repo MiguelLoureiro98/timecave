@@ -269,9 +269,12 @@ class TestOOS(unittest.TestCase):
         Test the 'statistics' method.
         """
 
+        # Exceptions
+
+        # Functionality
         columns = 13;
-        column_list = ["Mean", "Median", "Min", "Max", "P2P_amplitude", "Variance" \
-                       "Trend_slope", "Spectral_centroid", "Spectral_rollof", "Spectral_entropy" \
+        column_list = ["Mean", "Median", "Min", "Max", "P2P_amplitude", "Variance", \
+                       "Trend_slope", "Spectral_centroid", "Spectral_rollof", "Spectral_entropy", \
                        "Strength_of_trend", "Mean_crossing_rate", "Median_crossing_rate"];
 
         # Holdout
@@ -288,24 +291,24 @@ class TestOOS(unittest.TestCase):
         #self.assertEqual(holdout1_stats.shape[0]);
 
         # Repeated Holdout
-        #repeated_holdout1_stats = self.Repeated_Holdout1.statistics();
-        #repeated_holdout2_stats = self.Repeated_Holdout2.statistics();
-        #repeated_holdout3_stats = self.Repeated_Holdout3.statistics();
+        repeated_holdout1_stats = self.Repeated_Holdout1.statistics();
+        repeated_holdout2_stats = self.Repeated_Holdout2.statistics();
+        repeated_holdout3_stats = self.Repeated_Holdout3.statistics();
 
         # Rolling Origin Update
-        #update1_stats = self.Update1.statistics();
-        #update2_stats = self.Update2.statistics();
-        #update3_stats = self.Update3.statistics();
+        update1_stats = self.Update1.statistics();
+        update2_stats = self.Update2.statistics();
+        update3_stats = self.Update3.statistics();
 
         # Rolling Origin Recalibration
-        #rec1_stats = self.Recalibration1.statistics();
-        #rec2_stats = self.Recalibration2.statistics();
-        #rec3_stats = self.Recalibration3.statistics();
+        rec1_stats = self.Recalibration1.statistics();
+        rec2_stats = self.Recalibration2.statistics();
+        rec3_stats = self.Recalibration3.statistics();
 
         # Fixed-size Rolling Window
-        #window1_stats = self.Window1.statistics();
-        #window2_stats = self.Window2.statistics();
-        #window3_stats = self.Window3.statistics();
+        window1_stats = self.Window1.statistics();
+        window2_stats = self.Window2.statistics();
+        window3_stats = self.Window3.statistics();
 
         return;
 
