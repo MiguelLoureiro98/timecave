@@ -42,16 +42,27 @@ def get_features(ts: np.ndarray | pd.Series, fs: float | int) -> pd.DataFrame:
     _check_type(ts);
     _check_sampling_rate(fs);
 
-    feature_list = ["0_Mean", "0_Median", "0_Min", "0_Max", "0_Variance", "0_Peak to peak distance"];
+    #feature_list = ["0_Mean", "0_Median", "0_Min", "0_Max", "0_Variance", "0_Peak to peak distance"];
 
-    cfg = tsfel.get_features_by_domain("statistical");
-    stat_feat_df = tsfel.time_series_features_extractor(cfg, ts, fs);
+    #cfg = tsfel.get_features_by_domain("statistical");
+    #stat_feat_df = tsfel.time_series_features_extractor(cfg, ts, fs);
     
-    relevant_feat_df = stat_feat_df[feature_list].copy();
-    new_names = [feat[2:] for feat in feature_list];
-    cols = {name: new_name for (name, new_name) in zip(feature_list, new_names)};
-    relevant_feat_df = relevant_feat_df.rename(columns=cols);
-    relevant_feat_df = relevant_feat_df.rename(columns={"Peak to peak distance": "P2P_amplitude"});
+    #relevant_feat_df = stat_feat_df[feature_list].copy();
+    #new_names = [feat[2:] for feat in feature_list];
+    #cols = {name: new_name for (name, new_name) in zip(feature_list, new_names)};
+    #relevant_feat_df = relevant_feat_df.rename(columns=cols);
+    #relevant_feat_df = relevant_feat_df.rename(columns={"Peak to peak distance": "P2P_amplitude"});
+
+    mean = tsfel.calc_mean(ts);
+    median = tsfel.calc_median(ts);
+    minimum = tsfel.calc_min(ts);
+    maximum = tsfel.calc_max(ts);
+    variance = tsfel.calc_var(ts);
+    p2p = tsfel.pk_pk_distance(ts);
+    feature_list = [mean, median, minimum, maximum, variance, p2p];
+    feature_names = ["Mean", "Median", "Min", "Max", "Variance", "P2P_amplitude"];
+
+    relevant_feat_df = pd.DataFrame(data={name: [feat] for name, feat in zip(feature_names, feature_list)});
     relevant_feat_df["Trend_slope"] = tsfel.slope(ts);
     relevant_feat_df["Spectral_centroid"] = tsfel.spectral_centroid(ts, fs);
     relevant_feat_df["Spectral_rolloff"] = tsfel.spectral_roll_off(ts, fs);

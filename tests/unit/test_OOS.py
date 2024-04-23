@@ -275,7 +275,7 @@ class TestOOS(unittest.TestCase):
                        "Strength_of_trend", "Mean_crossing_rate", "Median_crossing_rate"];
 
         # Holdout
-        #holdout1_stats = self.Holdout1.statistics();
+        holdout1_stats = self.Holdout1.statistics();
         holdout2_stats = self.Holdout2.statistics();
         holdout3_stats = self.Holdout3.statistics();
 
