@@ -270,6 +270,18 @@ class TestOOS(unittest.TestCase):
         """
 
         # Exceptions
+        two_sample_series = np.zeros(shape=(2,));
+        holdout_2sample = Holdout(two_sample_series, 1);
+        repeated_holdout_2sample = Repeated_Holdout(two_sample_series, 1, 2);
+        update_2sample = Rolling_Origin_Update(two_sample_series, 1);
+        rec_2sample = Rolling_Origin_Recalibration(two_sample_series, 1);
+        window_2sample = Fixed_Size_Rolling_Window(two_sample_series, 1);
+
+        self.assertRaises(ValueError, holdout_2sample.statistics);
+        self.assertRaises(ValueError, repeated_holdout_2sample.statistics);
+        self.assertRaises(ValueError, update_2sample.statistics);
+        self.assertRaises(ValueError, rec_2sample.statistics);
+        self.assertRaises(ValueError, window_2sample.statistics);
 
         # Functionality
         columns = 13;
@@ -354,9 +366,6 @@ class TestOOS(unittest.TestCase):
         self.assertEqual(window3_full_stats.shape[0], 1);
         self.assertEqual(window3_training_stats.shape[0], 500);
         self.assertEqual(window3_validation_stats.shape[0], 499);
-
-        #print(repeated_holdout3_training_stats);
-        #print(repeated_holdout3_validation_stats);
 
         # TODO: add 'reset_index' to feature data frames after concatenation takes place (just for convenience).
 
