@@ -1,6 +1,7 @@
 import numpy as np
 from statsmodels.tsa.arima_process import ArmaProcess
-from tsvalidation.data_generation.utils import FrequencyModulation, nonlin_func, get_arma_parameters
+from tsvalidation.data_generation.utils import FrequencyModulation
+from tsvalidation.data_generation._utils import nonlin_func, get_arma_parameters
 
 def sinusoid_ts(number_samples: int, 
                 max_interval_size: float, 

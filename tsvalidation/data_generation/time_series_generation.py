@@ -1,61 +1,8 @@
 import numpy as np
-import random
 from tsvalidation.data_generation import time_series_functions as tsf
 import matplotlib.pyplot as plt
-
-def linear_combination(weight_vector: list, ts_matrix: list) -> np.ndarray:
-
-    nb_ts = len(ts_matrix)
-    len_ts = len(ts_matrix[0])
-    
-    w = np.array(weight_vector)
-    T = np.array(ts_matrix).T
-    
-    assert nb_ts == len(weight_vector)
-    assert np.shape(T) == (len_ts, nb_ts )
-    
-    return np.matmul(T, w)
-
-
-def generate_random_parameters(param_possibilities: dict, seed=1):
-    random.seed(seed)
-    params = {}
-    for key, values in param_possibilities.items():
-        if isinstance(values, tuple):
-            value = random.choice(values)
-        elif isinstance(values, list):
-            value = random.uniform(values[0], values[1])
-        else:
-            value = values
-        params[key] = value
-    
-    return params
-
-
-def generate_from_func(number_samples, 
-                       ts_func: callable, 
-                       param_possibilities: dict, 
-                       nb_ts: int, 
-                       generate_param: callable = generate_random_parameters, 
-                       seed = 1 ) -> np.ndarray:
-    ts_list = []
-    
-    for _ in range(nb_ts):
-        params = {}
-        params = generate_param(param_possibilities, seed = seed)
-        ts_list.append(ts_func(number_samples = number_samples, **params))
-    
-    return ts_list
-
-
-def generate_seeds(seed, num_seeds):
-    random.seed(seed)
-    
-    # Generate array of seeds
-    seeds = [random.randint(0, 2**32 - 1) for _ in range(num_seeds)]
-    
-    return seeds
-
+from tsvalidation.data_generation._utils import generate_random_parameters, generate_seeds
+from tsvalidation.data_generation import utils as dgu
 
 class TimeSeriesGenerator:
     def __init__(self, functions,  length=100, noise_level=0.1, weights = None, parameter_values = None):
@@ -102,14 +49,11 @@ class TimeSeriesGenerator:
             plt.show()
 
 
-# Example usage
-if __name__ == "__main__":
-    from tsvalidation.data_generation import utils as dgu
-
+if __name__=='__main__':
     linear_parameters = {
-        'max_interval_size':1, 
-        'slope':5, 
-        'intercept':[5, 30] 
+    'max_interval_size':1, 
+    'slope':5, 
+    'intercept':[5, 30] 
         }
 
     exp_parameters = {
@@ -133,11 +77,13 @@ if __name__ == "__main__":
         'start_index': (700, 600), 
         'end_index': (800, 900)
         }
+    
     generator = TimeSeriesGenerator(
-        length = 1000,
-        noise_level=0.2,
-        functions = [tsf.linear_ts, tsf.indicator_ts ,tsf.frequency_varying_sinusoid_ts, tsf.scaled_unit_impulse_function_ts, tsf.exponential_ts ], 
-        parameter_values = [linear_parameters, indicator_parameters, sin_parameters, impulse_parameters, exp_parameters]
-        )
-    generator.generate(10)
-    generator.plot()
+    length = 1000,
+    noise_level=0.2,
+    functions = [tsf.linear_ts, tsf.indicator_ts ,tsf.frequency_varying_sinusoid_ts, tsf.scaled_unit_impulse_function_ts, tsf.exponential_ts ], 
+    parameter_values = [linear_parameters, indicator_parameters, sin_parameters, impulse_parameters, exp_parameters]
+    )
+    generator.generate(100)
+
+    generator.plot(range(0,10))
