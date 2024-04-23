@@ -1,6 +1,7 @@
 import numpy as np
 import random
 from tsvalidation.data_generation import time_series_functions as tsf
+import matplotlib.pyplot as plt
 
 def linear_combination(weight_vector: list, ts_matrix: list) -> np.ndarray:
 
@@ -46,11 +47,19 @@ def generate_from_func(number_samples,
     
     return ts_list
 
-import numpy as np
+
+def generate_seeds(seed, num_seeds):
+    random.seed(seed)
+    
+    # Generate array of seeds
+    seeds = [random.randint(0, 2**32 - 1) for _ in range(num_seeds)]
+    
+    return seeds
 
 
 class TimeSeriesGenerator:
     def __init__(self, functions,  length=100, noise_level=0.1, weights = None, parameter_values = None):
+        assert len(functions) == len(parameter_values)
         self.functions = functions
         self.length = length
         self.noise_level = noise_level
@@ -58,48 +67,77 @@ class TimeSeriesGenerator:
         self.weights = weights
         if weights == None:
             self.weights = np.ones(len(functions))
-        self.time_series = np.zeros(length)
+        self.time_series = []
 
-    def generate(self, seed=1):
-        time_series = np.zeros(self.length)
+    def generate(self, nb_sim, og_seed=1):
         
-        for i in range(len(self.functions)):
-            # Generate random parameters within specified values
-            parameters = generate_random_parameters(self.parameter_values[i], seed = seed)
-            
-            # Evaluate the function with the random parameters
-            time_series += self.weights[i]*self.functions[i](self.length, **parameters)
-        
-        # Add noise
-        noise = np.random.normal(scale=self.noise_level, size=self.length)
-        time_series += noise
+        seeds = generate_seeds(og_seed, nb_sim)
 
-        self.time_series = time_series
+        for seed in seeds:
+            np.random.seed(seed)
+            ts = np.zeros(self.length) 
+            for i in range(len(self.functions)):
+                parameters = generate_random_parameters(self.parameter_values[i], seed = seed)
+                ts += self.weights[i]*self.functions[i](self.length, **parameters)
 
-        return time_series
+            ts += np.random.normal(scale=self.noise_level, size=self.length)
+
+            self.time_series.append(ts)
+
+        return self.time_series
     
-    def viz(self):
-        # Plot the generated time series
-        plt.plot(self.time_series)
-        plt.xlabel('Time')
-        plt.ylabel('Value')
-        plt.title('Generated Time Series')
-        plt.show()
-
-        return
+    def plot(self, indexes=None):
+            if indexes is None:
+                indexes = range(len(self.time_series))
+            elif isinstance(indexes, int):
+                indexes = [indexes]
+            
+            for idx in indexes:
+                plt.plot(self.time_series[idx], label=f'Time Series {idx}')
+            
+            plt.xlabel('Time')
+            plt.ylabel('Value')
+            plt.title('Generated Time Series')
+            plt.legend()
+            plt.show()
 
 
 # Example usage
 if __name__ == "__main__":
-    import matplotlib.pyplot as plt
+    from tsvalidation.data_generation import utils as dgu
 
+    linear_parameters = {
+        'max_interval_size':1, 
+        'slope':5, 
+        'intercept':[5, 30] 
+        }
 
-    # Initialize TimeSeriesGenerator with the list of functions and parameter values
-    generator = TimeSeriesGenerator([tsf.linear_ts, tsf.linear_ts], 
-                                    parameter_values= [{'max_interval_size':1, 'slope':5, 'intercept':[5, 30]}, {'max_interval_size':1, 'slope':5, 'intercept':[5, 30]}],
-                                    weights = [2,1])
-    
-    # Generate a time series
-    time_series = generator.generate()
+    exp_parameters = {
+        'max_interval_size': (1, 2),
+        'decay_rate': [1, 25],
+        'initial_value': [1, 25]
+        }
 
-    generator.viz()
+    sin_parameters = {
+        'max_interval_size': (1, 2), 
+        'amplitude':[1,3],
+        'frequency':(dgu.FrequencyModulationLinear(1,20), dgu.FrequencyModulationWithStep(10,0.8))
+        }
+
+    impulse_parameters = {
+        'idx': (500, 600),
+        'constant': [5, 10]
+        }
+
+    indicator_parameters = {
+        'start_index': (700, 600), 
+        'end_index': (800, 900)
+        }
+    generator = TimeSeriesGenerator(
+        length = 1000,
+        noise_level=0.2,
+        functions = [tsf.linear_ts, tsf.indicator_ts ,tsf.frequency_varying_sinusoid_ts, tsf.scaled_unit_impulse_function_ts, tsf.exponential_ts ], 
+        parameter_values = [linear_parameters, indicator_parameters, sin_parameters, impulse_parameters, exp_parameters]
+        )
+    generator.generate(10)
+    generator.plot()
