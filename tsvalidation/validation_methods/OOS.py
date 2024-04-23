@@ -125,9 +125,9 @@ class Holdout(base_splitter):
 
         print("Holdout method");
         print("--------------");
-        print(f"Time series size: {self._n_samples}");
-        print(f"Training size: {np.round(1 - self._val_size, 2)} ({(1 - self._val_size) * self._n_samples} samples)");
-        print(f"Validation size: {np.round(self._val_size, 2)} ({self._val_size * self._n_samples} samples)");
+        print(f"Time series size: {self._n_samples} samples");
+        print(f"Training size: {int(np.round((1 - self._val_size) * self._n_samples))} samples ({np.round(1 - self._val_size, 4) * 100} %)");
+        print(f"Validation size: {int(np.round(self._val_size * self._n_samples))} samples ({np.round(self._val_size, 4) * 100} %)");
 
         return;
 
@@ -344,12 +344,12 @@ class Repeated_Holdout(base_splitter):
         """
 
         mean_size = self._n_samples - self._splitting_ind.mean();
-        max_size = self._n_samples - self._splitting_ind.max();
-        min_size = self._n_samples - self._splitting_ind.min();
+        min_size = self._n_samples - self._splitting_ind.max();
+        max_size = self._n_samples - self._splitting_ind.min();
 
-        mean_pct = np.round(mean_size / self._n_samples, 2) * 100;
-        max_pct = np.round(max_size / self._n_samples, 2) * 100;
-        min_pct = np.round(min_size / self._n_samples, 2) * 100;
+        mean_pct = np.round(mean_size / self._n_samples, 4) * 100;
+        max_pct = np.round(max_size / self._n_samples, 4) * 100;
+        min_pct = np.round(min_size / self._n_samples, 4) * 100;
 
         print("Repeated Holdout method");
         print("-----------------------");
@@ -538,13 +538,13 @@ class Rolling_Origin_Update(base_splitter):
         _extended_summary_
         """
 
-        training_size = self._origin;
-        max_size = self._n_samples - self._origin;
+        training_size = self._origin + 1;
+        max_size = self._n_samples - self._origin - 1;
         min_size = 1;
 
-        training_pct = np.round(training_size / self._n_samples, 2) * 100;
-        max_pct = np.round(max_size / self._n_samples, 2) * 100;
-        min_pct = np.round(1 / self._n_samples, 2) * 100;
+        training_pct = np.round(training_size / self._n_samples, 4) * 100;
+        max_pct = np.round(max_size / self._n_samples, 4) * 100;
+        min_pct = np.round(1 / self._n_samples, 4) * 100;
 
         print("Rolling Origin Update method");
         print("----------------------------");
@@ -730,14 +730,14 @@ class Rolling_Origin_Recalibration(base_splitter):
         """
 
         max_training_size = self._n_samples - 1;
-        min_training_size = self._origin;
-        max_validation_size = self._n_samples - self._origin;
+        min_training_size = self._origin + 1;
+        max_validation_size = self._n_samples - self._origin - 1;
         min_validation_size = 1;
 
-        max_training_pct = np.round(max_training_size / self._n_samples, 2) * 100;
-        min_training_pct = np.round(min_training_size / self._n_samples, 2) * 100;
-        max_validation_pct = np.round(max_validation_size / self._n_samples, 2) * 100;
-        min_validation_pct = np.round(min_validation_size / self._n_samples, 2) * 100;
+        max_training_pct = np.round(max_training_size / self._n_samples, 4) * 100;
+        min_training_pct = np.round(min_training_size / self._n_samples, 4) * 100;
+        max_validation_pct = np.round(max_validation_size / self._n_samples, 4) * 100;
+        min_validation_pct = np.round(min_validation_size / self._n_samples, 4) * 100;
 
         print("Rolling Origin Recalibration method");
         print("-----------------------------------");
@@ -927,13 +927,13 @@ class Fixed_Size_Rolling_Window(base_splitter):
         _extended_summary_
         """
 
-        training_size = self._origin;
-        max_size = self._n_samples - self._origin;
+        training_size = self._origin + 1;
+        max_size = self._n_samples - self._origin - 1;
         min_size = 1;
 
-        training_pct = np.round(training_size / self._n_samples, 2) * 100;
-        max_pct = np.round(max_size / self._n_samples, 2) * 100;
-        min_pct = np.round(1 / self._n_samples, 2) * 100;
+        training_pct = np.round(training_size / self._n_samples, 4) * 100;
+        max_pct = np.round(max_size / self._n_samples, 4) * 100;
+        min_pct = np.round(1 / self._n_samples, 4) * 100;
 
         print("Fixed-size Rolling Window method");
         print("--------------------------------");

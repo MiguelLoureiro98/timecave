@@ -255,6 +255,18 @@ class TestOOS(unittest.TestCase):
         Test the 'info' method.
         """
 
+        self.Holdout1.info();
+        self.Repeated_Holdout1.info();
+        self.Update1.info();
+        self.Recalibration1.info();
+        self.Window1.info();
+
+        self.Holdout2.info();
+        self.Repeated_Holdout2.info();
+        self.Update2.info();
+        self.Recalibration2.info();
+        self.Window2.info();
+
         self.Holdout3.info();
         self.Repeated_Holdout3.info();
         self.Update3.info();
