@@ -255,6 +255,18 @@ class TestOOS(unittest.TestCase):
         Test the 'info' method.
         """
 
+        self.Holdout1.info();
+        self.Repeated_Holdout1.info();
+        self.Update1.info();
+        self.Recalibration1.info();
+        self.Window1.info();
+
+        self.Holdout2.info();
+        self.Repeated_Holdout2.info();
+        self.Update2.info();
+        self.Recalibration2.info();
+        self.Window2.info();
+
         self.Holdout3.info();
         self.Repeated_Holdout3.info();
         self.Update3.info();
@@ -269,43 +281,105 @@ class TestOOS(unittest.TestCase):
         Test the 'statistics' method.
         """
 
+        # Exceptions
+        two_sample_series = np.zeros(shape=(2,));
+        holdout_2sample = Holdout(two_sample_series, 1);
+        repeated_holdout_2sample = Repeated_Holdout(two_sample_series, 1, 2);
+        update_2sample = Rolling_Origin_Update(two_sample_series, 1);
+        rec_2sample = Rolling_Origin_Recalibration(two_sample_series, 1);
+        window_2sample = Fixed_Size_Rolling_Window(two_sample_series, 1);
+
+        self.assertRaises(ValueError, holdout_2sample.statistics);
+        self.assertRaises(ValueError, repeated_holdout_2sample.statistics);
+        self.assertRaises(ValueError, update_2sample.statistics);
+        self.assertRaises(ValueError, rec_2sample.statistics);
+        self.assertRaises(ValueError, window_2sample.statistics);
+
+        # Functionality
         columns = 13;
-        column_list = ["Mean", "Median", "Min", "Max", "P2P_amplitude", "Variance" \
-                       "Trend_slope", "Spectral_centroid", "Spectral_rollof", "Spectral_entropy" \
+        column_list = ["Mean", "Median", "Min", "Max", "Variance", "P2P_amplitude", \
+                       "Trend_slope", "Spectral_centroid", "Spectral_rolloff", "Spectral_entropy", \
                        "Strength_of_trend", "Mean_crossing_rate", "Median_crossing_rate"];
 
         # Holdout
-        #holdout1_stats = self.Holdout1.statistics();
-        holdout2_stats = self.Holdout2.statistics();
-        holdout3_stats = self.Holdout3.statistics();
+        holdout1_full_stats, holdout1_training_stats, holdout1_validation_stats = self.Holdout1.statistics();
+        holdout2_full_stats, holdout2_training_stats, holdout2_validation_stats = self.Holdout2.statistics();
+        holdout3_full_stats, holdout3_training_stats, holdout3_validation_stats = self.Holdout3.statistics();
 
-        #self.assertEqual(holdout3_stats.shape[1], columns);
-        #self.assertIn(column_list, holdout3_stats.columns.tolist());
+        self.assertEqual(holdout1_full_stats.shape[1], columns);
+        self.assertListEqual(column_list, holdout1_full_stats.columns.tolist());
 
-        #self.assertEqual(holdout2_stats.shape[0], 2);
-        #self.assertEqual(holdout3_stats.shape[0], 2);
-
-        #self.assertEqual(holdout1_stats.shape[0]);
+        self.assertEqual(holdout1_full_stats.shape[0], 1);
+        self.assertEqual(holdout1_training_stats.shape[0], 1);
+        self.assertEqual(holdout1_validation_stats.shape[0], 1);
+        self.assertEqual(holdout2_full_stats.shape[0], 1);
+        self.assertEqual(holdout2_training_stats.shape[0], 1);
+        self.assertEqual(holdout2_validation_stats.shape[0], 1);
+        self.assertEqual(holdout3_full_stats.shape[0], 1);
+        self.assertEqual(holdout3_training_stats.shape[0], 1);
+        self.assertEqual(holdout3_validation_stats.shape[0], 1);
 
         # Repeated Holdout
-        #repeated_holdout1_stats = self.Repeated_Holdout1.statistics();
-        #repeated_holdout2_stats = self.Repeated_Holdout2.statistics();
-        #repeated_holdout3_stats = self.Repeated_Holdout3.statistics();
+        repeated_holdout1_full_stats, repeated_holdout1_training_stats, repeated_holdout1_validation_stats = self.Repeated_Holdout1.statistics();
+        repeated_holdout2_full_stats, repeated_holdout2_training_stats, repeated_holdout2_validation_stats = self.Repeated_Holdout2.statistics();
+        repeated_holdout3_full_stats, repeated_holdout3_training_stats, repeated_holdout3_validation_stats = self.Repeated_Holdout3.statistics();
+
+        self.assertEqual(repeated_holdout1_full_stats.shape[0], 1);
+        self.assertEqual(repeated_holdout1_training_stats.shape[0], 2);
+        self.assertEqual(repeated_holdout1_validation_stats.shape[0], 2);
+        self.assertEqual(repeated_holdout2_full_stats.shape[0], 1);
+        self.assertEqual(repeated_holdout2_training_stats.shape[0], 5);
+        self.assertEqual(repeated_holdout2_validation_stats.shape[0], 5);
+        self.assertEqual(repeated_holdout3_full_stats.shape[0], 1);
+        self.assertEqual(repeated_holdout3_training_stats.shape[0], 10);
+        self.assertEqual(repeated_holdout3_validation_stats.shape[0], 10);
 
         # Rolling Origin Update
-        #update1_stats = self.Update1.statistics();
-        #update2_stats = self.Update2.statistics();
-        #update3_stats = self.Update3.statistics();
+        update1_full_stats, update1_training_stats, update1_validation_stats = self.Update1.statistics();
+        update2_full_stats, update2_training_stats, update2_validation_stats = self.Update2.statistics();
+        update3_full_stats, update3_training_stats, update3_validation_stats = self.Update3.statistics();
+
+        self.assertEqual(update1_full_stats.shape[0], 1);
+        self.assertEqual(update1_training_stats.shape[0], 1);
+        self.assertEqual(update1_validation_stats.shape[0], 2);
+        self.assertEqual(update2_full_stats.shape[0], 1);
+        self.assertEqual(update2_training_stats.shape[0], 1);
+        self.assertEqual(update2_validation_stats.shape[0], 4);
+        self.assertEqual(update3_full_stats.shape[0], 1);
+        self.assertEqual(update3_training_stats.shape[0], 1);
+        self.assertEqual(update3_validation_stats.shape[0], 499);
 
         # Rolling Origin Recalibration
-        #rec1_stats = self.Recalibration1.statistics();
-        #rec2_stats = self.Recalibration2.statistics();
-        #rec3_stats = self.Recalibration3.statistics();
+        rec1_full_stats, rec1_training_stats, rec1_validation_stats = self.Recalibration1.statistics();
+        rec2_full_stats, rec2_training_stats, rec2_validation_stats = self.Recalibration2.statistics();
+        rec3_full_stats, rec3_training_stats, rec3_validation_stats = self.Recalibration3.statistics();
+
+        self.assertEqual(rec1_full_stats.shape[0], 1);
+        self.assertEqual(rec1_training_stats.shape[0], 3);
+        self.assertEqual(rec1_validation_stats.shape[0], 2);
+        self.assertEqual(rec2_full_stats.shape[0], 1);
+        self.assertEqual(rec2_training_stats.shape[0], 5);
+        self.assertEqual(rec2_validation_stats.shape[0], 4);
+        self.assertEqual(rec3_full_stats.shape[0], 1);
+        self.assertEqual(rec3_training_stats.shape[0], 500);
+        self.assertEqual(rec3_validation_stats.shape[0], 499);
 
         # Fixed-size Rolling Window
-        #window1_stats = self.Window1.statistics();
-        #window2_stats = self.Window2.statistics();
-        #window3_stats = self.Window3.statistics();
+        window1_full_stats, window1_training_stats, window1_validation_stats = self.Window1.statistics();
+        window2_full_stats, window2_training_stats, window2_validation_stats = self.Window2.statistics();
+        window3_full_stats, window3_training_stats, window3_validation_stats = self.Window3.statistics();
+
+        self.assertEqual(window1_full_stats.shape[0], 1);
+        self.assertEqual(window1_training_stats.shape[0], 3);
+        self.assertEqual(window1_validation_stats.shape[0], 2);
+        self.assertEqual(window2_full_stats.shape[0], 1);
+        self.assertEqual(window2_training_stats.shape[0], 5);
+        self.assertEqual(window2_validation_stats.shape[0], 4);
+        self.assertEqual(window3_full_stats.shape[0], 1);
+        self.assertEqual(window3_training_stats.shape[0], 500);
+        self.assertEqual(window3_validation_stats.shape[0], 499);
+
+        # TODO: add 'reset_index' to feature data frames after concatenation takes place (just for convenience).
 
         return;
 
@@ -319,10 +393,17 @@ class TestOOS(unittest.TestCase):
         width = 10;
 
         self.Holdout1.plot(height, width);
+        self.Holdout2.plot(height, width);
+        self.Holdout3.plot(height, width);
+        self.Repeated_Holdout1.plot(height, width);
         self.Repeated_Holdout2.plot(height, width);
+        self.Repeated_Holdout3.plot(height + 10, width + 10);
         self.Update1.plot(height, width);
+        self.Update2.plot(height, width);
         self.Recalibration1.plot(height, width);
+        self.Recalibration2.plot(height, width);
         self.Window1.plot(height, width);
+        self.Window2.plot(height, width);
 
         return;
 
