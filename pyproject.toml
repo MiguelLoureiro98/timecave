@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tsvalidation"
 version = "0.1.1"
-authors=[
+authors=[  
     {name = "Miguel Santos Loureiro", email = "miguel.santos.loureiro@tecnico.ulisboa.pt"},
     {name = "Beatriz Pereira Lourenço", email = "beatriz.p.lourenco@tecnico.ulisboa.pt"}
 ]
@@ -30,7 +30,8 @@ dependencies = [
     "numpy>=1.26.3",
     "pandas>=2.1.4",
     "matplotlib>=3.8",
-    "tsfel==0.1.7"
+    "tsfel==0.1.7",
+    "black==24.4.2"
 ]
 
 [tool.setuptools.packages.find]

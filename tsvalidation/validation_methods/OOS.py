@@ -28,10 +28,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from typing import Generator
 
+
 class Holdout(base_splitter):
 
-    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, validation_size: float=0.3) -> None:
-        
+    def __init__(
+        self, ts: np.ndarray | pd.Series, fs: float | int, validation_size: float = 0.3
+    ) -> None:
         """
         Class constructor.
 
@@ -52,19 +54,18 @@ class Holdout(base_splitter):
         ------
         TypeError
             If the validation size is not a float.
-        
+
         ValueError
             If the validation size does not lie in the ]0, 1[ interval.
         """
 
-        super().__init__(2, ts, fs);
-        self._check_validation_size(validation_size);
-        self._val_size = validation_size;
+        super().__init__(2, ts, fs)
+        self._check_validation_size(validation_size)
+        self._val_size = validation_size
 
-        return;
+        return
 
     def _check_validation_size(self, validation_size: float) -> None:
-        
         """
         Perform type and value checks on the 'validation_size' parameter.
 
@@ -80,23 +81,24 @@ class Holdout(base_splitter):
         ------
         TypeError
             If the validation size is not a float.
-        
+
         ValueError
-            If the validation size does not lie in the ]0, 1[ interval. 
+            If the validation size does not lie in the ]0, 1[ interval.
         """
 
-        if(isinstance(validation_size, float) is False):
+        if isinstance(validation_size, float) is False:
 
-            raise TypeError("'validation_size' must be a float.");
+            raise TypeError("'validation_size' must be a float.")
 
-        elif(validation_size >= 1 or validation_size <= 0):
+        elif validation_size >= 1 or validation_size <= 0:
 
-            raise ValueError("'validation_size' must be greater than zero and less than one.");
+            raise ValueError(
+                "'validation_size' must be greater than zero and less than one."
+            )
 
-        return;
+        return
 
     def split(self) -> Generator[tuple, None, None]:
-        
         """
         _summary_
 
@@ -108,31 +110,33 @@ class Holdout(base_splitter):
             _description_
         """
 
-        split_ind = int(np.round((1 - self._val_size) * self._n_samples));
+        split_ind = int(np.round((1 - self._val_size) * self._n_samples))
 
-        train = self._indices[:split_ind];
-        validation = self._indices[split_ind:];
+        train = self._indices[:split_ind]
+        validation = self._indices[split_ind:]
 
-        yield (train, validation);
+        yield (train, validation)
 
     def info(self) -> None:
-        
         """
         Provide some basic information on the training and validation sets.
 
         This method ... .
         """
 
-        print("Holdout method");
-        print("--------------");
-        print(f"Time series size: {self._n_samples} samples");
-        print(f"Training size: {int(np.round((1 - self._val_size) * self._n_samples))} samples ({np.round(1 - self._val_size, 4) * 100} %)");
-        print(f"Validation size: {int(np.round(self._val_size * self._n_samples))} samples ({np.round(self._val_size, 4) * 100} %)");
+        print("Holdout method")
+        print("--------------")
+        print(f"Time series size: {self._n_samples} samples")
+        print(
+            f"Training size: {int(np.round((1 - self._val_size) * self._n_samples))} samples ({np.round(1 - self._val_size, 4) * 100} %)"
+        )
+        print(
+            f"Validation size: {int(np.round(self._val_size * self._n_samples))} samples ({np.round(self._val_size, 4) * 100} %)"
+        )
 
-        return;
+        return
 
     def statistics(self) -> tuple[pd.DataFrame]:
-        
         """
         _summary_
 
@@ -149,29 +153,32 @@ class Holdout(base_splitter):
             If the time series is composed of less than three samples.
         """
 
-        if(self._n_samples <= 2):
+        if self._n_samples <= 2:
 
-            raise ValueError("Basic statistics can only be computed if the time series comprises more than two samples.");
+            raise ValueError(
+                "Basic statistics can only be computed if the time series comprises more than two samples."
+            )
 
-        split = self.split();
-        training, validation = next(split);
+        split = self.split()
+        training, validation = next(split)
 
-        full_feat = get_features(self._series, self.sampling_freq);
+        full_feat = get_features(self._series, self.sampling_freq)
 
-        print("Training and validation set statistics can only be computed if each of these comprise two or more samples.");
+        print(
+            "Training and validation set statistics can only be computed if each of these comprise two or more samples."
+        )
 
-        if(self._series[training].shape[0] >= 2):
+        if self._series[training].shape[0] >= 2:
 
-            training_feat = get_features(self._series[training], self.sampling_freq);
-        
-        if(self._series[validation].shape[0] >= 2):
+            training_feat = get_features(self._series[training], self.sampling_freq)
 
-            validation_feat = get_features(self._series[validation], self.sampling_freq);
+        if self._series[validation].shape[0] >= 2:
 
-        return (full_feat, training_feat, validation_feat);
+            validation_feat = get_features(self._series[validation], self.sampling_freq)
+
+        return (full_feat, training_feat, validation_feat)
 
     def plot(self, height: int, width: int) -> None:
-        
         """
         _summary_
 
@@ -185,26 +192,33 @@ class Holdout(base_splitter):
         width : int
             The figure's width.
         """
-        
-        split = self.split();
-        training, validation = next(split);
 
-        fig = plt.figure(figsize=(height, width));
-        ax = fig.add_subplot(1, 1, 1);
-        ax.scatter(training, self._series[training], label="Training set");
-        ax.scatter(validation, self._series[validation], label="Validation set");
-        ax.set_xlabel("Samples");
-        ax.set_ylabel("Time Series");
-        ax.set_title("Holdout method");
-        ax.legend();
-        plt.show();
+        split = self.split()
+        training, validation = next(split)
 
-        return;
+        fig = plt.figure(figsize=(height, width))
+        ax = fig.add_subplot(1, 1, 1)
+        ax.scatter(training, self._series[training], label="Training set")
+        ax.scatter(validation, self._series[validation], label="Validation set")
+        ax.set_xlabel("Samples")
+        ax.set_ylabel("Time Series")
+        ax.set_title("Holdout method")
+        ax.legend()
+        plt.show()
+
+        return
+
 
 class Repeated_Holdout(base_splitter):
 
-    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, iterations: int, splitting_interval: list[int | float]=[0.7, 0.8], seed: int=0) -> None:
-        
+    def __init__(
+        self,
+        ts: np.ndarray | pd.Series,
+        fs: float | int,
+        iterations: int,
+        splitting_interval: list[int | float] = [0.7, 0.8],
+        seed: int = 0,
+    ) -> None:
         """
         _summary_
 
@@ -228,95 +242,97 @@ class Repeated_Holdout(base_splitter):
             _description_, by default 0
         """
 
-        self._check_iterations(iterations);
-        self._check_splits(splitting_interval);
-        super().__init__(iterations, ts, fs);
-        self._iter = iterations;
-        self._interval = self._convert_interval(splitting_interval);
-        self._seed = seed;
-        self._splitting_ind = self._get_splitting_ind();
+        self._check_iterations(iterations)
+        self._check_splits(splitting_interval)
+        super().__init__(iterations, ts, fs)
+        self._iter = iterations
+        self._interval = self._convert_interval(splitting_interval)
+        self._seed = seed
+        self._splitting_ind = self._get_splitting_ind()
 
-        return;
+        return
 
     def _check_iterations(self, iterations: int) -> None:
-
         """
         Perform type and value checks on the number of iterations.
         """
 
-        if(isinstance(iterations, int) is False):
+        if isinstance(iterations, int) is False:
 
-            raise TypeError("The number of iterations must be an integer.");
+            raise TypeError("The number of iterations must be an integer.")
 
-        if(iterations <= 0):
+        if iterations <= 0:
 
-            raise ValueError("The number of iterations must be positive.");
+            raise ValueError("The number of iterations must be positive.")
 
     def _check_splits(self, splitting_interval: list) -> None:
-
         """
         Perform several type and value checks on the splitting interval.
         """
 
-        if(isinstance(splitting_interval, list) is False):
+        if isinstance(splitting_interval, list) is False:
 
-            raise TypeError("The splitting interval must be a list.");
+            raise TypeError("The splitting interval must be a list.")
 
-        if(len(splitting_interval) > 2):
+        if len(splitting_interval) > 2:
 
-            raise ValueError("The splitting interval should be composed of two elements.");
+            raise ValueError(
+                "The splitting interval should be composed of two elements."
+            )
 
         for element in splitting_interval:
-            
-            if((isinstance(element, int) or isinstance(element, float)) is False):
-                
-                raise TypeError("The interval must be entirely composed of integers or floats.");
-    
-        if(splitting_interval[0] > splitting_interval[1]):
 
-            raise ValueError("'splitting_interval' should have the [smaller_value, larger_value] format.");
+            if (isinstance(element, int) or isinstance(element, float)) is False:
 
-        return;
+                raise TypeError(
+                    "The interval must be entirely composed of integers or floats."
+                )
+
+        if splitting_interval[0] > splitting_interval[1]:
+
+            raise ValueError(
+                "'splitting_interval' should have the [smaller_value, larger_value] format."
+            )
+
+        return
 
     def _convert_interval(self, splitting_interval: list) -> list:
-        
         """
         Convert intervals of floats (percentages) into intervals of integers (indices).
         """
 
         for ind, element in enumerate(splitting_interval):
 
-            if(isinstance(element, float) is True):
+            if isinstance(element, float) is True:
 
-                splitting_interval[ind] = int(np.round(element * self._n_samples));
-            
-        return splitting_interval;
+                splitting_interval[ind] = int(np.round(element * self._n_samples))
+
+        return splitting_interval
 
     def _check_seed(self, seed: int) -> None:
-
         """
         Perform a type check on the seed.
         """
 
-        if(isinstance(seed, int) is False):
+        if isinstance(seed, int) is False:
 
-            raise TypeError("'seed' should be an integer.");
+            raise TypeError("'seed' should be an integer.")
 
-        return;
+        return
 
     def _get_splitting_ind(self) -> np.ndarray:
-
         """
         Generate the splitting indices.
         """
 
-        np.random.seed(self._seed);
-        rand_ind = np.random.randint(low=self._interval[0], high=self._interval[1], size=self._iter);
+        np.random.seed(self._seed)
+        rand_ind = np.random.randint(
+            low=self._interval[0], high=self._interval[1], size=self._iter
+        )
 
-        return rand_ind;
+        return rand_ind
 
     def split(self) -> Generator[tuple, None, None]:
-        
         """
         _summary_
 
@@ -330,36 +346,34 @@ class Repeated_Holdout(base_splitter):
 
         for ind in self._splitting_ind:
 
-            training = self._indices[:ind];
-            validation = self._indices[ind:];
+            training = self._indices[:ind]
+            validation = self._indices[ind:]
 
-            yield (training, validation);
+            yield (training, validation)
 
     def info(self) -> None:
-        
         """
         _summary_
 
         _extended_summary_
         """
 
-        mean_size = self._n_samples - self._splitting_ind.mean();
-        min_size = self._n_samples - self._splitting_ind.max();
-        max_size = self._n_samples - self._splitting_ind.min();
+        mean_size = self._n_samples - self._splitting_ind.mean()
+        min_size = self._n_samples - self._splitting_ind.max()
+        max_size = self._n_samples - self._splitting_ind.min()
 
-        mean_pct = np.round(mean_size / self._n_samples, 4) * 100;
-        max_pct = np.round(max_size / self._n_samples, 4) * 100;
-        min_pct = np.round(min_size / self._n_samples, 4) * 100;
+        mean_pct = np.round(mean_size / self._n_samples, 4) * 100
+        max_pct = np.round(max_size / self._n_samples, 4) * 100
+        min_pct = np.round(min_size / self._n_samples, 4) * 100
 
-        print("Repeated Holdout method");
-        print("-----------------------");
-        print(f"Time series size: {self._n_samples} samples");
-        print(f"Average validation set size: {mean_size} samples ({mean_pct} %)");
-        print(f"Maximum validation set size: {max_size} samples ({max_pct} %)");
-        print(f"Minimum validation set size: {min_size} samples ({min_pct} %)");
+        print("Repeated Holdout method")
+        print("-----------------------")
+        print(f"Time series size: {self._n_samples} samples")
+        print(f"Average validation set size: {mean_size} samples ({mean_pct} %)")
+        print(f"Maximum validation set size: {max_size} samples ({max_pct} %)")
+        print(f"Minimum validation set size: {min_size} samples ({min_pct} %)")
 
     def statistics(self) -> tuple[pd.DataFrame]:
-        
         """
         _summary_
 
@@ -371,49 +385,56 @@ class Repeated_Holdout(base_splitter):
             _description_
         """
 
-        if(self._n_samples <= 2):
+        if self._n_samples <= 2:
 
-            raise ValueError("Basic statistics can only be computed if the time series comprises more than two samples.");
+            raise ValueError(
+                "Basic statistics can only be computed if the time series comprises more than two samples."
+            )
 
-        full_features = get_features(self._series, self.sampling_freq);
+        full_features = get_features(self._series, self.sampling_freq)
 
-        training_stats = [];
-        validation_stats = [];
+        training_stats = []
+        validation_stats = []
 
-        #for ind in self._splitting_ind:
+        # for ind in self._splitting_ind:
 
         #    training_feat = get_features(self._series[:ind], self.sampling_freq);
         #    validation_feat = get_features(self._series[ind:], self.sampling_freq);
         #    training_stats.append(training_feat);
         #    validation_stats.append(validation_feat);
 
-        for (training, validation) in self.split():
+        for training, validation in self.split():
 
-            if(self._series[training].shape[0] >= 2):
+            if self._series[training].shape[0] >= 2:
 
-                training_feat = get_features(self._series[training], self.sampling_freq);
-                training_stats.append(training_feat);
-            
+                training_feat = get_features(self._series[training], self.sampling_freq)
+                training_stats.append(training_feat)
+
             else:
 
-                print("The training set is too small to compute most meaningful features.");
-            
-            if(self._series[validation].shape[0] >= 2):
+                print(
+                    "The training set is too small to compute most meaningful features."
+                )
 
-                validation_feat = get_features(self._series[validation], self.sampling_freq);
-                validation_stats.append(validation_feat);
-            
+            if self._series[validation].shape[0] >= 2:
+
+                validation_feat = get_features(
+                    self._series[validation], self.sampling_freq
+                )
+                validation_stats.append(validation_feat)
+
             else:
 
-                print("The validation set is too small to compute most meaningful features.");
-        
-        training_features = pd.concat(training_stats);
-        validation_features = pd.concat(validation_stats);
+                print(
+                    "The validation set is too small to compute most meaningful features."
+                )
 
-        return (full_features, training_features, validation_features);
+        training_features = pd.concat(training_stats)
+        validation_features = pd.concat(validation_stats)
+
+        return (full_features, training_features, validation_features)
 
     def plot(self, height: int, width: int) -> None:
-        
         """
         _summary_
 
@@ -427,29 +448,33 @@ class Repeated_Holdout(base_splitter):
         width : int
             The figure's width.
         """
-        
-        fig, axs = plt.subplots(self._iter, 1, sharex=True);
-        fig.set_figheight(height);
-        fig.set_figwidth(width);
-        fig.supxlabel("Samples");
-        fig.supylabel("Time Series");
-        fig.suptitle("Repeated Holdout method");
+
+        fig, axs = plt.subplots(self._iter, 1, sharex=True)
+        fig.set_figheight(height)
+        fig.set_figwidth(width)
+        fig.supxlabel("Samples")
+        fig.supylabel("Time Series")
+        fig.suptitle("Repeated Holdout method")
 
         for it, (training, validation) in enumerate(self.split()):
 
-            axs[it].scatter(training, self._series[training], label="Training set");
-            axs[it].scatter(validation, self._series[validation], label="Validation set");
-            axs[it].set_title("Iteration {}".format(it+1));
-            axs[it].legend();
-        
-        plt.show();
+            axs[it].scatter(training, self._series[training], label="Training set")
+            axs[it].scatter(
+                validation, self._series[validation], label="Validation set"
+            )
+            axs[it].set_title("Iteration {}".format(it + 1))
+            axs[it].legend()
 
-        return;
+        plt.show()
+
+        return
+
 
 class Rolling_Origin_Update(base_splitter):
 
-    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float=0.7) -> None:
-        
+    def __init__(
+        self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
+    ) -> None:
         """
         _summary_
 
@@ -467,51 +492,52 @@ class Rolling_Origin_Update(base_splitter):
             _description_, by default 0.7
         """
 
-        super().__init__(2, ts, fs);
-        self._check_origin(origin);
-        self._origin = self._convert_origin(origin);
-        self._splitting_ind = np.arange(self._origin + 1, self._n_samples);
-        self._n_splits = self._splitting_ind.shape[0];
+        super().__init__(2, ts, fs)
+        self._check_origin(origin)
+        self._origin = self._convert_origin(origin)
+        self._splitting_ind = np.arange(self._origin + 1, self._n_samples)
+        self._n_splits = self._splitting_ind.shape[0]
 
-        return;
+        return
 
     def _check_origin(self, origin: int | float) -> None:
-
         """
         Perform type and value checks on the origin.
         """
 
-        is_int = isinstance(origin, int);
-        is_float = isinstance(origin, float);
+        is_int = isinstance(origin, int)
+        is_float = isinstance(origin, float)
 
-        if((is_int or is_float) is False):
+        if (is_int or is_float) is False:
 
-            raise TypeError("'origin' must be an integer or a float.");
-    
-        if(is_float and (origin >= 1 or origin <= 0)):
+            raise TypeError("'origin' must be an integer or a float.")
 
-            raise ValueError("If 'origin' is a float, it must lie in the interval of ]0, 1[.");
-    
-        if(is_int and (origin >= self._n_samples or origin <= 0)):
+        if is_float and (origin >= 1 or origin <= 0):
 
-            raise ValueError("If 'origin' is an integer, it must lie in the interval of ]0, n_samples[.");
+            raise ValueError(
+                "If 'origin' is a float, it must lie in the interval of ]0, 1[."
+            )
 
-        return;
+        if is_int and (origin >= self._n_samples or origin <= 0):
+
+            raise ValueError(
+                "If 'origin' is an integer, it must lie in the interval of ]0, n_samples[."
+            )
+
+        return
 
     def _convert_origin(self, origin: int | float) -> int:
-
         """
         Cast the origin from float (proportion) to integer (index).
         """
 
-        if(isinstance(origin, float) is True):
+        if isinstance(origin, float) is True:
 
-            origin = int(np.round(origin * self._n_samples)) - 1;
+            origin = int(np.round(origin * self._n_samples)) - 1
 
-        return origin;
+        return origin
 
     def split(self) -> Generator[np.ndarray, None, None]:
-        
         """
         _summary_
 
@@ -525,38 +551,38 @@ class Rolling_Origin_Update(base_splitter):
 
         for ind in self._splitting_ind:
 
-            training = self._indices[:self._origin + 1];
-            validation = self._indices[ind:];
-            
-            yield (training, validation);
+            training = self._indices[: self._origin + 1]
+            validation = self._indices[ind:]
+
+            yield (training, validation)
 
     def info(self) -> None:
-        
         """
         _summary_
 
         _extended_summary_
         """
 
-        training_size = self._origin + 1;
-        max_size = self._n_samples - self._origin - 1;
-        min_size = 1;
+        training_size = self._origin + 1
+        max_size = self._n_samples - self._origin - 1
+        min_size = 1
 
-        training_pct = np.round(training_size / self._n_samples, 4) * 100;
-        max_pct = np.round(max_size / self._n_samples, 4) * 100;
-        min_pct = np.round(1 / self._n_samples, 4) * 100;
+        training_pct = np.round(training_size / self._n_samples, 4) * 100
+        max_pct = np.round(max_size / self._n_samples, 4) * 100
+        min_pct = np.round(1 / self._n_samples, 4) * 100
 
-        print("Rolling Origin Update method");
-        print("----------------------------");
-        print(f"Time series size: {self._n_samples} samples");
-        print(f"Training set size (fixed parameter): {training_size} samples ({training_pct} %)");
-        print(f"Maximum validation set size: {max_size} samples ({max_pct} %)");
-        print(f"Minimum validation set size: {min_size} sample ({min_pct} %)");
+        print("Rolling Origin Update method")
+        print("----------------------------")
+        print(f"Time series size: {self._n_samples} samples")
+        print(
+            f"Training set size (fixed parameter): {training_size} samples ({training_pct} %)"
+        )
+        print(f"Maximum validation set size: {max_size} samples ({max_pct} %)")
+        print(f"Minimum validation set size: {min_size} sample ({min_pct} %)")
 
-        return;
+        return
 
     def statistics(self) -> tuple[pd.DataFrame]:
-        
         """
         _summary_
 
@@ -573,38 +599,47 @@ class Rolling_Origin_Update(base_splitter):
             _description_
         """
 
-        if(self._n_samples <= 2):
+        if self._n_samples <= 2:
 
-            raise ValueError("Basic statistics can only be computed if the time series comprises more than two samples.");
+            raise ValueError(
+                "Basic statistics can only be computed if the time series comprises more than two samples."
+            )
 
-        full_features = get_features(self._series, self.sampling_freq);
-        it_1 = True;
-        validation_stats = [];
+        full_features = get_features(self._series, self.sampling_freq)
+        it_1 = True
+        validation_stats = []
 
-        print("Training set features are only computed if the time series is composed of two or more samples.");
+        print(
+            "Training set features are only computed if the time series is composed of two or more samples."
+        )
 
-        for (training, validation) in self.split():
+        for training, validation in self.split():
 
-            if(it_1 is True and self._series[training].shape[0] >= 2):
+            if it_1 is True and self._series[training].shape[0] >= 2:
 
-                training_features = get_features(self._series[training], self.sampling_freq);
-                it_1 = False;
-            
-            if(self._series[validation].shape[0] >= 2):
+                training_features = get_features(
+                    self._series[training], self.sampling_freq
+                )
+                it_1 = False
 
-                validation_feat = get_features(self._series[validation], self.sampling_freq);
-                validation_stats.append(validation_feat);
-        
+            if self._series[validation].shape[0] >= 2:
+
+                validation_feat = get_features(
+                    self._series[validation], self.sampling_freq
+                )
+                validation_stats.append(validation_feat)
+
             else:
 
-                print("The validation set is too small to compute most meaningful features.");
-        
-        validation_features = pd.concat(validation_stats);
+                print(
+                    "The validation set is too small to compute most meaningful features."
+                )
 
-        return (full_features, training_features, validation_features);
+        validation_features = pd.concat(validation_stats)
+
+        return (full_features, training_features, validation_features)
 
     def plot(self, height: int, width: int) -> None:
-        
         """
         _summary_
 
@@ -619,28 +654,32 @@ class Rolling_Origin_Update(base_splitter):
             The figure's width.
         """
 
-        fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True);
-        fig.set_figheight(height);
-        fig.set_figwidth(width);
-        fig.supxlabel("Samples");
-        fig.supylabel("Time Series");
-        fig.suptitle("Rolling Origin Update method");
+        fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True)
+        fig.set_figheight(height)
+        fig.set_figwidth(width)
+        fig.supxlabel("Samples")
+        fig.supylabel("Time Series")
+        fig.suptitle("Rolling Origin Update method")
 
         for it, (training, validation) in enumerate(self.split()):
 
-            axs[it].scatter(training, self._series[training], label="Training set");
-            axs[it].scatter(validation, self._series[validation], label="Validation set");
-            axs[it].set_title("Iteration {}".format(it+1));
-            axs[it].legend();
-        
-        plt.show();
+            axs[it].scatter(training, self._series[training], label="Training set")
+            axs[it].scatter(
+                validation, self._series[validation], label="Validation set"
+            )
+            axs[it].set_title("Iteration {}".format(it + 1))
+            axs[it].legend()
 
-        return;
+        plt.show()
+
+        return
+
 
 class Rolling_Origin_Recalibration(base_splitter):
 
-    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float=0.7) -> None:
-        
+    def __init__(
+        self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
+    ) -> None:
         """
         _summary_
 
@@ -658,51 +697,52 @@ class Rolling_Origin_Recalibration(base_splitter):
             _description_, by default 0.7
         """
 
-        super().__init__(2, ts, fs);
-        self._check_origin(origin);
-        self._origin = self._convert_origin(origin);
-        self._splitting_ind = np.arange(self._origin + 1, self._n_samples);
-        self._n_splits = self._splitting_ind.shape[0];
+        super().__init__(2, ts, fs)
+        self._check_origin(origin)
+        self._origin = self._convert_origin(origin)
+        self._splitting_ind = np.arange(self._origin + 1, self._n_samples)
+        self._n_splits = self._splitting_ind.shape[0]
 
-        return;
+        return
 
     def _check_origin(self, origin: int | float) -> None:
-
         """
         Perform type and value checks on the origin.
         """
 
-        is_int = isinstance(origin, int);
-        is_float = isinstance(origin, float);
+        is_int = isinstance(origin, int)
+        is_float = isinstance(origin, float)
 
-        if((is_int or is_float) is False):
+        if (is_int or is_float) is False:
 
-            raise TypeError("'origin' must be an integer or a float.");
-    
-        if(is_float and (origin >= 1 or origin <= 0)):
+            raise TypeError("'origin' must be an integer or a float.")
 
-            raise ValueError("If 'origin' is a float, it must lie in the interval of ]0, 1[.");
-    
-        if(is_int and (origin >= self._n_samples or origin <= 0)):
+        if is_float and (origin >= 1 or origin <= 0):
 
-            raise ValueError("If 'origin' is an integer, it must lie in the interval of ]0, n_samples[.");
+            raise ValueError(
+                "If 'origin' is a float, it must lie in the interval of ]0, 1[."
+            )
 
-        return;
+        if is_int and (origin >= self._n_samples or origin <= 0):
+
+            raise ValueError(
+                "If 'origin' is an integer, it must lie in the interval of ]0, n_samples[."
+            )
+
+        return
 
     def _convert_origin(self, origin: int | float) -> int:
-
         """
         Cast the origin from float (proportion) to integer (index).
         """
 
-        if(isinstance(origin, float) is True):
+        if isinstance(origin, float) is True:
 
-            origin = int(np.round(origin * self._n_samples)) - 1;
+            origin = int(np.round(origin * self._n_samples)) - 1
 
-        return origin;
+        return origin
 
     def split(self) -> Generator[tuple, None, None]:
-        
         """
         _summary_
 
@@ -716,41 +756,47 @@ class Rolling_Origin_Recalibration(base_splitter):
 
         for ind in self._splitting_ind:
 
-            training = self._indices[:ind];
-            validation = self._indices[ind:];
-        
-            yield (training, validation);
+            training = self._indices[:ind]
+            validation = self._indices[ind:]
+
+            yield (training, validation)
 
     def info(self) -> None:
-        
         """
         _summary_
 
         _extended_summary_
         """
 
-        max_training_size = self._n_samples - 1;
-        min_training_size = self._origin + 1;
-        max_validation_size = self._n_samples - self._origin - 1;
-        min_validation_size = 1;
+        max_training_size = self._n_samples - 1
+        min_training_size = self._origin + 1
+        max_validation_size = self._n_samples - self._origin - 1
+        min_validation_size = 1
 
-        max_training_pct = np.round(max_training_size / self._n_samples, 4) * 100;
-        min_training_pct = np.round(min_training_size / self._n_samples, 4) * 100;
-        max_validation_pct = np.round(max_validation_size / self._n_samples, 4) * 100;
-        min_validation_pct = np.round(min_validation_size / self._n_samples, 4) * 100;
+        max_training_pct = np.round(max_training_size / self._n_samples, 4) * 100
+        min_training_pct = np.round(min_training_size / self._n_samples, 4) * 100
+        max_validation_pct = np.round(max_validation_size / self._n_samples, 4) * 100
+        min_validation_pct = np.round(min_validation_size / self._n_samples, 4) * 100
 
-        print("Rolling Origin Recalibration method");
-        print("-----------------------------------");
-        print(f"Time series size: {self._n_samples} samples");
-        print(f"Minimum training set size: {min_training_size} samples ({min_training_pct} %)");
-        print(f"Maximum validation set size: {max_validation_size} samples ({max_validation_pct} %)");
-        print(f"Maximum training set size: {max_training_size} samples ({max_training_pct} %)");
-        print(f"Minimum validation set size: {min_validation_size} samples ({min_validation_pct} %)");
+        print("Rolling Origin Recalibration method")
+        print("-----------------------------------")
+        print(f"Time series size: {self._n_samples} samples")
+        print(
+            f"Minimum training set size: {min_training_size} samples ({min_training_pct} %)"
+        )
+        print(
+            f"Maximum validation set size: {max_validation_size} samples ({max_validation_pct} %)"
+        )
+        print(
+            f"Maximum training set size: {max_training_size} samples ({max_training_pct} %)"
+        )
+        print(
+            f"Minimum validation set size: {min_validation_size} samples ({min_validation_pct} %)"
+        )
 
-        return;
+        return
 
     def statistics(self) -> tuple[pd.DataFrame]:
-        
         """
         _summary_
 
@@ -766,42 +812,49 @@ class Rolling_Origin_Recalibration(base_splitter):
         ValueError
             _description_
         """
-        
-        if(self._n_samples <= 2):
 
-            raise ValueError("Basic statistics can only be computed if the time series comprises more than two samples.");
+        if self._n_samples <= 2:
 
-        full_features = get_features(self._series, self.sampling_freq);
-        training_stats = [];
-        validation_stats = [];
+            raise ValueError(
+                "Basic statistics can only be computed if the time series comprises more than two samples."
+            )
 
-        for (training, validation) in self.split():
+        full_features = get_features(self._series, self.sampling_freq)
+        training_stats = []
+        validation_stats = []
 
-            if(self._series[training].shape[0] >= 2):
+        for training, validation in self.split():
 
-                training_feat = get_features(self._series[training], self.sampling_freq);
-                training_stats.append(training_feat);
-            
+            if self._series[training].shape[0] >= 2:
+
+                training_feat = get_features(self._series[training], self.sampling_freq)
+                training_stats.append(training_feat)
+
             else:
 
-                print("The training set is too small to compute most meaningful features.");
+                print(
+                    "The training set is too small to compute most meaningful features."
+                )
 
-            if(self._series[validation].shape[0] >= 2):
+            if self._series[validation].shape[0] >= 2:
 
-                validation_feat = get_features(self._series[validation], self.sampling_freq);
-                validation_stats.append(validation_feat);
-        
+                validation_feat = get_features(
+                    self._series[validation], self.sampling_freq
+                )
+                validation_stats.append(validation_feat)
+
             else:
 
-                print("The validation set is too small to compute most meaningful features.");
-        
-        training_features = pd.concat(training_stats);
-        validation_features = pd.concat(validation_stats);
+                print(
+                    "The validation set is too small to compute most meaningful features."
+                )
 
-        return (full_features, training_features, validation_features);
+        training_features = pd.concat(training_stats)
+        validation_features = pd.concat(validation_stats)
+
+        return (full_features, training_features, validation_features)
 
     def plot(self, height: int, width: int) -> None:
-        
         """
         _summary_
 
@@ -816,28 +869,32 @@ class Rolling_Origin_Recalibration(base_splitter):
             _description_
         """
 
-        fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True);
-        fig.set_figheight(height);
-        fig.set_figwidth(width);
-        fig.supxlabel("Samples");
-        fig.supylabel("Time Series");
-        fig.suptitle("Rolling Origin Recalibration method");
+        fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True)
+        fig.set_figheight(height)
+        fig.set_figwidth(width)
+        fig.supxlabel("Samples")
+        fig.supylabel("Time Series")
+        fig.suptitle("Rolling Origin Recalibration method")
 
         for it, (training, validation) in enumerate(self.split()):
 
-            axs[it].scatter(training, self._series[training], label="Training set");
-            axs[it].scatter(validation, self._series[validation], label="Validation set");
-            axs[it].set_title("Iteration {}".format(it+1));
-            axs[it].legend();
-        
-        plt.show();
+            axs[it].scatter(training, self._series[training], label="Training set")
+            axs[it].scatter(
+                validation, self._series[validation], label="Validation set"
+            )
+            axs[it].set_title("Iteration {}".format(it + 1))
+            axs[it].legend()
 
-        return;
+        plt.show()
+
+        return
+
 
 class Fixed_Size_Rolling_Window(base_splitter):
 
-    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float=0.7) -> None:
-        
+    def __init__(
+        self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
+    ) -> None:
         """
         _summary_
 
@@ -855,51 +912,52 @@ class Fixed_Size_Rolling_Window(base_splitter):
             _description_, by default 0.7
         """
 
-        super().__init__(2, ts, fs);
-        self._check_origin(origin);
-        self._origin = self._convert_origin(origin);
-        self._splitting_ind = np.arange(self._origin + 1, self._n_samples);
-        self._n_splits = self._splitting_ind.shape[0];
+        super().__init__(2, ts, fs)
+        self._check_origin(origin)
+        self._origin = self._convert_origin(origin)
+        self._splitting_ind = np.arange(self._origin + 1, self._n_samples)
+        self._n_splits = self._splitting_ind.shape[0]
 
-        return;
+        return
 
     def _check_origin(self, origin: int | float) -> None:
-
         """
         Perform type and value checks on the origin.
         """
 
-        is_int = isinstance(origin, int);
-        is_float = isinstance(origin, float);
+        is_int = isinstance(origin, int)
+        is_float = isinstance(origin, float)
 
-        if((is_int or is_float) is False):
+        if (is_int or is_float) is False:
 
-            raise TypeError("'origin' must be an integer or a float.");
-    
-        if(is_float and (origin >= 1 or origin <= 0)):
+            raise TypeError("'origin' must be an integer or a float.")
 
-            raise ValueError("If 'origin' is a float, it must lie in the interval of ]0, 1[.");
-    
-        if(is_int and (origin >= self._n_samples or origin <= 0)):
+        if is_float and (origin >= 1 or origin <= 0):
 
-            raise ValueError("If 'origin' is an integer, it must lie in the interval of ]0, n_samples[.");
+            raise ValueError(
+                "If 'origin' is a float, it must lie in the interval of ]0, 1[."
+            )
 
-        return;
+        if is_int and (origin >= self._n_samples or origin <= 0):
+
+            raise ValueError(
+                "If 'origin' is an integer, it must lie in the interval of ]0, n_samples[."
+            )
+
+        return
 
     def _convert_origin(self, origin: int | float) -> int:
-
         """
         Cast the origin from float (proportion) to integer (index).
         """
 
-        if(isinstance(origin, float) is True):
+        if isinstance(origin, float) is True:
 
-            origin = int(np.round(origin * self._n_samples)) - 1;
+            origin = int(np.round(origin * self._n_samples)) - 1
 
-        return origin;
+        return origin
 
     def split(self) -> Generator[tuple, None, None]:
-        
         """
         _summary_
 
@@ -910,42 +968,42 @@ class Fixed_Size_Rolling_Window(base_splitter):
         Generator[tuple, None, None]
             _description_
         """
-        start_training_ind = self._splitting_ind - self._origin - 1;
-        
+        start_training_ind = self._splitting_ind - self._origin - 1
+
         for start_ind, end_ind in zip(start_training_ind, self._splitting_ind):
 
-            training = self._indices[start_ind:end_ind];
-            validation = self._indices[end_ind:];
+            training = self._indices[start_ind:end_ind]
+            validation = self._indices[end_ind:]
 
-            yield (training, validation);
+            yield (training, validation)
 
     def info(self) -> None:
-        
         """
         _summary_
 
         _extended_summary_
         """
 
-        training_size = self._origin + 1;
-        max_size = self._n_samples - self._origin - 1;
-        min_size = 1;
+        training_size = self._origin + 1
+        max_size = self._n_samples - self._origin - 1
+        min_size = 1
 
-        training_pct = np.round(training_size / self._n_samples, 4) * 100;
-        max_pct = np.round(max_size / self._n_samples, 4) * 100;
-        min_pct = np.round(1 / self._n_samples, 4) * 100;
+        training_pct = np.round(training_size / self._n_samples, 4) * 100
+        max_pct = np.round(max_size / self._n_samples, 4) * 100
+        min_pct = np.round(1 / self._n_samples, 4) * 100
 
-        print("Fixed-size Rolling Window method");
-        print("--------------------------------");
-        print(f"Time series size: {self._n_samples} samples");
-        print(f"Training set size (fixed parameter): {training_size} samples ({training_pct} %)");
-        print(f"Maximum validation set size: {max_size} samples ({max_pct} %)");
-        print(f"Minimum validation set size: {min_size} sample ({min_pct} %)");
+        print("Fixed-size Rolling Window method")
+        print("--------------------------------")
+        print(f"Time series size: {self._n_samples} samples")
+        print(
+            f"Training set size (fixed parameter): {training_size} samples ({training_pct} %)"
+        )
+        print(f"Maximum validation set size: {max_size} samples ({max_pct} %)")
+        print(f"Minimum validation set size: {min_size} sample ({min_pct} %)")
 
-        return;
+        return
 
     def statistics(self) -> tuple[pd.DataFrame]:
-        
         """
         _summary_
 
@@ -962,41 +1020,48 @@ class Fixed_Size_Rolling_Window(base_splitter):
             If the time series is composed of less than three samples.
         """
 
-        if(self._n_samples <= 2):
+        if self._n_samples <= 2:
 
-            raise ValueError("Basic statistics can only be computed if the time series comprises more than two samples.");
+            raise ValueError(
+                "Basic statistics can only be computed if the time series comprises more than two samples."
+            )
 
-        full_features = get_features(self._series, self.sampling_freq);
-        training_stats = [];
-        validation_stats = [];
+        full_features = get_features(self._series, self.sampling_freq)
+        training_stats = []
+        validation_stats = []
 
-        for (training, validation) in self.split():
+        for training, validation in self.split():
 
-            if(self._series[training].shape[0] >= 2):
+            if self._series[training].shape[0] >= 2:
 
-                training_feat = get_features(self._series[training], self.sampling_freq);
-                training_stats.append(training_feat);
-            
+                training_feat = get_features(self._series[training], self.sampling_freq)
+                training_stats.append(training_feat)
+
             else:
 
-                print("The training set is too small to compute most meaningful features.");
+                print(
+                    "The training set is too small to compute most meaningful features."
+                )
 
-            if(self._series[validation].shape[0] >= 2):
+            if self._series[validation].shape[0] >= 2:
 
-                validation_feat = get_features(self._series[validation], self.sampling_freq);
-                validation_stats.append(validation_feat);
-        
+                validation_feat = get_features(
+                    self._series[validation], self.sampling_freq
+                )
+                validation_stats.append(validation_feat)
+
             else:
 
-                print("The validation set is too small to compute most meaningful features.");
-        
-        training_features = pd.concat(training_stats);
-        validation_features = pd.concat(validation_stats);
+                print(
+                    "The validation set is too small to compute most meaningful features."
+                )
 
-        return (full_features, training_features, validation_features);
+        training_features = pd.concat(training_stats)
+        validation_features = pd.concat(validation_stats)
+
+        return (full_features, training_features, validation_features)
 
     def plot(self, height: int, width: int) -> None:
-        
         """
         _summary_
 
@@ -1011,20 +1076,22 @@ class Fixed_Size_Rolling_Window(base_splitter):
             The figure's width.
         """
 
-        fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True);
-        fig.set_figheight(height);
-        fig.set_figwidth(width);
-        fig.supxlabel("Samples");
-        fig.supylabel("Time Series");
-        fig.suptitle("Fixed-size Rolling Window method");
+        fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True)
+        fig.set_figheight(height)
+        fig.set_figwidth(width)
+        fig.supxlabel("Samples")
+        fig.supylabel("Time Series")
+        fig.suptitle("Fixed-size Rolling Window method")
 
         for it, (training, validation) in enumerate(self.split()):
 
-            axs[it].scatter(training, self._series[training], label="Training set");
-            axs[it].scatter(validation, self._series[validation], label="Validation set");
-            axs[it].set_title("Iteration {}".format(it+1));
-            axs[it].legend();
-        
-        plt.show();
+            axs[it].scatter(training, self._series[training], label="Training set")
+            axs[it].scatter(
+                validation, self._series[validation], label="Validation set"
+            )
+            axs[it].set_title("Iteration {}".format(it + 1))
+            axs[it].legend()
 
-        return;
+        plt.show()
+
+        return
