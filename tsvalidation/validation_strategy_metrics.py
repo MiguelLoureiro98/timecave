@@ -72,7 +72,16 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
     -------
     float
         Relative Predictive Accuracy Error.
+
+    Raises
+    ------
+    ValueError
+        If 'test_error' is zero.
     """
+
+    if(test_error == 0):
+
+        raise ValueError("The test error is zero. RPAE is undefined.");
 
     return (estimated_error - test_error) / test_error;
 
@@ -96,7 +105,16 @@ def RAPAE(estimated_error: float | int, test_error: float | int) -> float:
     -------
     float
         Relative Absolute Predictive Accuracy Error.
+
+    Raises
+    ------
+    ValueError
+        If 'test_error' is zero.
     """
+
+    if(test_error == 0):
+
+        raise ValueError("The test error is zero. RAPAE is undefined.");
 
     return abs(estimated_error - test_error) / test_error;
 
@@ -198,12 +216,26 @@ def under_over_estimation(estimated_error_list: list[float | int], test_error_li
     over_est = estimated_errors[estimated_errors > test_errors].tolist();
     over_test = test_errors[estimated_errors > test_errors].tolist();
 
-    under_estimation_stats = MC_metric(under_est, under_test, metric);
-    over_estimation_stats = MC_metric(over_est, over_test, metric);
+    if(len(under_est) > 0):
 
-    under_estimation_stats["N"] = len(under_est);
-    under_estimation_stats["%"] = np.round(len(under_est) / len(estimated_error_list) * 100, 2);
-    over_estimation_stats["N"] = len(over_est);
-    over_estimation_stats["%"] = np.round(len(over_est) / len(estimated_error_list) * 100, 2);
+        under_estimation_stats = MC_metric(under_est, under_test, metric);
+        under_estimation_stats["N"] = len(under_est);
+        under_estimation_stats["%"] = np.round(len(under_est) / len(estimated_error_list) * 100, 2);
+    
+    else:
+
+        under_estimation_stats = {};
+        print("No errors were underestimated. Underestimation data dictionary empty.");
+    
+    if(len(over_est) > 0):
+
+        over_estimation_stats = MC_metric(over_est, over_test, metric);
+        over_estimation_stats["N"] = len(over_est);
+        over_estimation_stats["%"] = np.round(len(over_est) / len(estimated_error_list) * 100, 2);
+    
+    else:
+
+        over_estimation_stats = {};
+        print("No errors were overestimated. Overestimation data dictionary empty.");
 
     return (under_estimation_stats, over_estimation_stats);
