@@ -5,7 +5,7 @@ from tsvalidation.data_generation._utils import (
     generate_random_parameters,
     generate_seeds,
 )
-from tsvalidation.data_generation import utils as dgu
+from tsvalidation.data_generation import frequency_modulation as dgu
 from typing import Callable, List
 
 
