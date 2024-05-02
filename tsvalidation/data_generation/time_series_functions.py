@@ -36,48 +36,10 @@ def sinusoid_ts(
     """
     _check_number_samples(number_samples)
     _check_max_interval_size(max_interval_size)
-    _check_amplitude(amplitude)
-    _check_frequency(frequency)
-    _check_phase(phase)
-
     time_values = np.linspace(0, max_interval_size, number_samples)
     sinusoid = amplitude * np.sin(2 * np.pi * frequency * time_values + phase)
 
     return sinusoid
-
-
-def _check_phase(phase: float) -> None:
-    """
-    Checks if the 'phase' must be a float.
-    """
-    if isinstance(phase, int) is False:
-
-        raise TypeError("'phase' should be a float.")
-    return
-
-
-def _check_frequency(frequency: int or float) -> None:
-    """
-    Checks if the 'frequency' must be a non-negative float or int.
-    """
-    if isinstance(frequency, (float, int)) is False:
-
-        raise TypeError("'frequency' should be a float or int.")
-
-    if frequency > 0:
-
-        raise ValueError("'frequency' must be greater than zero.")
-    return
-
-
-def _check_amplitude(amplitude: float) -> None:
-    """
-    Checks if the 'amplitude' must be a float.
-    """
-    if isinstance(amplitude, float) is False:
-
-        raise TypeError("'amplitude' should be a float.")
-    return
 
 
 def _check_max_interval_size(max_interval_size: float) -> None:
@@ -141,8 +103,6 @@ def frequency_varying_sinusoid_ts(
     """
     _check_number_samples(number_samples)
     _check_max_interval_size(max_interval_size)
-    _check_phase(phase_initial)
-    _check_amplitude(amplitude)
 
     time = np.linspace(0, max_interval_size, number_samples)
     frequency = frequency.modulate(time=time)
@@ -151,6 +111,25 @@ def frequency_varying_sinusoid_ts(
 
 
 def indicator_ts(number_samples: int, start_index: int, end_index: int) -> np.ndarray:
+    """
+    Generate time series array based on a binary indicator function with specified start and end indices.
+
+    This function creates a time series array based on a binary indicator function of given length. The specified segment is marked as 1 and the rest as 0.
+
+    Parameters
+    ----------
+    number_samples : int
+        The total number of samples in the time series array.
+    start_index : int
+        The start index of the segment to be marked as 1.
+    end_index : int
+        The end index of the segment to be marked as 1.
+
+    Returns
+    -------
+    np.ndarray
+        A time series array where the specified segment is marked as 1 and the rest as 0.
+    """
     _check_number_samples(number_samples)
     _check_index(start_index)
     _check_index(end_index)
@@ -177,12 +156,55 @@ def _check_index(index: int) -> None:
 def scaled_right_indicator_ts(
     number_samples: int, idx: int, constant: float = 1
 ) -> np.ndarray:
+    """
+    Generate a time series array based on a indicator function that is 1 in the interval [idx, + inf[ and 0 otherwise.
+
+    This function creates a time series array of given length where the segment starting from the specified index to the end is marked as 1 and the rest as 0.
+    The binary array is then scaled by a constant factor.
+
+    Parameters
+    ----------
+    number_samples : int
+        The total number of samples in the time series array.
+    idx : int
+        The index from which the segment starts to be marked as 1.
+    constant : float, optional
+        A scaling constant to multiply the array by, by default 1.
+
+    Returns
+    -------
+    np.ndarray
+        A scaled time series array where the segment starting from the specified index to the end is marked as 1 and the rest as 0.
+    """
+    _check_number_samples(number_samples)
     return constant * indicator_ts(number_samples, idx, number_samples - 1)
 
 
 def scaled_unit_impulse_function_ts(
     number_samples: int, idx: int, constant: float = 1
 ) -> np.ndarray:
+    """
+    Generate time series array based on a scaled unit impulse function with specified index.
+
+    This function creates a binary indicator time series array of given length where
+    only the sample at the specified index is marked as 1 and the rest as 0.
+    The binary array is then scaled by a constant factor.
+
+    Parameters
+    ----------
+    number_samples : int
+        The total number of samples in the time series array.
+    idx : int
+        The index at which the impulse occurs, marked as 1.
+    constant : float, optional
+        A scaling constant to multiply the array by, by default 1.
+
+    Returns
+    -------
+    np.ndarray
+        A scaled time series array where only the sample at the specified index is marked as 1 and the rest as 0.
+    """
+    _check_number_samples(number_samples)
     return constant * indicator_ts(number_samples, idx, idx)
 
 
@@ -192,6 +214,29 @@ def linear_ts(
     slope: float = 1,
     intercept: float = 0,
 ) -> np.ndarray:
+    """
+    Generate a linear time series array.
+
+    This function creates a time series array of given length where the values
+    follow a linear pattern determined by the slope and intercept parameters.
+
+    Parameters
+    ----------
+    number_samples : int
+        The total number of samples in the time series array.
+    max_interval_size : float
+        The maximum interval size for generating the time series array.
+    slope : float, optional
+        The slope of the linear pattern, by default 1.
+    intercept : float, optional
+        The intercept of the linear pattern, by default 0.
+
+    Returns
+    -------
+    np.ndarray
+        A time series array following a linear pattern determined by the slope and intercept parameters.
+    """
+    _check_number_samples(number_samples)
     time = np.linspace(0, max_interval_size, number_samples)
     linear_series = slope * time + intercept
     return linear_series
@@ -203,18 +248,64 @@ def exponential_ts(
     decay_rate: float = 1,
     initial_value: float = 1,
 ) -> np.ndarray:
+    """
+    Generates a time series based on a exponential function.
+
+    This function creates a time series array of given length where the values
+    decay exponentially over time based on the specified decay rate and initial value.
+
+    Parameters
+    ----------
+    number_samples : int
+        The total number of samples in the time series array.
+    max_interval_size : float
+        The maximum interval size for generating the time series array.
+    decay_rate : float, optional
+        The rate at which the values decay over time, by default 1.
+    initial_value : float, optional
+        The initial value of the time series array, by default 1.
+
+    Returns
+    -------
+    np.ndarray
+        An exponential decay time series array where values decay exponentially over time based on the specified decay rate and initial value.
+    """
+    _check_number_samples(number_samples)
     time = np.linspace(0, max_interval_size, number_samples)
     exponential_series = initial_value * np.exp(-decay_rate * time)
     return exponential_series
 
 
-def white_noise_ts(
-    number_samples: int, mean: float = 0, std_dev: float = 1
-) -> np.ndarray:
-    return np.random.normal(loc=mean, scale=std_dev, size=number_samples)
-
-
 def arma_ts(number_samples, lags, max_root, ar=True, ma=True, seed=1, **kwargs):
+    """
+    Generate a time series array based on an Autoregressive Moving Average (ARMA) model.
+
+    This function creates a time series array of given length based on an ARMA model
+    with specified parameters such as number of lags and maximum root. It generates
+    samples using an ARMA process.
+
+    Parameters
+    ----------
+    number_samples : int
+        The total number of samples in the time series array.
+    lags : int
+        The number of lags to consider in the ARMA model.
+    max_root : float
+        The maximum root for the ARMA model.
+    ar : bool, optional
+        Whether to include autoregressive (AR) component in the ARMA model, by default True.
+    ma : bool, optional
+        Whether to include moving average (MA) component in the ARMA model, by default True.
+    seed : int, optional
+        Random seed for reproducibility, by default 1.
+    **kwargs : dict
+        Additional keyword arguments to pass to the ARMA process generator.
+
+    Returns
+    -------
+    np.ndarray
+        A time series array generated based on the specified ARMA model parameters.
+    """
     params_ar = get_arma_parameters(lags, max_root, seed=seed)
     params_ma = get_arma_parameters(lags, max_root, seed=seed)
     ar_coeff = np.r_[1, -params_ar]
