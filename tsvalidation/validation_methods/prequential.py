@@ -76,7 +76,11 @@ class Growing_Window(base_splitter):
         split_size = int(np.round(self._n_samples / self.n_splits))
         split_ind = np.arange(split_size, self._n_samples, split_size)
         split_ind[:remainder] += 1
-        split_ind[remainder:] += remainder
+
+        if remainder != 0:
+
+            split_ind[remainder:] += remainder
+
         split_ind = np.append(split_ind, self._n_samples)
 
         return split_ind
@@ -278,7 +282,11 @@ class Rolling_Window(base_splitter):
         split_size = int(np.round(self._n_samples / self.n_splits))
         split_ind = np.arange(0, self._n_samples, split_size)
         split_ind[:remainder] += 1
-        split_ind[remainder:] += remainder
+
+        if remainder != 0:
+
+            split_ind[remainder:] += remainder
+
         split_ind = np.append(split_ind, self._n_samples)
 
         return split_ind
