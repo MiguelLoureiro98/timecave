@@ -62,7 +62,7 @@ def _check_frequency(frequency: int or float) -> None:
     """
     if isinstance(frequency, (float, int)) is False:
 
-        raise TypeError("'frequency' should be a float.")
+        raise TypeError("'frequency' should be a float or int.")
 
     if frequency > 0:
 
@@ -74,7 +74,7 @@ def _check_amplitude(amplitude: float) -> None:
     """
     Checks if the 'amplitude' must be a float.
     """
-    if isinstance(amplitude, int) is False:
+    if isinstance(amplitude, float) is False:
 
         raise TypeError("'amplitude' should be a float.")
     return
@@ -88,7 +88,7 @@ def _check_max_interval_size(max_interval_size: float) -> None:
 
         raise TypeError("'max_interval_size' should be a float.")
 
-    if max_interval_size > 0:
+    if max_interval_size <= 0:
 
         raise ValueError("'max_interval_size' must be greater than zero.")
     return
@@ -102,7 +102,7 @@ def _check_number_samples(number_samples: int, min_samples: int = 0) -> None:
 
         raise TypeError("'number_samples' should be a int.")
 
-    if number_samples > min_samples:
+    if number_samples <= min_samples:
 
         raise ValueError(f"'number_samples' must be greater than {min_samples}.")
 
@@ -141,7 +141,6 @@ def frequency_varying_sinusoid_ts(
     """
     _check_number_samples(number_samples)
     _check_max_interval_size(max_interval_size)
-    _check_frequency(frequency)
     _check_phase(phase_initial)
     _check_amplitude(amplitude)
 
@@ -168,7 +167,7 @@ def _check_index(index: int) -> None:
 
         raise TypeError("'index' should be a int.")
 
-    if index > 0:
+    if index <= 0:
 
         raise ValueError("'index' must be greater than zero.")
 

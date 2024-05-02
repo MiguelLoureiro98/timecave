@@ -1,3 +1,14 @@
+"""
+A module for generating time series data using provided functions.
+
+This module provides a class for generating time series data based on provided functions, with optional noise and weights.
+
+Classes
+-------
+TimeSeriesGenerator
+    A class for generating time series data using provided functions.
+"""
+
 import numpy as np
 from tsvalidation.data_generation import time_series_functions as tsf
 import matplotlib.pyplot as plt
@@ -6,12 +17,12 @@ from tsvalidation.data_generation._utils import (
     generate_seeds,
 )
 from tsvalidation.data_generation import frequency_modulation as dgu
-from typing import Callable, List
+from typing import Callable, List, Dict
 
 
 class TimeSeriesGenerator:
     """
-    Generate multiple random time series based on given functions and set/list of parameters.
+    A class for generating time series data using provided functions.
 
     This class enables the generation of multiple time series by combining various functions with parameters.
     It allows customization of the time series length, noise level, weights for functions, and parameter values.
@@ -19,21 +30,22 @@ class TimeSeriesGenerator:
     Parameters
     ----------
     functions : List[Callable]
-        List of functions to generate time series data. The function first parameter must be the time series length.
+        A list of functions used to generate the time series.
     length : int, optional
-        Length of the generated time series data, by default 100.
+        The length of the time series to be generated, by default 100.
     noise_level : float, optional
-        Level of noise to be added to the generated data, by default 0.1.
+        The standard deviation of the Gaussian noise added to the time series, by default 0.1.
     weights : List[float], optional
-        Weights assigned to each function for generating combined time series data, by default None.
-    parameter_values : list, optional
-        List of parameter values corresponding to each function, by default None.
+        A list of weights corresponding to each function, by default None.
+    parameter_values : list[Dict], optional
+        A list of dictionaries containing parameter values for each function, by default None.
 
-    Attributes
+    Methods
     ----------
-    time_series : List[np.array]
-        List containing all the generated time series data.
-
+    generate
+        Generate time series data.
+    plot
+        Plot the generated time series.
     """
 
     def __init__(
@@ -42,11 +54,13 @@ class TimeSeriesGenerator:
         length: int = 100,
         noise_level: float = 0.1,
         weights: List[float] = None,
-        parameter_values: list = None,
+        parameter_values: list[Dict] = None,
     ) -> None:
-        self._check_functions(self, functions)
-        self._check_length(self, length)
+        self._check_functions(functions)
+        self._check_length(length)
         self._check_noise_level(noise_level)
+        self._check_weights(weights)
+        self._check_parameter_values(parameter_values)
 
         assert len(functions) == len(parameter_values)
         self._functions = functions
@@ -54,62 +68,105 @@ class TimeSeriesGenerator:
         self._noise_level = noise_level
         self._parameter_values = parameter_values
         self._weights = weights
-        if weights == None:
+        if weights is None:
             self._weights = [1.0] * len(functions)
         self.time_series = []
 
+    def _check_parameter_values(self, parameter_values: float):
+        """
+        Check if 'parameter_values' is a list of dictionaries.
+        """
+        if isinstance(parameter_values, list) is False or not all(
+            isinstance(params, Dict) for params in parameter_values
+        ):
+
+            raise TypeError("'parameter_values' should be a list of parameter_values.")
+
+    def _check_weights(self, weights: float):
+        """
+        Check if 'weights' is a positive float.
+        """
+        if isinstance(weights, list) is False and weights is not None:
+
+            raise TypeError("'weights' should be an float.")
+
     def _check_functions(self, functions: List[Callable]) -> None:
         """
-        Checks if the provided functions is a list of callable objects.
+        Check if 'functions' is a list of functions.
         """
-
-        if not isinstance(functions, list) or not all(
-            callable(func) for func in functions
+        if isinstance(functions, list) is False or not all(
+            isinstance(func, Callable) for func in functions
         ):
-            raise TypeError("'functions' must be a list of callable objects.")
 
-        return
+            raise TypeError("'functions' should be a list of functions.")
 
-    def _check_length(self, length: int) -> None:
+    def _check_noise_level(self, noise_level: float):
         """
-        Checks if the provided length is a positive integer.
+        Check if 'noise_level' is a positive float.
         """
-        # REVER VALUE ERROR/TYPE ERROR
-        if not isinstance(length, int) or length <= 0:
-            raise ValueError("'length' must be a positive integer.")
+        if isinstance(noise_level, float) is False:
 
-        return
+            raise TypeError("'noise_level' should be an float.")
 
-    def _check_noise_level(self, noise_level: float) -> None:
+        if noise_level <= 0:
+
+            raise ValueError("'noise_level' must be greater than zero.")
+
+    def _check_length(self, length: int):
         """
-        Checks if the provided 'noise_level' is a positive integer.
+        Check if 'length' is a positive integer.
         """
+        if length <= 0:
 
-        if not isinstance(noise_level, (int, float)) or not 0 <= noise_level <= 1:
-            raise ValueError("'noise_level' must be a float between 0 and 1.")
+            raise ValueError("'length' must be greater than zero.")
 
-        return
+        if isinstance(length, int) is False:
 
-    def generate(self, nb_sim, og_seed=1):
+            raise TypeError("'length' should be an int.")
+
+    def generate(self, nb_sim: int, og_seed: int = 1):
+        """
+        Generate time series data.
+
+        Parameters
+        ----------
+        nb_sim : int
+            Number of simulations to generate.
+        og_seed : int, optional
+            The original seed for generating random numbers, by default 1.
+
+        Returns
+        -------
+        List[np.array]
+            A list of numpy arrays containing generated time series data.
+        """
 
         seeds = generate_seeds(og_seed, nb_sim)
 
         for seed in seeds:
             np.random.seed(seed)
-            ts = np.zeros(self.length)
-            for i in range(len(self.functions)):
+            ts = np.zeros(self._length)
+            for i in range(len(self._functions)):
                 parameters = generate_random_parameters(
-                    self.parameter_values[i], seed=seed
+                    self._parameter_values[i], seed=seed
                 )
-                ts += self.weights[i] * self.functions[i](self.length, **parameters)
+                ts += self._weights[i] * self._functions[i](self._length, **parameters)
 
-            ts += np.random.normal(scale=self.noise_level, size=self.length)
+            ts += np.random.normal(scale=self._noise_level, size=self._length)
 
             self.time_series.append(ts)
 
         return self.time_series
 
-    def plot(self, indexes=None):
+    def plot(self, indexes: np.array or list or range = None):
+        """
+        Plot the generated time series.
+
+        Parameters
+        ----------
+        indexes : np.array or list or range, optional
+            Indexes of time series to plot, by default None.
+        """
         if indexes is None:
             indexes = range(len(self.time_series))
         elif isinstance(indexes, int):

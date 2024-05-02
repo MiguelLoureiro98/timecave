@@ -68,7 +68,7 @@ class FrequencyModulationWithStep(BaseFrequency):
         If 'freq_init' is not greater than zero. If 't_split' is not greater than zero.
     """
 
-    def __init__(self, freq_init, t_split):
+    def __init__(self, freq_init: float or int, t_split: float or int):
         self._check_freq_init(freq_init)
         self._check_t_split(t_split)
 
@@ -80,7 +80,7 @@ class FrequencyModulationWithStep(BaseFrequency):
         """
         Checks if the 'freq_init' is a non-negative float or int.
         """
-        if isinstance(freq_init, (float, int)):
+        if isinstance(freq_init, (float, int)) is False:
 
             raise TypeError("'freq_init' must be a float or int.")
 
@@ -89,11 +89,11 @@ class FrequencyModulationWithStep(BaseFrequency):
             raise ValueError("'freq_init' must be greater than zero.")
         return
 
-    def _check_t_split(self, t_split) -> None:
+    def _check_t_split(self, t_split: int or float) -> None:
         """
         Checks if the 't_split' is a non-negative float or int.
         """
-        if isinstance(t_split, int):
+        if isinstance(t_split, (int, float)) is False:
 
             raise TypeError("'t_split' must be int.")
 
@@ -152,7 +152,7 @@ class FrequencyModulationLinear(BaseFrequency):
         """
         Checks if the 'freq_init' is a non-negative float or int.
         """
-        if isinstance(freq_init, (float, int)):
+        if isinstance(freq_init, (float, int)) is False:
 
             raise TypeError("'freq_init' must be a float or int.")
 
@@ -165,7 +165,7 @@ class FrequencyModulationLinear(BaseFrequency):
         """
         Checks if the 'slope' is a non-negative float or int.
         """
-        if isinstance(slope, (float, int)):
+        if isinstance(slope, (float, int)) is False:
 
             raise TypeError("'slope' must be a float or int.")
 
