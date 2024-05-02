@@ -1,3 +1,31 @@
+"""
+Module for generating various types of time series data.
+
+This module provides functions to generate different types of time series data, including sinusoidal signals, indicator functions, linear patterns, exponential decays,
+and time series based on autoregressive moving average (ARMA) models and nonlinear autoregressive (AR) models.
+
+Functions
+---------
+sinusoid_ts
+    Generate a time series of a sinusoidal signal.
+frequency_varying_sinusoid_ts
+    Generate a time series of a sinusoidal signal with varying frequency.
+indicator_ts
+    Generate time series array based on a binary indicator function with specified start and end indices.
+scaled_right_indicator_ts
+    Generate a time series array based on a indicator function that is 1 in the interval [idx, + inf[ and 0 otherwise.
+scaled_unit_impulse_function_ts
+    Generate time series array based on a scaled unit impulse function with specified index.
+linear_ts
+    Generate a linear time series array.
+exponential_ts
+    Generates a time series based on a exponential function.
+arma_ts
+    Generate a time series array based on an Autoregressive Moving Average (ARMA) model.
+nonlinear_ar_ts
+    Generate a time series array based on a nonlinear autoregressive (AR) model.
+"""
+
 import numpy as np
 from statsmodels.tsa.arima_process import ArmaProcess
 from tsvalidation.data_generation.frequency_modulation import BaseFrequency
@@ -284,6 +312,8 @@ def arma_ts(number_samples, lags, max_root, ar=True, ma=True, seed=1, **kwargs):
     with specified parameters such as number of lags and maximum root. It generates
     samples using an ARMA process.
 
+    #TODO Reference Bergmeir
+
     Parameters
     ----------
     number_samples : int
@@ -291,7 +321,7 @@ def arma_ts(number_samples, lags, max_root, ar=True, ma=True, seed=1, **kwargs):
     lags : int
         The number of lags to consider in the ARMA model.
     max_root : float
-        The maximum root for the ARMA model.
+        The maximum root for the ARMA model. This value has to be larger than 1.1.
     ar : bool, optional
         Whether to include autoregressive (AR) component in the ARMA model, by default True.
     ma : bool, optional
@@ -305,6 +335,11 @@ def arma_ts(number_samples, lags, max_root, ar=True, ma=True, seed=1, **kwargs):
     -------
     np.ndarray
         A time series array generated based on the specified ARMA model parameters.
+
+    Raises
+    -------
+    ValueError
+        If the maximum root is not larger than 1.1.
     """
     params_ar = get_arma_parameters(lags, max_root, seed=seed)
     params_ma = get_arma_parameters(lags, max_root, seed=seed)
@@ -325,6 +360,30 @@ def arma_ts(number_samples, lags, max_root, ar=True, ma=True, seed=1, **kwargs):
 
 
 def nonlinear_ar_ts(number_samples, init_array, params, func_idxs):
+    """
+    Generate a time series array based on a nonlinear autoregressive (AR) model.
+
+    This function creates a time series array of given length based on a nonlinear AR model
+    with specified initial array, parameters, and function indices.
+
+    #TODO Reference Bergmeir
+
+    Parameters
+    ----------
+    number_samples : int
+        The total number of samples in the time series array.
+    init_array : np.ndarray
+        The initial array for generating the time series.
+    params : list
+        The parameters for the nonlinear AR model.
+    func_idxs : list
+        The indices of the nonlinear functions used in the model.
+
+    Returns
+    -------
+    np.ndarray
+        A time series array generated based on the specified nonlinear AR model parameters.
+    """
     init_len = len(init_array)
 
     x = np.empty(number_samples + init_len)
