@@ -10,13 +10,13 @@ TimeSeriesGenerator
 """
 
 import numpy as np
-from tsvalidation.data_generation import time_series_functions as tsf
+
 import matplotlib.pyplot as plt
 from tsvalidation.data_generation._utils import (
     _generate_random_parameters,
     _generate_seeds,
 )
-from tsvalidation.data_generation import frequency_modulation as dgu
+
 from typing import Callable, List, Dict
 
 
@@ -41,18 +41,23 @@ class TimeSeriesGenerator:
         A list of dictionaries containing parameter values for each function, by default None.
 
     Methods
-    ----------
+    -------
     generate
         Generate time series data.
     plot
         Plot the generated time series.
+
+    Raises
+    ------
+    ValueError
+        If the lengths of 'functions', 'parameter_values', and 'weights' don't match.
     """
 
     def __init__(
         self,
         functions: List[Callable],
         length: int = 100,
-        noise_level: float = 0.1,
+        noise_level: float or int = 0.1,
         weights: List[float] = None,
         parameter_values: list[Dict] = None,
     ) -> None:
@@ -62,7 +67,19 @@ class TimeSeriesGenerator:
         self._check_weights(weights)
         self._check_parameter_values(parameter_values)
 
-        assert len(functions) == len(parameter_values)
+        if len(functions) != len(parameter_values):
+
+            raise ValueError(
+                "Lengths of 'functions', 'parameter_values', and 'weights' must match."
+            )
+        if weights is not None and (
+            len(weights) != len(parameter_values) or len(functions) != len(weights)
+        ):
+
+            raise ValueError(
+                "Lengths of 'functions', 'parameter_values', and 'weights' must match."
+            )
+
         self._functions = functions
         self._length = length
         self._noise_level = noise_level
@@ -100,13 +117,13 @@ class TimeSeriesGenerator:
 
             raise TypeError("'functions' should be a list of functions.")
 
-    def _check_noise_level(self, noise_level: float):
+    def _check_noise_level(self, noise_level: float or int):
         """
         Check if 'noise_level' is a positive float.
         """
-        if isinstance(noise_level, float) is False:
+        if isinstance(noise_level, (float, int)) is False:
 
-            raise TypeError("'noise_level' should be an float.")
+            raise TypeError("'noise_level' should be an float or int.")
 
         if noise_level <= 0:
 
@@ -183,6 +200,10 @@ class TimeSeriesGenerator:
 
 
 if __name__ == "__main__":
+
+    from tsvalidation.data_generation import frequency_modulation as dgu
+    from tsvalidation.data_generation import time_series_functions as tsf
+
     linear_parameters = {"max_interval_size": 1, "slope": 5, "intercept": [5, 30]}
 
     exp_parameters = {
