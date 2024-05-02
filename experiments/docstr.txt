@@ -1,0 +1,51 @@
+class
+"""
+_summary_
+
+_extended_summary_
+
+Parameters
+----------
+_param_ : _type_
+    _description_
+
+Attributes
+----------
+_attr_ : _type_
+    _description_
+
+Methods
+----------
+_method_name_
+    _description_
+
+Raises
+----------
+_error_
+    _description_
+"""
+
+
+method/function
+"""
+_summary_
+
+_extended_summary_
+
+Parameters
+----------
+_param_ : _type_
+    _description_
+
+Returns
+----------
+_type_
+    _description_
+
+Raises
+----------
+_error_
+    _description_
+
+
+"""
