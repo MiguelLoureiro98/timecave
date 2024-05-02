@@ -16,6 +16,23 @@ class TimeSeriesGenerator:
     This class enables the generation of multiple time series by combining various functions with parameters.
     It allows customization of the time series length, noise level, weights for functions, and parameter values.
 
+    Parameters
+    ----------
+    functions : List[Callable]
+        List of functions to generate time series data. The function first parameter must be the time series length.
+    length : int, optional
+        Length of the generated time series data, by default 100.
+    noise_level : float, optional
+        Level of noise to be added to the generated data, by default 0.1.
+    weights : List[float], optional
+        Weights assigned to each function for generating combined time series data, by default None.
+    parameter_values : list, optional
+        List of parameter values corresponding to each function, by default None.
+
+    Attributes
+    ----------
+    time_series : List[np.array]
+        List containing all the generated time series data.
 
     """
 
@@ -27,16 +44,51 @@ class TimeSeriesGenerator:
         weights: List[float] = None,
         parameter_values: list = None,
     ) -> None:
+        self._check_functions(self, functions)
+        self._check_length(self, length)
+        self._check_noise_level(noise_level)
 
         assert len(functions) == len(parameter_values)
-        self.functions = functions
-        self.length = length
-        self.noise_level = noise_level
-        self.parameter_values = parameter_values
-        self.weights = weights
+        self._functions = functions
+        self._length = length
+        self._noise_level = noise_level
+        self._parameter_values = parameter_values
+        self._weights = weights
         if weights == None:
-            self.weights = [1.0] * len(functions)
+            self._weights = [1.0] * len(functions)
         self.time_series = []
+
+    def _check_functions(self, functions: List[Callable]) -> None:
+        """
+        Checks if the provided functions is a list of callable objects.
+        """
+
+        if not isinstance(functions, list) or not all(
+            callable(func) for func in functions
+        ):
+            raise TypeError("'functions' must be a list of callable objects.")
+
+        return
+
+    def _check_length(self, length: int) -> None:
+        """
+        Checks if the provided length is a positive integer.
+        """
+        # REVER VALUE ERROR/TYPE ERROR
+        if not isinstance(length, int) or length <= 0:
+            raise ValueError("'length' must be a positive integer.")
+
+        return
+
+    def _check_noise_level(self, noise_level: float) -> None:
+        """
+        Checks if the provided 'noise_level' is a positive integer.
+        """
+
+        if not isinstance(noise_level, (int, float)) or not 0 <= noise_level <= 1:
+            raise ValueError("'noise_level' must be a float between 0 and 1.")
+
+        return
 
     def generate(self, nb_sim, og_seed=1):
 
