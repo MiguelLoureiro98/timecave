@@ -1,7 +1,8 @@
 """
 Module for utility functions used in time series data generation.
 
-This module provides utility functions for generating time series data, including nonlinear transformation functions, ARMA model parameter generation, random parameter generation, and seed generation.
+This module provides utility functions for generating time series data, including nonlinear 
+transformation functions, ARMA model parameter generation, random parameter generation, and seed generation.
 
 Functions
 ---------
