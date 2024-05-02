@@ -29,7 +29,7 @@ nonlinear_ar_ts
 import numpy as np
 from statsmodels.tsa.arima_process import ArmaProcess
 from tsvalidation.data_generation.frequency_modulation import BaseFrequency
-from tsvalidation.data_generation._utils import nonlin_func, get_arma_parameters
+from tsvalidation.data_generation._utils import _nonlin_func, _get_arma_parameters
 
 
 def sinusoid_ts(
@@ -341,8 +341,8 @@ def arma_ts(number_samples, lags, max_root, ar=True, ma=True, seed=1, **kwargs):
     ValueError
         If the maximum root is not larger than 1.1.
     """
-    params_ar = get_arma_parameters(lags, max_root, seed=seed)
-    params_ma = get_arma_parameters(lags, max_root, seed=seed)
+    params_ar = _get_arma_parameters(lags, max_root, seed=seed)
+    params_ma = _get_arma_parameters(lags, max_root, seed=seed)
     ar_coeff = np.r_[1, -params_ar]
     ma_coeff = np.r_[1, params_ma]
 
@@ -393,7 +393,7 @@ def nonlinear_ar_ts(number_samples, init_array, params, func_idxs):
         x[t] = np.random.normal(scale=0.5)
 
         for j in range(1, init_len + 1):
-            x[t] += params[j - 1] * nonlin_func(func_idxs[j - 1], x[t - j])
+            x[t] += params[j - 1] * _nonlin_func(func_idxs[j - 1], x[t - j])
 
     ts = x[init_len : (number_samples + init_len)]
 

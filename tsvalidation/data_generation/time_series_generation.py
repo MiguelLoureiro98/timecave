@@ -13,8 +13,8 @@ import numpy as np
 from tsvalidation.data_generation import time_series_functions as tsf
 import matplotlib.pyplot as plt
 from tsvalidation.data_generation._utils import (
-    generate_random_parameters,
-    generate_seeds,
+    _generate_random_parameters,
+    _generate_seeds,
 )
 from tsvalidation.data_generation import frequency_modulation as dgu
 from typing import Callable, List, Dict
@@ -141,13 +141,13 @@ class TimeSeriesGenerator:
             A list of numpy arrays containing generated time series data.
         """
 
-        seeds = generate_seeds(og_seed, nb_sim)
+        seeds = _generate_seeds(og_seed, nb_sim)
 
         for seed in seeds:
             np.random.seed(seed)
             ts = np.zeros(self._length)
             for i in range(len(self._functions)):
-                parameters = generate_random_parameters(
+                parameters = _generate_random_parameters(
                     self._parameter_values[i], seed=seed
                 )
                 ts += self._weights[i] * self._functions[i](self._length, **parameters)
