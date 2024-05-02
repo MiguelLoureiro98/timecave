@@ -37,6 +37,7 @@ class Block_CV(base_splitter):
         fs: float | int,
         weight_function: callable = constant_weights,
     ) -> None:
+
         super().__init__(splits, ts, fs)
         self._splitting_ind = self._split_ind()
         self._weights = weight_function(self.n_splits)
@@ -125,6 +126,9 @@ class Block_CV(base_splitter):
         ------
         ValueError
             _description_
+
+        ValueError
+            _description_
         """
 
         if self._n_samples <= 2:
@@ -133,35 +137,23 @@ class Block_CV(base_splitter):
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
 
+        if int(np.round(self._n_samples / self.n_splits)) < 2:
+
+            raise ValueError(
+                "The folds are too small to compute most meaningful features."
+            )
+
         full_features = get_features(self._series, self.sampling_freq)
         training_stats = []
         validation_stats = []
 
         for training, validation in self.split():
 
-            if self._series[training].shape[0] >= 2:
+            training_feat = get_features(self._series[training], self.sampling_freq)
+            training_stats.append(training_feat)
 
-                training_feat = get_features(self._series[training], self.sampling_freq)
-                training_stats.append(training_feat)
-
-            else:
-
-                print(
-                    "The training set is too small to compute most meaningful features."
-                )
-
-            if self._series[validation].shape[0] >= 2:
-
-                validation_feat = get_features(
-                    self._series[validation], self.sampling_freq
-                )
-                validation_stats.append(validation_feat)
-
-            else:
-
-                print(
-                    "The validation set is too small to compute most meaningful features."
-                )
+            validation_feat = get_features(self._series[validation], self.sampling_freq)
+            validation_stats.append(validation_feat)
 
         training_features = pd.concat(training_stats)
         validation_features = pd.concat(validation_stats)
