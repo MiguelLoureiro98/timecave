@@ -55,7 +55,7 @@ class Growing_Window(base_splitter):
 
         return
 
-    def _check_gap(gap: int) -> None:
+    def _check_gap(self, gap: int) -> None:
         """
         Perform type and value checks for the 'gap' parameter.
         """
@@ -67,6 +67,14 @@ class Growing_Window(base_splitter):
         if gap < 0:
 
             raise ValueError("'gap' must be non-negative.")
+
+        if self.n_splits - gap < 2:
+
+            raise ValueError(
+                f"With {self.n_splits}, the maximum allowable gap is {self._n_splits - 2} splits."
+            )
+
+        return
 
     def _split_ind(self) -> np.ndarray:
         """
@@ -250,7 +258,7 @@ class Rolling_Window(base_splitter):
 
         return
 
-    def _check_gap(gap: int) -> None:
+    def _check_gap(self, gap: int) -> None:
         """
         Perform type and value checks for the 'gap' parameter.
         """
@@ -262,6 +270,14 @@ class Rolling_Window(base_splitter):
         if gap < 0:
 
             raise ValueError("'gap' must be non-negative.")
+
+        if self.n_splits - gap < 2:
+
+            raise ValueError(
+                f"With {self.n_splits}, the maximum allowable gap is {self._n_splits - 2} splits."
+            )
+
+        return
 
     def _split_ind(self) -> np.ndarray:
         """

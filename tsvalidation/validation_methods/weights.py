@@ -39,7 +39,6 @@ def constant_weights(
     return np.ones(splits)
 
 
-# Define functions for linear and exponential weights; based on recent/old data and the amount of data.
 def linear_weights(
     n_splits: int, gap: int = 0, compensation: int = 0, params: dict = {"slope": 2}
 ) -> np.ndarray:
@@ -68,6 +67,7 @@ def linear_weights(
         _description_
     """
 
+    _check_params(params["slope"])
     splits = n_splits - gap - compensation
     weights = np.array([params["slope"] * i for i in range(1, splits + 1)])
     weights = weights / weights.sum()
@@ -103,8 +103,20 @@ def exponential_weights(
         _description_
     """
 
+    _check_params(params["base"])
     splits = n_splits - gap - compensation
     weights = np.array([params["base"] ** i for i in range(splits)])
     weights = weights / weights.sum()
 
     return weights
+
+
+def _check_params(param: int) -> None:
+
+    if (isinstance(param, int) or isinstance(param, float)) is False:
+
+        raise TypeError("'base' and 'slope' should be integers or floats.")
+
+    if param <= 0:
+
+        raise ValueError("'base' and 'slope' should be positive.")
