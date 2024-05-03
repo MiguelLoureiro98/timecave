@@ -36,11 +36,12 @@ class Block_CV(base_splitter):
         ts: np.ndarray | pd.Series,
         fs: float | int,
         weight_function: callable = constant_weights,
+        params: dict = None,
     ) -> None:
 
         super().__init__(splits, ts, fs)
         self._splitting_ind = self._split_ind()
-        self._weights = weight_function(self.n_splits)
+        self._weights = weight_function(self.n_splits, params=params)
 
     def _split_ind(self) -> np.ndarray:
         """

@@ -44,13 +44,14 @@ class Growing_Window(base_splitter):
         fs: float | int,
         gap: int = 0,
         weight_function: callable = constant_weights,
+        params: dict = None,
     ) -> None:
 
         super().__init__(splits, ts, fs)
         self._check_gap(gap)
         self._gap = gap
         self._splitting_ind = self._split_ind()
-        self._weights = weight_function(self.n_splits)
+        self._weights = weight_function(self.n_splits, self._gap, 1, params)
 
         return
 
@@ -238,13 +239,14 @@ class Rolling_Window(base_splitter):
         fs: float | int,
         gap: int = 0,
         weight_function: callable = constant_weights,
+        params: dict = None,
     ) -> None:
 
         super().__init__(splits, ts, fs)
         self._check_gap(gap)
         self._gap = gap
         self._splitting_ind = self._split_ind()
-        self._weights = weight_function(self.n_splits)
+        self._weights = weight_function(self.n_splits, self._gap, 1, params)
 
         return
 
