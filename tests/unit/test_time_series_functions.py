@@ -17,6 +17,10 @@ from tsvalidation.data_generation.frequency_modulation import FrequencyModulatio
 class TestTimeSeriesFunctions(unittest.TestCase):
 
     def test_sinusoid_ts(self):
+        """
+        This function tests the sinusoid time series generation function with various parameters
+        and validates the correctness of the generated time series.
+        """
         n1 = 8 + 1
         frequency = 1 / (2 * np.pi)
         amplitude = 1
@@ -41,6 +45,11 @@ class TestTimeSeriesFunctions(unittest.TestCase):
         np.testing.assert_array_almost_equal(ts1, ts2)
 
     def test_frequency_varying_sinusoid_ts(self):
+        """
+        This function tests the generation of frequency-varying sinusoid time series
+        with linearly varying frequency over time, and validates the correctness of
+        the generated time series.
+        """
         n1 = 8 + 1
         m1 = 4 * np.pi
         fm = FrequencyModulationLinear(freq_init=1 / (2 * np.pi), slope=0)
@@ -87,6 +96,10 @@ class TestTimeSeriesFunctions(unittest.TestCase):
         np.testing.assert_array_equal(ts1, result)
 
     def test_linear_ts(self):
+        """
+        This function tests the generation of an indicator time series, where specific
+        segments are marked as 1 while the rest are 0.
+        """
         n1 = 10 + 1
         m1 = 10
         ts1 = linear_ts(n1, m1, slope=1, intercept=0)
@@ -104,6 +117,10 @@ class TestTimeSeriesFunctions(unittest.TestCase):
         np.testing.assert_array_equal(ts2, r2)
 
     def test_exponential_ts(self):
+        """
+        This function tests the generation of exponential time series with specified
+        parameters such as length and decay rate.
+        """
         n1 = 4 + 1
         m1 = 4
         ts1 = exponential_ts(n1, m1)
@@ -123,6 +140,10 @@ class TestTimeSeriesFunctions(unittest.TestCase):
         np.testing.assert_array_almost_equal(ts2, r2)
 
     def test_arma_ts(self):
+        """
+        This function tests the generation of ARMA time series with specified parameters
+        such as length, number of lags, maximum root, and inclusion of AR and MA components.
+        """
         n1 = 5
         lags = 2
         max_root = 1.5
@@ -141,6 +162,11 @@ class TestTimeSeriesFunctions(unittest.TestCase):
         self.assertEqual(len(ts1), n1)
 
     def test_nonlinear_ar_ts(self):
+        """
+        This function tests the generation of nonlinear autoregressive time series with
+        specified parameters such as number of samples, initial array, parameters,
+        and function indices.
+        """
         number_samples = 100
         init_array = np.zeros(2)
         params = [0.5, -0.3]

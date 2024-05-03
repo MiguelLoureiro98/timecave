@@ -234,6 +234,9 @@ class TestTimeSeriesGenerator(unittest.TestCase):
         self.assertEqual(self.ts5.time_series, [])
 
     def test_generate(self) -> None:
+        """
+        Test the class 'generate' method.
+        """
         nb1 = 1
         nb2 = 2
         s1 = 1
