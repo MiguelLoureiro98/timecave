@@ -194,3 +194,23 @@ class Block_CV(base_splitter):
         plt.show()
 
         return
+
+
+class hv_Block_CV(base_splitter):
+
+    def __init__(
+        self, splits: int, ts: np.ndarray | pd.Series, fs: float | int
+    ) -> None:
+        super().__init__(splits, ts, fs)
+
+    def split(self) -> Generator[tuple, None, None]:
+        return super().split()
+
+    def info(self) -> None:
+        return super().info()
+
+    def statistics(self) -> tuple[pd.DataFrame]:
+        return super().statistics()
+
+    def plot(self, height: int, width: int) -> None:
+        return super().plot(height, width)
