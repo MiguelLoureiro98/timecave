@@ -169,9 +169,9 @@ class FrequencyModulationLinear(BaseFrequency):
 
             raise TypeError("'slope' must be a float or int.")
 
-        elif slope <= 0:
+        elif slope < 0:
 
-            raise ValueError("'slope' must be greater than zero.")
+            raise ValueError("'slope' must be equal or greater than ozero.")
         return
 
     def modulate(self, time: int):
