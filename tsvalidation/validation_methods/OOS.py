@@ -128,10 +128,10 @@ class Holdout(base_splitter):
         print("--------------")
         print(f"Time series size: {self._n_samples} samples")
         print(
-            f"Training size: {int(np.round((1 - self._val_size) * self._n_samples))} samples ({np.round(1 - self._val_size, 4) * 100} %)"
+            f"Training set size: {int(np.round((1 - self._val_size) * self._n_samples))} samples ({np.round(1 - self._val_size, 4) * 100} %)"
         )
         print(
-            f"Validation size: {int(np.round(self._val_size * self._n_samples))} samples ({np.round(self._val_size, 4) * 100} %)"
+            f"Validation set size: {int(np.round(self._val_size * self._n_samples))} samples ({np.round(self._val_size, 4) * 100} %)"
         )
 
         return
