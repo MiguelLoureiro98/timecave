@@ -12,14 +12,14 @@ import numpy as np
 
 class TestTimeSeriesGenerator(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.l1 = 1000
-        cls.l2 = 2
-        cls.l3 = 100
-        cls.nl1 = 0.1
-        cls.w1 = None
-        cls.w2 = [0.1, 0.3, 0.9, 0.1]
+    def setUp(self) -> None:
+        self.l0 = 1
+        self.l1 = 1000
+        self.l2 = 2
+        self.l3 = 5
+        self.nl1 = 0.1
+        self.w1 = None
+        self.w2 = [0.1, 0.3, 0.9, 0.1]
         linear_parameters = {"max_interval_size": 1, "slope": 5, "intercept": [5, 30]}
         exp_parameters = {
             "max_interval_size": (1, 2),
@@ -37,59 +37,82 @@ class TestTimeSeriesGenerator(unittest.TestCase):
         }
         impulse_parameters = {"idx": (500, 600), "constant": [5, 10]}
         indicator_parameters = {"start_index": (700, 600), "end_index": (800, 900)}
-        cls.funcs1 = [tsf.linear_ts]
-        cls.funcs1 = [
+        self.funcs0 = [tsf.linear_ts]
+        self.funcs1 = [
             tsf.linear_ts,
             tsf.indicator_ts,
             tsf.scaled_unit_impulse_function_ts,
             tsf.exponential_ts,
         ]
-        cls.funcs2 = [
+        self.funcs2 = [
             tsf.linear_ts,
             tsf.indicator_ts,
             tsf.frequency_varying_sinusoid_ts,
             tsf.scaled_unit_impulse_function_ts,
         ]
-        cls.params0 = [{"max_interval_size": 1, "slope": 1, "intercept": 0}]
-        cls.params1 = [
+        self.funcs3 = [tsf.linear_ts, tsf.indicator_ts]
+
+        self.params0 = [{"max_interval_size": 1, "slope": 1, "intercept": 0}]
+        self.params1 = [
             linear_parameters,
             indicator_parameters,
             impulse_parameters,
             exp_parameters,
         ]
-        cls.params2 = [
+        self.params2 = [
             linear_parameters,
             indicator_parameters,
             sin_parameters,
             impulse_parameters,
         ]
-        cls.ts0 = TimeSeriesGenerator(
-            functions=cls.funcs1,
-            length=cls.l3,
-            noise_level=cls.nl1,
-            weights=cls.w1,
-            parameter_values=cls.params1,
+        self.params3 = [
+            {"max_interval_size": 4, "slope": 1, "intercept": 0},
+            {"start_index": 1, "end_index": 2},
+        ]
+
+        self.ts0 = TimeSeriesGenerator(
+            functions=self.funcs1,
+            length=self.l3,
+            noise_level=self.nl1,
+            weights=self.w1,
+            parameter_values=self.params1,
         )
-        cls.ts1 = TimeSeriesGenerator(
-            functions=cls.funcs1,
-            length=cls.l1,
-            noise_level=cls.nl1,
-            weights=cls.w1,
-            parameter_values=cls.params1,
+        self.ts1 = TimeSeriesGenerator(
+            functions=self.funcs1,
+            length=self.l1,
+            noise_level=self.nl1,
+            weights=self.w1,
+            parameter_values=self.params1,
         )
-        cls.ts2 = TimeSeriesGenerator(
-            functions=cls.funcs2,
-            length=cls.l2,
-            noise_level=cls.nl1,
-            weights=cls.w2,
-            parameter_values=cls.params2,
+        self.ts2 = TimeSeriesGenerator(
+            functions=self.funcs2,
+            length=self.l2,
+            noise_level=self.nl1,
+            weights=self.w2,
+            parameter_values=self.params2,
         )
-        cls.ts3 = TimeSeriesGenerator(
-            functions=cls.funcs1,
-            length=cls.l3,
-            noise_level=cls.nl1,
-            weights=cls.w1,
-            parameter_values=cls.params1,
+        self.ts3 = TimeSeriesGenerator(
+            functions=self.funcs1,
+            length=self.l3,
+            noise_level=self.nl1,
+            weights=self.w1,
+            parameter_values=self.params1,
+        )
+
+        self.ts4 = TimeSeriesGenerator(
+            functions=self.funcs3,
+            length=5,
+            noise_level=0,
+            weights=None,
+            parameter_values=self.params3,
+        )
+
+        self.ts5 = TimeSeriesGenerator(
+            functions=self.funcs3,
+            length=self.l0,
+            noise_level=0,
+            weights=None,
+            parameter_values=self.params3,
         )
 
         return
@@ -207,15 +230,36 @@ class TestTimeSeriesGenerator(unittest.TestCase):
         self.assertEqual(self.ts1.time_series, [])
         self.assertEqual(self.ts2.time_series, [])
         self.assertEqual(self.ts3.time_series, [])
+        self.assertEqual(self.ts4.time_series, [])
+        self.assertEqual(self.ts5.time_series, [])
 
     def test_generate(self) -> None:
         nb1 = 1
         nb2 = 2
-        nb3 = 0
         s1 = 1
         s2 = 92
-        s3 = 39
-        self.ts1.generate(nb1, s1)
+        ts4_out = [0.0, 2.0, 3.0, 3.0, 4.0]
+        ts5_out = [0.0]
+        self.assertListEqual(list(self.ts4.generate(nb1, s1)[0]), ts4_out)
+        self.assertListEqual(list(self.ts4.generate(nb2, s1)[0]), ts4_out)
+        self.assertListEqual(list(self.ts4.generate(nb2, s2)[0]), ts4_out)
+        self.assertListEqual(list(self.ts5.generate(nb1, s1)[0]), ts5_out)
+
+    def test_plot(self) -> None:
+        """
+        Test the 'plot' method.
+        """
+        self.ts1.generate(5, 1)
+        self.ts1.plot()
+        self.ts2.generate(5, 1)
+        self.ts2.plot()
+        self.ts3.generate(5, 1)
+        self.ts3.plot()
+        self.ts4.generate(5, 1)
+        self.ts4.plot()
+        self.ts5.generate(5, 1)
+        self.ts5.plot()
+        return
 
 
 if __name__ == "__main__":

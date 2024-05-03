@@ -38,7 +38,9 @@ class TimeSeriesGenerator:
     weights : List[float], optional
         A list of weights corresponding to each function, by default None.
     parameter_values : list[Dict], optional
-        A list of dictionaries containing parameter values for each function, by default None.
+        A list of dictionaries containing parameter values for each function, by default None. Each dictionary contains
+        parameter names as keys and either single values, tuples (for discrete choices), or lists (for continuous ranges)
+        as values, representing the possible values or ranges for each parameter.
 
     Methods
     -------
@@ -85,9 +87,9 @@ class TimeSeriesGenerator:
         self._noise_level = noise_level
         self._parameter_values = parameter_values
         self._weights = weights
+        self.time_series = []
         if weights is None:
             self._weights = [1.0] * len(functions)
-        self.time_series = []
 
     def _check_parameter_values(self, parameter_values: float):
         """
@@ -119,15 +121,15 @@ class TimeSeriesGenerator:
 
     def _check_noise_level(self, noise_level: float or int):
         """
-        Check if 'noise_level' is a positive float.
+        Check if 'noise_level' is a non-negative float.
         """
         if isinstance(noise_level, (float, int)) is False:
 
             raise TypeError("'noise_level' should be an float or int.")
 
-        if noise_level <= 0:
+        if noise_level < 0:
 
-            raise ValueError("'noise_level' must be greater than zero.")
+            raise ValueError("'noise_level' must be greater or equal to zero.")
 
     def _check_length(self, length: int):
         """
