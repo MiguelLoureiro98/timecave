@@ -390,7 +390,12 @@ def nonlinear_ar_ts(
     init_array : np.ndarray
         The initial array for generating the time series. The lengths corresponds to the number of lags.
     params : list
-        The parameters for the nonlinear AR model.
+        The parameters for the nonlinear AR model. The index representing the specific nonlinear transformation to apply:
+            0: Cosine function.
+            1: Sine function.
+            2: Hyperbolic tangent function.
+            3: Arctangent function.
+            4: Exponential decay function.
     func_idxs : list
         The indices of the nonlinear functions used in the model.
 
@@ -400,6 +405,8 @@ def nonlinear_ar_ts(
         A time series array generated based on the specified nonlinear AR model parameters.
     """
     _check_number_samples(number_samples)
+    if len(params) != len(func_idxs):
+        raise ValueError("'params' and 'func_idxs' must have the same length")
 
     init_len = len(init_array)
 

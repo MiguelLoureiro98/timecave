@@ -26,11 +26,11 @@ def _nonlin_func(nb: int, x: float):
     based on the specified function number 'nb'.
     """
     nonlin_x = {
-        1: np.cos(x),
-        2: np.sin(x),
-        3: np.tanh(x),
-        4: np.arctan(x),
-        5: np.exp(-x / 10000),
+        0: np.cos(x),
+        1: np.sin(x),
+        2: np.tanh(x),
+        3: np.arctan(x),
+        4: np.exp(-x / 10000),
     }[nb]
     return nonlin_x
 

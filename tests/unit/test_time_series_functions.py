@@ -141,22 +141,24 @@ class TestTimeSeriesFunctions(unittest.TestCase):
         self.assertEqual(len(ts1), n1)
 
     def test_nonlinear_ar_ts(self):
-        n1 = 5
-        lags = 2
-        max_root = 1.5
-        ar = True
-        ma = True
+        number_samples = 100
+        init_array = np.zeros(2)
+        params = [0.5, -0.3]
+        func_idxs = [0, 1]
 
-        ts1 = nonlinear_ar_ts(n1, lags, max_root, ar, ma)
+        ts = nonlinear_ar_ts(number_samples, init_array, params, func_idxs)
+        self.assertRaises(
+            ValueError, nonlinear_ar_ts, -1, init_array, params, func_idxs
+        )
+        self.assertRaises(
+            TypeError, nonlinear_ar_ts, "a", init_array, params, func_idxs
+        )
+        self.assertRaises(
+            ValueError, nonlinear_ar_ts, -1, init_array, [0, 1, 2], func_idxs
+        )
 
-        # Exception
-        self.assertRaises(ValueError, nonlinear_ar_ts, -1, 1, 2)
-        self.assertRaises(TypeError, nonlinear_ar_ts, "a", 1, 2)
-        self.assertRaises(ValueError, nonlinear_ar_ts, 1, 1, 2, ar=False, ma=False)
-        self.assertRaises(ValueError, nonlinear_ar_ts, 1, 1, 0.5)
-
-        # Functionality
-        self.assertEqual(len(ts1), n1)
+        self.assertEqual(len(ts), number_samples)
+        self.assertIsInstance(ts, np.ndarray)
 
 
 if __name__ == "__main__":
