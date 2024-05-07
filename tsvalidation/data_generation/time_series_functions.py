@@ -34,7 +34,7 @@ from tsvalidation.data_generation._utils import _nonlin_func, _get_arma_paramete
 
 def sinusoid_ts(
     number_samples: int,
-    max_interval_size: float,
+    max_interval_size: float or int,
     amplitude: float = 1,
     frequency: float or int = 1,
     phase: float = 0,
@@ -72,11 +72,11 @@ def sinusoid_ts(
 
 def _check_max_interval_size(max_interval_size: float) -> None:
     """
-    Checks if the 'max_interval_size' must be a non-negative float.
+    Checks if the 'max_interval_size' must be a non-negative float or int.
     """
-    if isinstance(max_interval_size, int) is False:
+    if isinstance(max_interval_size, (float, int)) is False:
 
-        raise TypeError("'max_interval_size' should be a float.")
+        raise TypeError("'max_interval_size' should be a float or int.")
 
     if max_interval_size <= 0:
 
@@ -104,7 +104,7 @@ def frequency_varying_sinusoid_ts(
     max_interval_size: float,
     frequency: BaseFrequency,
     amplitude: float = 1,
-    phase_initial: float = 0,
+    phase: float = 0,
 ) -> np.ndarray:
     """
     Generate a time series of a sinusoidal signal with varying frequency.
@@ -121,7 +121,7 @@ def frequency_varying_sinusoid_ts(
         An object representing the base frequency of the sinusoid, which may vary over time.
     amplitude : float, optional
         The amplitude of the sinusoidal signal, by default 1.
-    phase_initial : float, optional
+    phase : float, optional
         The initial phase of the sinusoidal signal in radians, by default 0.
 
     Returns
@@ -134,7 +134,7 @@ def frequency_varying_sinusoid_ts(
 
     time = np.linspace(0, max_interval_size, number_samples)
     frequency = frequency.modulate(time=time)
-    time_series = amplitude * np.sin(2 * np.pi * frequency * time + phase_initial)
+    time_series = amplitude * np.sin(2 * np.pi * frequency * time + phase)
     return time_series
 
 
@@ -304,7 +304,15 @@ def exponential_ts(
     return exponential_series
 
 
-def arma_ts(number_samples, lags, max_root, ar=True, ma=True, seed=1, **kwargs):
+def arma_ts(
+    number_samples: int,
+    lags: int,
+    max_root: float,
+    ar: bool = True,
+    ma: bool = True,
+    seed: bool = 1,
+    **kwargs,
+):
     """
     Generate a time series array based on an Autoregressive Moving Average (ARMA) model.
 
@@ -341,6 +349,11 @@ def arma_ts(number_samples, lags, max_root, ar=True, ma=True, seed=1, **kwargs):
     ValueError
         If the maximum root is not larger than 1.1.
     """
+    _check_number_samples(number_samples)
+
+    if ar == False and ma == False:
+        raise ValueError("At least one of 'ar' or 'ma' must be set to True.")
+
     params_ar = _get_arma_parameters(lags, max_root, seed=seed)
     params_ma = _get_arma_parameters(lags, max_root, seed=seed)
     ar_coeff = np.r_[1, -params_ar]
@@ -359,7 +372,9 @@ def arma_ts(number_samples, lags, max_root, ar=True, ma=True, seed=1, **kwargs):
     return ts
 
 
-def nonlinear_ar_ts(number_samples, init_array, params, func_idxs):
+def nonlinear_ar_ts(
+    number_samples: int, init_array: np.array, params: list, func_idxs: list
+):
     """
     Generate a time series array based on a nonlinear autoregressive (AR) model.
 
@@ -373,9 +388,14 @@ def nonlinear_ar_ts(number_samples, init_array, params, func_idxs):
     number_samples : int
         The total number of samples in the time series array.
     init_array : np.ndarray
-        The initial array for generating the time series.
+        The initial array for generating the time series. The lengths corresponds to the number of lags.
     params : list
-        The parameters for the nonlinear AR model.
+        The parameters for the nonlinear AR model. The index representing the specific nonlinear transformation to apply:
+            0: Cosine function.
+            1: Sine function.
+            2: Hyperbolic tangent function.
+            3: Arctangent function.
+            4: Exponential decay function.
     func_idxs : list
         The indices of the nonlinear functions used in the model.
 
@@ -384,6 +404,10 @@ def nonlinear_ar_ts(number_samples, init_array, params, func_idxs):
     np.ndarray
         A time series array generated based on the specified nonlinear AR model parameters.
     """
+    _check_number_samples(number_samples)
+    if len(params) != len(func_idxs):
+        raise ValueError("'params' and 'func_idxs' must have the same length")
+
     init_len = len(init_array)
 
     x = np.empty(number_samples + init_len)
