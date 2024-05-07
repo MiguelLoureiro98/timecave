@@ -127,5 +127,7 @@ class MarkovCV(base_splitter):
 
 
 if __name__ == "__main":
-    MarkovCV(ts=np.arange(0, 100), fs=0.2, p=3)
+    mcv = MarkovCV(ts=np.arange(0, 100), fs=0.2, p=3)
+    mcv.split()
+
     print()
