@@ -1,5 +1,4 @@
 import unittest
-import numpy as np
 from tsvalidation.data_generation.frequency_modulation import (
     FrequencyModulationWithStep,
     FrequencyModulationLinear,
@@ -25,7 +24,6 @@ class TestFrequencyModulationWithStep(unittest.TestCase):
 
 class TestFrequencyModulationLinear(unittest.TestCase):
     def test_initialization(self):
-        # Test initialization errors
         with self.assertRaises(TypeError):
             FrequencyModulationLinear("freq_init", 0.5)
         with self.assertRaises(TypeError):
