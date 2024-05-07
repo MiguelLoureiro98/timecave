@@ -73,7 +73,7 @@ def _get_arma_parameters(lags: int, max_root: int or float, seed: int = 1) -> np
     return params
 
 
-def _generate_random_parameters(param_possibilities: dict, seed=1):
+def _generate_random_parameters(param_possibilities: dict, seed=1) -> dict:
     """
     This function generates random parameters based on the possibilities provided
     in the `param_possibilities` dictionary.
@@ -101,11 +101,17 @@ def _generate_random_parameters(param_possibilities: dict, seed=1):
     return params
 
 
-def _generate_seeds(seed, num_seeds):
+def _generate_seeds(seed: int, num_seeds: int) -> list:
     """
     This function generates a list of random seeds based on the specified
     parameters.
     """
+    if isinstance(seed, int) is False:
+        raise TypeError("'seed' must be int")
+
+    if isinstance(num_seeds, int) is False:
+        raise TypeError("'num_seeds' must be int")
+
     random.seed(seed)
 
     seeds = [random.randint(0, 2**32 - 1) for _ in range(num_seeds)]
