@@ -15,18 +15,26 @@ import matplotlib.pyplot as plt
 
 
 class MarkovCV(base_splitter):
-    def __init__(self, ts: np.ndarray | pd.Series, fs: float | int, p: int) -> None:
+    def __init__(
+        self, ts: np.ndarray | pd.Series, fs: float | int, p: int, seed: int
+    ) -> None:
 
-        if self._p % 3 == 0:
-            self._m = int(2 * self._p / 3) + 1
+        if p % 3 == 0:
+            self._m = int(2 * p / 3) + 1
         else:
-            self._m = int(2 * self._p / 3) + 2
+            self._m = int(2 * p / 3) + 2
 
-        splits = 2 * self._m
+        self.n_subsets = (
+            2 * self._m
+        )  # total number of subsets (training + tests subsets)
+        splits = 2 * self._m  # due to 2-fold CV
         super().__init__(splits, ts, fs)
         self._p = p
+        self._seed = seed
 
     def _markov_iteration(self, n):
+        np.random.seed(self._seed)
+
         d = np.zeros(n, dtype=int)
 
         i, j = 1, -1
@@ -69,9 +77,14 @@ class MarkovCV(base_splitter):
 
         Suo = {}
         Sue = {}
-        for u in range(1, 2 * self._m + 1):
-            Suo[u] = Su[u][Su[u] % 2 != 0]
-            Sue[u] = Su[u][Su[u] % 2 == 0]
+        for u in range(1, self._m + 1):
+            print(u, u * 2 - 1, u * 2)
+            Suo[u] = Su[u * 2 - 1]
+            Sue[u] = Su[u * 2]
+
+        # for u in range(1, 2 * self._m + 1):
+        #    Suo[u] = Su[u][Su[u] % 2 != 0]
+        #    Sue[u] = Su[u][Su[u] % 2 == 0]
 
         return Suo, Sue
 
@@ -82,7 +95,7 @@ class MarkovCV(base_splitter):
             train, validation = Suo[i], Sue[i]
             yield (train, validation)
             train, validation = Sue[i], Suo[i]
-            yield (train, validation)
+            yield (train, validation)  # two-fold cross validation
 
     def info(self) -> None:
         pass
@@ -105,7 +118,7 @@ class MarkovCV(base_splitter):
             The figure's width.
         """
 
-        fig, axs = plt.subplots(self.n_splits - 1, 1, sharex=True)
+        fig, axs = plt.subplots(self.n_splits, 1, sharex=True)
         fig.set_figheight(height)
         fig.set_figwidth(width)
         fig.supxlabel("Samples")
@@ -121,13 +134,15 @@ class MarkovCV(base_splitter):
             axs[it].set_title("Fold {}".format(it + 1))
             axs[it].legend()
 
+        plt.subplots_adjust(hspace=0.5)
         plt.show()
 
         return
 
 
-if __name__ == "__main":
-    mcv = MarkovCV(ts=np.arange(0, 100), fs=0.2, p=3)
+if __name__ == "__main__":
+    mcv = MarkovCV(ts=np.ones(50), fs=0.2, p=4, seed=1)
     mcv.split()
+    mcv.plot(2, 10)
 
     print()
