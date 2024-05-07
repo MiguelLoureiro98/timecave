@@ -8,6 +8,8 @@ MarkovCV
 """
 
 from tsvalidation.validation_methods._base import base_splitter
+from tsvalidation.data_characteristics import get_features
+
 import numpy as np
 import pandas as pd
 from typing import Generator
@@ -75,48 +77,78 @@ class MarkovCV(base_splitter):
         for u in range(1, 2 * self._m + 1):
             Su[u] = np.where(Id == u)[0]
 
-        Suo = {}
-        Sue = {}
+        self._suo = {}
+        self._sue = {}
         for u in range(1, self._m + 1):
-            print(u, u * 2 - 1, u * 2)
-            Suo[u] = Su[u * 2 - 1]
-            Sue[u] = Su[u * 2]
+            self._suo[u] = Su[u * 2 - 1]
+            self._sue[u] = Su[u * 2]
 
-        # for u in range(1, 2 * self._m + 1):
-        #    Suo[u] = Su[u][Su[u] % 2 != 0]
-        #    Sue[u] = Su[u][Su[u] % 2 == 0]
-
-        return Suo, Sue
+        pass
 
     def split(self) -> Generator[tuple, None, None]:
-        Suo, Sue = self._markov_partitions()
-
-        for i in range(1, len(Suo.items()) + 1):
-            train, validation = Suo[i], Sue[i]
+        self._markov_partitions()
+        for i in range(1, len(self._suo.items()) + 1):
+            train, validation = self._suo[i], self._sue[i]
             yield (train, validation)
-            train, validation = Sue[i], Suo[i]
+            train, validation = self._sue[i], self._suo[i]
             yield (train, validation)  # two-fold cross validation
 
     def info(self) -> None:
+        lengths = []
+        for i in range(1, len(self._suo.items()) + 1):
+            lengths.extend([len(self._suo[i]), len(self._sue[i])])
+
+        print("Markov CV method")
+        print("---------------")
+        print(f"Time series size: {self._n_samples} samples")
+        print(f"Number of splits: {self.n_splits}")
+        print(f"Number of observations per set: {min(lengths)} to {max(lengths)}")
         pass
 
     def statistics(self) -> tuple[pd.DataFrame]:
-        return
+
+        if self._n_samples <= 2:
+
+            raise ValueError(
+                "Basic statistics can only be computed if the time series comprises more than two samples."
+            )
+
+        full_features = get_features(self._series, self.sampling_freq)
+        training_stats = []
+        validation_stats = []
+
+        for training, validation in self.split():
+
+            if self._series[training].shape[0] >= 2:
+
+                training_feat = get_features(self._series[training], self.sampling_freq)
+                training_stats.append(training_feat)
+
+            else:
+
+                print(
+                    "The training set is too small to compute most meaningful features."
+                )
+
+            if self._series[validation].shape[0] >= 2:
+
+                validation_feat = get_features(
+                    self._series[validation], self.sampling_freq
+                )
+                validation_stats.append(validation_feat)
+
+            else:
+
+                print(
+                    "The validation set is too small to compute most meaningful features."
+                )
+
+        training_features = pd.concat(training_stats)
+        validation_features = pd.concat(validation_stats)
+
+        return (full_features, training_features, validation_features)
 
     def plot(self, height: int, width: int) -> None:
-        """
-        _summary_
-
-        _extended_summary_
-
-        Parameters
-        ----------
-        height : int
-            The figure's height.
-
-        width : int
-            The figure's width.
-        """
 
         fig, axs = plt.subplots(self.n_splits, 1, sharex=True)
         fig.set_figheight(height)
@@ -144,5 +176,6 @@ if __name__ == "__main__":
     mcv = MarkovCV(ts=np.ones(50), fs=0.2, p=4, seed=1)
     mcv.split()
     mcv.plot(2, 10)
-
+    mcv.info()
+    mcv.statistics()
     print()
