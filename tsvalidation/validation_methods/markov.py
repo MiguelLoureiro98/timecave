@@ -31,6 +31,8 @@ class MarkovCV(base_splitter):
         super().__init__(splits, ts, 1)
         self._p = p
         self._seed = seed
+        self._suo = {}
+        self._sue = {}
 
     @property
     def sampling_freq(self) -> int | float:
@@ -103,8 +105,6 @@ class MarkovCV(base_splitter):
             self._suo[u] = Su[u * 2 - 1]
             self._sue[u] = Su[u * 2]
 
-        pass
-
     def split(self) -> Generator[tuple, None, None]:
         self._markov_partitions()
         for i in range(1, len(self._suo.items()) + 1):
@@ -114,6 +114,8 @@ class MarkovCV(base_splitter):
             yield (train, validation)  # two-fold cross validation
 
     def info(self) -> None:
+        self._markov_partitions()
+
         lengths = []
         for i in range(1, len(self._suo.items()) + 1):
             lengths.extend([len(self._suo[i]), len(self._sue[i])])
@@ -152,16 +154,16 @@ class MarkovCV(base_splitter):
                 "The folds are too small to compute most meaningful features."
             )
 
-        full_features = get_features(self._series, self.sampling_freq)[columns]
+        full_features = get_features(self._series, self._fs)[columns]
         training_stats = []
         validation_stats = []
 
         for training, validation in self.split():
 
-            training_feat = get_features(self._series[training], self.sampling_freq)
+            training_feat = get_features(self._series[training], self._fs)
             training_stats.append(training_feat[columns])
 
-            validation_feat = get_features(self._series[validation], self.sampling_freq)
+            validation_feat = get_features(self._series[validation], self._fs)
             validation_stats.append(validation_feat[columns])
 
         training_features = pd.concat(training_stats)
@@ -196,7 +198,5 @@ class MarkovCV(base_splitter):
 if __name__ == "__main__":
     mcv = MarkovCV(ts=np.arange(50), p=4, seed=1)
     mcv.split()
-    mcv.plot(2, 10)
     mcv.info()
-    mcv.statistics()
     print()
