@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 from typing import Generator
 import matplotlib.pyplot as plt
+import math
 
 
 class MarkovCV(base_splitter):
@@ -22,9 +23,9 @@ class MarkovCV(base_splitter):
         self._check_p(p)
 
         if p % 3 == 0:
-            self._m = int(2 * p / 3) + 1
+            self._m = math.floor(2 * p / 3) + 1
         else:
-            self._m = int(2 * p / 3) + 2
+            self._m = math.floor(2 * p / 3) + 2
 
         self.n_subsets = (
             2 * self._m
@@ -84,7 +85,7 @@ class MarkovCV(base_splitter):
 
         return None
 
-    def _markov_iteration(self, n):
+    def _markov_iteration(self, n: int) -> np.array:
         np.random.seed(self._seed)
 
         d = np.zeros(n, dtype=int)
