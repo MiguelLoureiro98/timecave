@@ -15,78 +15,77 @@ import numpy as np
 
 class TestOOS(unittest.TestCase):
 
-    def setUp(self) -> None:
+    @classmethod
+    def setUp(cls) -> None:
 
-        self.test_array_simple = np.arange(1, 11)
-        self.test_array_simple_odd = np.arange(1, 16)
-        self.test_array_high_freq = np.arange(1, 11, 0.01)
-        self.simple_freq = 1
-        self.high_freq = 100
-        self.Holdout1 = Holdout(self.test_array_simple, self.simple_freq)
-        self.Holdout2 = Holdout(self.test_array_simple_odd, self.simple_freq)
-        self.Holdout3 = Holdout(
-            self.test_array_high_freq, self.high_freq, validation_size=0.5
+        cls.test_array_simple = np.arange(1, 11)
+        cls.test_array_simple_odd = np.arange(1, 16)
+        cls.test_array_high_freq = np.arange(1, 11, 0.01)
+        cls.simple_freq = 1
+        cls.high_freq = 100
+        cls.Holdout1 = Holdout(cls.test_array_simple, cls.simple_freq)
+        cls.Holdout2 = Holdout(cls.test_array_simple_odd, cls.simple_freq)
+        cls.Holdout3 = Holdout(
+            cls.test_array_high_freq, cls.high_freq, validation_size=0.5
         )
-        self.Repeated_Holdout1 = Repeated_Holdout(
-            self.test_array_simple, self.simple_freq, 2
+        cls.Repeated_Holdout1 = Repeated_Holdout(
+            cls.test_array_simple, cls.simple_freq, 2
         )
-        self.Repeated_Holdout2 = Repeated_Holdout(
-            self.test_array_simple_odd, self.simple_freq, 5, [7, 10]
+        cls.Repeated_Holdout2 = Repeated_Holdout(
+            cls.test_array_simple_odd, cls.simple_freq, 5, [7, 10]
         )
-        self.Repeated_Holdout3 = Repeated_Holdout(
-            self.test_array_high_freq, self.high_freq, 10, [0.5, 0.6]
+        cls.Repeated_Holdout3 = Repeated_Holdout(
+            cls.test_array_high_freq, cls.high_freq, 10, [0.5, 0.6]
         )
-        self.Update1 = Rolling_Origin_Update(self.test_array_simple, self.simple_freq)
-        self.Update2 = Rolling_Origin_Update(
-            self.test_array_simple_odd, self.simple_freq, origin=9
+        cls.Update1 = Rolling_Origin_Update(cls.test_array_simple, cls.simple_freq)
+        cls.Update2 = Rolling_Origin_Update(
+            cls.test_array_simple_odd, cls.simple_freq, origin=9
         )
-        self.Update3 = Rolling_Origin_Update(
-            self.test_array_high_freq, self.high_freq, origin=0.5
+        cls.Update3 = Rolling_Origin_Update(
+            cls.test_array_high_freq, cls.high_freq, origin=0.5
         )
-        self.Recalibration1 = Rolling_Origin_Recalibration(
-            self.test_array_simple, self.simple_freq
+        cls.Recalibration1 = Rolling_Origin_Recalibration(
+            cls.test_array_simple, cls.simple_freq
         )
-        self.Recalibration2 = Rolling_Origin_Recalibration(
-            self.test_array_simple_odd, self.simple_freq, origin=9
+        cls.Recalibration2 = Rolling_Origin_Recalibration(
+            cls.test_array_simple_odd, cls.simple_freq, origin=9
         )
-        self.Recalibration3 = Rolling_Origin_Recalibration(
-            self.test_array_high_freq, self.high_freq, origin=0.5
+        cls.Recalibration3 = Rolling_Origin_Recalibration(
+            cls.test_array_high_freq, cls.high_freq, origin=0.5
         )
-        self.Window1 = Fixed_Size_Rolling_Window(
-            self.test_array_simple, self.simple_freq
+        cls.Window1 = Fixed_Size_Rolling_Window(cls.test_array_simple, cls.simple_freq)
+        cls.Window2 = Fixed_Size_Rolling_Window(
+            cls.test_array_simple_odd, cls.simple_freq, origin=9
         )
-        self.Window2 = Fixed_Size_Rolling_Window(
-            self.test_array_simple_odd, self.simple_freq, origin=9
-        )
-        self.Window3 = Fixed_Size_Rolling_Window(
-            self.test_array_high_freq, self.high_freq, origin=0.5
+        cls.Window3 = Fixed_Size_Rolling_Window(
+            cls.test_array_high_freq, cls.high_freq, origin=0.5
         )
 
         return
 
     @classmethod
-    def tearDownClass(self) -> None:
+    def tearDownClass(cls) -> None:
 
-        del self.test_array_simple
-        del self.test_array_simple_odd
-        del self.test_array_high_freq
-        del self.simple_freq
-        del self.high_freq
-        del self.Holdout1
-        del self.Holdout2
-        del self.Holdout3
-        del self.Repeated_Holdout1
-        del self.Repeated_Holdout2
-        del self.Repeated_Holdout3
-        del self.Update1
-        del self.Update2
-        del self.Update3
-        del self.Recalibration1
-        del self.Recalibration2
-        del self.Recalibration3
-        del self.Window1
-        del self.Window2
-        del self.Window3
+        del cls.test_array_simple
+        del cls.test_array_simple_odd
+        del cls.test_array_high_freq
+        del cls.simple_freq
+        del cls.high_freq
+        del cls.Holdout1
+        del cls.Holdout2
+        del cls.Holdout3
+        del cls.Repeated_Holdout1
+        del cls.Repeated_Holdout2
+        del cls.Repeated_Holdout3
+        del cls.Update1
+        del cls.Update2
+        del cls.Update3
+        del cls.Recalibration1
+        del cls.Recalibration2
+        del cls.Recalibration3
+        del cls.Window1
+        del cls.Window2
+        del cls.Window3
 
         return
 

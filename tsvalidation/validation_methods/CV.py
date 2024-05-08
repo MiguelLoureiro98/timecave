@@ -49,7 +49,7 @@ class Block_CV(base_splitter):
         """
 
         remainder = int(self._n_samples % self.n_splits)
-        split_size = int(np.round(self._n_samples / self.n_splits))
+        split_size = int(np.floor(self._n_samples / self.n_splits))
         split_ind = np.arange(0, self._n_samples, split_size)
         split_ind[:remainder] += 1
 
@@ -73,7 +73,7 @@ class Block_CV(base_splitter):
             _description_
         """
 
-        for i, ind, weight in enumerate(zip(self._splitting_ind[:-1]), self._weights):
+        for i, (ind, weight) in enumerate(zip(self._splitting_ind[:-1]), self._weights):
 
             next_ind = self._splitting_ind[i + 1]
 
