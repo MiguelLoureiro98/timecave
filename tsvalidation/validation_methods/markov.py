@@ -14,15 +14,18 @@ import numpy as np
 import pandas as pd
 from typing import Generator
 import matplotlib.pyplot as plt
+import math
 
 
 class MarkovCV(base_splitter):
-    def __init__(self, ts: np.ndarray | pd.Series, p: int, seed: int) -> None:
+    def __init__(self, ts: np.ndarray | pd.Series, p: int, seed: int = 1) -> None:
+        self._check_seed(seed)
+        self._check_p(p)
 
         if p % 3 == 0:
-            self._m = int(2 * p / 3) + 1
+            self._m = math.floor(2 * p / 3) + 1
         else:
-            self._m = int(2 * p / 3) + 2
+            self._m = math.floor(2 * p / 3) + 2
 
         self.n_subsets = (
             2 * self._m
@@ -33,6 +36,32 @@ class MarkovCV(base_splitter):
         self._seed = seed
         self._suo = {}
         self._sue = {}
+
+    def _check_p(self, p: int) -> None:
+        """
+        Perform a type and value check on the p.
+        """
+
+        if isinstance(p, int) is False:
+
+            raise TypeError("'p' should be an integer.")
+
+        if p < 0:
+
+            raise ValueError("'p' must be positive.")
+
+        return
+
+    def _check_seed(self, seed: int) -> None:
+        """
+        Perform a type check on the seed.
+        """
+
+        if isinstance(seed, int) is False:
+
+            raise TypeError("'seed' should be an integer.")
+
+        return
 
     @property
     def sampling_freq(self) -> int | float:
@@ -56,7 +85,7 @@ class MarkovCV(base_splitter):
 
         return None
 
-    def _markov_iteration(self, n):
+    def _markov_iteration(self, n: int) -> np.array:
         np.random.seed(self._seed)
 
         d = np.zeros(n, dtype=int)
@@ -148,12 +177,6 @@ class MarkovCV(base_splitter):
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
 
-        if int(np.round(self._n_samples / self.n_splits)) < 2:
-
-            raise ValueError(
-                "The folds are too small to compute most meaningful features."
-            )
-
         full_features = get_features(self._series, self._fs)[columns]
         training_stats = []
         validation_stats = []
@@ -196,7 +219,8 @@ class MarkovCV(base_splitter):
 
 
 if __name__ == "__main__":
-    mcv = MarkovCV(ts=np.arange(50), p=4, seed=1)
+    mcv = MarkovCV(ts=np.arange(50), p=1, seed=1)
     mcv.split()
     mcv.info()
+    mcv.plot(2, 10)
     print()
