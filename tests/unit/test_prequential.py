@@ -439,7 +439,33 @@ class TestPrequential(unittest.TestCase):
         Test the 'info' method.
         """
 
-        pass
+        self.Growing1.info();
+        self.Growing2.info();
+        self.Growing3.info();
+        self.Growing1_gap.info();
+        self.Growing2_gap.info();
+        self.Growing3_gap.info();
+        self.Growing1_linear.info();
+        self.Growing2_linear.info();
+        self.Growing3_linear.info();
+        self.Growing1_exponential.info();
+        self.Growing2_exponential.info();
+        self.Growing3_exponential.info();
+
+        self.Rolling1.info();
+        self.Rolling2.info();
+        self.Rolling3.info();
+        self.Rolling1_gap.info();
+        self.Rolling2_gap.info();
+        self.Rolling3_gap.info();
+        self.Rolling1_linear.info();
+        self.Rolling2_linear.info();
+        self.Rolling3_linear.info();
+        self.Rolling1_exponential.info();
+        self.Rolling2_exponential.info();
+        self.Rolling3_exponential.info();
+
+        return;
 
     def test_statistics(self):
         

@@ -144,8 +144,8 @@ class Growing_Window(base_splitter):
 
             max_fold_size += 1
 
-        min_fold_size_pct = np.round(min_fold_size / self._n_samples, 4) * 100
-        max_fold_size_pct = np.round(max_fold_size / self._n_samples, 4) * 100
+        min_fold_size_pct = np.round(min_fold_size / self._n_samples * 100, 2)
+        max_fold_size_pct = np.round(max_fold_size / self._n_samples * 100, 2)
 
         max_train = (
             min_fold_size * (self.n_splits - remainder) + max_fold_size * remainder
@@ -368,8 +368,8 @@ class Rolling_Window(base_splitter):
 
             max_fold_size += 1
 
-        min_fold_size_pct = np.round(min_fold_size / self._n_samples, 4) * 100
-        max_fold_size_pct = np.round(max_fold_size / self._n_samples, 4) * 100
+        min_fold_size_pct = np.round(min_fold_size / self._n_samples * 100, 2)
+        max_fold_size_pct = np.round(max_fold_size / self._n_samples * 100, 2)
 
         print("Rolling Window method")
         print("---------------------")
