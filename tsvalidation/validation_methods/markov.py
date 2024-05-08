@@ -177,12 +177,6 @@ class MarkovCV(base_splitter):
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
 
-        if int(np.round(self._n_samples / self.n_splits)) < 2:
-
-            raise ValueError(
-                "The folds are too small to compute most meaningful features."
-            )
-
         full_features = get_features(self._series, self._fs)[columns]
         training_stats = []
         validation_stats = []

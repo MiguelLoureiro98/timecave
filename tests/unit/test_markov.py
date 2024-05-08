@@ -141,6 +141,32 @@ class TestMarkovCV(unittest.TestCase):
 
         return
 
+    def test_statistics(self) -> None:
+        columns = [
+            "Mean",
+            "Median",
+            "Min",
+            "Max",
+            "Variance",
+            "P2P_amplitude",
+            "Trend_slope",
+            "Strength_of_trend",
+            "Mean_crossing_rate",
+            "Median_crossing_rate",
+        ]
+
+        m1_full_stats, m1_training_stats, m1_validation_stats = self.m1.statistics()
+
+        self.assertListEqual(columns, m1_full_stats.columns.tolist())
+        self.assertListEqual(columns, m1_training_stats.columns.tolist())
+        self.assertListEqual(columns, m1_validation_stats.columns.tolist())
+
+        self.assertEqual(m1_full_stats.shape[0], 1)
+        self.assertEqual(m1_training_stats.shape[0], self.m1.n_splits)
+        self.assertEqual(m1_validation_stats.shape[0], self.m1.n_splits)
+
+        return
+
     def test_info(self) -> None:
         """
         Test the 'info' method.
@@ -153,7 +179,6 @@ class TestMarkovCV(unittest.TestCase):
 
         return
 
-    """
     def test_plot(self) -> None:
         height = 2
         width = 10
@@ -163,7 +188,7 @@ class TestMarkovCV(unittest.TestCase):
         self.m2.plot(height, width)
         self.m3.plot(height, width)
 
-        return"""
+        return
 
 
 if __name__ == "__main__":
