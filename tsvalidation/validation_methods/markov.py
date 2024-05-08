@@ -17,7 +17,9 @@ import matplotlib.pyplot as plt
 
 
 class MarkovCV(base_splitter):
-    def __init__(self, ts: np.ndarray | pd.Series, p: int, seed: int) -> None:
+    def __init__(self, ts: np.ndarray | pd.Series, p: int, seed: int = 1) -> None:
+        self._check_seed(seed)
+        self._check_p(p)
 
         if p % 3 == 0:
             self._m = int(2 * p / 3) + 1
@@ -33,6 +35,32 @@ class MarkovCV(base_splitter):
         self._seed = seed
         self._suo = {}
         self._sue = {}
+
+    def _check_p(self, p: int) -> None:
+        """
+        Perform a type and value check on the p.
+        """
+
+        if isinstance(p, int) is False:
+
+            raise TypeError("'p' should be an integer.")
+
+        if p < 0:
+
+            raise ValueError("'p' must be positive.")
+
+        return
+
+    def _check_seed(self, seed: int) -> None:
+        """
+        Perform a type check on the seed.
+        """
+
+        if isinstance(seed, int) is False:
+
+            raise TypeError("'seed' should be an integer.")
+
+        return
 
     @property
     def sampling_freq(self) -> int | float:
@@ -196,7 +224,8 @@ class MarkovCV(base_splitter):
 
 
 if __name__ == "__main__":
-    mcv = MarkovCV(ts=np.arange(50), p=4, seed=1)
+    mcv = MarkovCV(ts=np.arange(50), p=1, seed=1)
     mcv.split()
     mcv.info()
+    mcv.plot(2, 10)
     print()
