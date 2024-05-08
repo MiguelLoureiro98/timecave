@@ -9,7 +9,21 @@ from itertools import combinations
 from typing import List
 
 
+def _are_disjoint_arrays(arrays: List[np.array]):
+    """
+    Checks if arrays are disjoint.
+    """
+    for array1, array2 in combinations(arrays, 2):
+        if set(array1.flatten()).intersection(array2.flatten()):
+            return False
+    return True
+
+
 def _checks_union_train_val(method: MarkovCV):
+    """
+    Concatenates training and validation patterns from a MarkovCV object.
+    """
+
     all_training_patterns = []
     all_validation_patterns = []
     for training, validation in method.split():
@@ -65,6 +79,9 @@ class TestMarkovCV(unittest.TestCase):
         self.assertEqual(self.m3._n_samples, len(self.ts2))
 
     def test_markov_iteration(self) -> None:
+        """
+        Test the 't_markov_iteration' method.
+        """
         np.testing.assert_array_equal(  # checking if the seed is working
             self.m1._markov_iteration(self.m1._n_samples),
             self.m1_dup._markov_iteration(self.m1_dup._n_samples),
@@ -78,13 +95,10 @@ class TestMarkovCV(unittest.TestCase):
         o3 = self.m3._markov_iteration(self.m3._n_samples)
         self.assertEqual(self.m3._n_samples, len(o3))
 
-    def _are_disjoint_arrays(self, arrays: List[np.array]):
-        for array1, array2 in combinations(arrays, 2):
-            if set(array1.flatten()).intersection(array2.flatten()):
-                return False
-        return True
-
     def test_markov_partitions(self) -> None:
+        """
+        Test the '_markov_partitions' method.
+        """
 
         self.m0._markov_partitions()
         self.assert_(bool(self.m0._suo))
@@ -107,21 +121,24 @@ class TestMarkovCV(unittest.TestCase):
         # check if sets are disjoints
         su0 = list(self.m0._suo.values())
         su0.extend(list(self.m0._sue.values()))
-        self.assert_(self._are_disjoint_arrays(su0))
+        self.assert_(_are_disjoint_arrays(su0))
 
         su1 = list(self.m1._suo.values())
         su1.extend(list(self.m1._sue.values()))
-        self.assert_(self._are_disjoint_arrays(su1))
+        self.assert_(_are_disjoint_arrays(su1))
 
         su2 = list(self.m2._suo.values())
         su2.extend(list(self.m2._sue.values()))
-        self.assert_(self._are_disjoint_arrays(su2))
+        self.assert_(_are_disjoint_arrays(su2))
 
         su3 = list(self.m3._suo.values())
         su3.extend(list(self.m3._sue.values()))
-        self.assert_(self._are_disjoint_arrays(su3))
+        self.assert_(_are_disjoint_arrays(su3))
 
     def test_split(self) -> None:
+        """
+        Test the 'split' method.
+        """
         # checking no sample is left behind
         all_train, all_val = _checks_union_train_val(self.m0)
         np.testing.assert_array_equal(all_train, np.arange(self.m0._n_samples))
@@ -142,6 +159,9 @@ class TestMarkovCV(unittest.TestCase):
         return
 
     def test_statistics(self) -> None:
+        """
+        Test the 'statistics' method.
+        """
         columns = [
             "Mean",
             "Median",
@@ -180,6 +200,9 @@ class TestMarkovCV(unittest.TestCase):
         return
 
     def test_plot(self) -> None:
+        """
+        Test the 'plot' method.
+        """
         height = 2
         width = 10
 
