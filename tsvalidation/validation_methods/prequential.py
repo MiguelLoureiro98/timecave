@@ -135,7 +135,7 @@ class Growing_Window(base_splitter):
         _extended_summary_
         """
 
-        min_fold_size = int(np.round(self._n_samples / self.n_splits))
+        min_fold_size = int(np.floor(self._n_samples / self.n_splits))
         max_fold_size = min_fold_size
 
         remainder = self._n_samples % self.n_splits
@@ -148,9 +148,9 @@ class Growing_Window(base_splitter):
         max_fold_size_pct = np.round(max_fold_size / self._n_samples * 100, 2)
 
         max_train = (
-            min_fold_size * (self.n_splits - remainder) + max_fold_size * remainder
+            min_fold_size * (self.n_splits - remainder - 1) + max_fold_size * remainder
         )
-        max_train_pct = np.round(max_train / self._n_samples, 4) * 100
+        max_train_pct = np.round(max_train / self._n_samples * 100, 2)
 
         print("Growing Window method")
         print("---------------------")
@@ -191,7 +191,7 @@ class Growing_Window(base_splitter):
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
 
-        if int(np.round(self._n_samples / self.n_splits)) < 2:
+        if int(np.floor(self._n_samples / self.n_splits)) < 2:
 
             raise ValueError(
                 "The folds are too small to compute most meaningful features."
@@ -201,7 +201,7 @@ class Growing_Window(base_splitter):
         training_stats = []
         validation_stats = []
 
-        for training, validation in self.split():
+        for (training, validation, _) in self.split():
 
             training_feat = get_features(self._series[training], self.sampling_freq)
             training_stats.append(training_feat)
@@ -236,14 +236,29 @@ class Growing_Window(base_splitter):
         fig.supylabel("Time Series")
         fig.suptitle("Growing Window method")
 
-        for it, (training, validation) in enumerate(self.split()):
+        if(self.n_splits - self._gap - 1 > 1):
 
-            axs[it].scatter(training, self._series[training], label="Training set")
-            axs[it].scatter(
-                validation, self._series[validation], label="Validation set"
-            )
-            axs[it].set_title("Iteration {}".format(it + 1))
-            axs[it].legend()
+            for it, (training, validation, weight) in enumerate(self.split()):
+
+                axs[it].scatter(training, self._series[training], label="Training set")
+                axs[it].scatter(
+                    validation, self._series[validation], label="Validation set"
+                )
+                axs[it].set_title("Iteration: {} Weight: {}".format(it + 1, weight))
+                axs[it].set_ylim([self._series.min() - 1, self._series.max() + 1])
+                axs[it].set_xlim([- 1, self._n_samples + 1])
+                axs[it].legend()
+
+        else:
+
+            for (training, validation, weight) in self.split():
+
+                axs.scatter(training, self._series[training], label="Training set")
+                axs.scatter(
+                    validation, self._series[validation], label="Validation set"
+                )
+                axs.set_title("Iteration: {} Weight: {}".format(1, weight))
+                axs.legend()
 
         plt.show()
 
@@ -359,7 +374,7 @@ class Rolling_Window(base_splitter):
         _extended_summary_
         """
 
-        min_fold_size = int(np.round(self._n_samples / self.n_splits))
+        min_fold_size = int(np.floor(self._n_samples / self.n_splits))
         max_fold_size = min_fold_size
 
         remainder = self._n_samples % self.n_splits
@@ -416,7 +431,7 @@ class Rolling_Window(base_splitter):
         training_stats = []
         validation_stats = []
 
-        for training, validation in self.split():
+        for (training, validation, _) in self.split():
 
             training_feat = get_features(self._series[training], self.sampling_freq)
             training_stats.append(training_feat)
@@ -451,14 +466,29 @@ class Rolling_Window(base_splitter):
         fig.supylabel("Time Series")
         fig.suptitle("Rolling Window method")
 
-        for it, (training, validation) in enumerate(self.split()):
+        if(self.n_splits - self._gap - 1 > 1):
 
-            axs[it].scatter(training, self._series[training], label="Training set")
-            axs[it].scatter(
-                validation, self._series[validation], label="Validation set"
-            )
-            axs[it].set_title("Iteration {}".format(it + 1))
-            axs[it].legend()
+            for it, (training, validation, weight) in enumerate(self.split()):
+
+                axs[it].scatter(training, self._series[training], label="Training set")
+                axs[it].scatter(
+                    validation, self._series[validation], label="Validation set"
+                )
+                axs[it].set_title("Iteration: {} Weight: {}".format(it + 1, weight))
+                axs[it].set_ylim([self._series.min() - 1, self._series.max() + 1])
+                axs[it].set_xlim([- 1, self._n_samples + 1])
+                axs[it].legend()
+
+        else:
+
+            for (training, validation, weight) in self.split():
+
+                axs.scatter(training, self._series[training], label="Training set")
+                axs.scatter(
+                    validation, self._series[validation], label="Validation set"
+                )
+                axs.set_title("Iteration: {} Weight: {}".format(1, weight))
+                axs.legend()
 
         plt.show()
 

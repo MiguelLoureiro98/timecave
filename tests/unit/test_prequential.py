@@ -473,7 +473,72 @@ class TestPrequential(unittest.TestCase):
         Test the 'statistics' method.
         """
 
-        pass
+        # Exceptions
+        two_sample_series = np.zeros(shape=(2,));
+        growing2samp = Growing_Window(2, two_sample_series, 1);
+        rolling2samp = Rolling_Window(2, two_sample_series, 1);
+
+        small_series = np.zeros(shape=(5,));
+        growing5samp = Growing_Window(5, small_series, 1);
+        rolling5samp = Rolling_Window(5, small_series, 1);
+
+        self.assertRaises(ValueError, growing2samp.statistics);
+        self.assertRaises(ValueError, rolling2samp.statistics);
+        self.assertRaises(ValueError, growing5samp.statistics);
+        self.assertRaises(ValueError, rolling5samp.statistics);
+
+        # Functionality
+        columns = 13
+        column_list = [
+            "Mean",
+            "Median",
+            "Min",
+            "Max",
+            "Variance",
+            "P2P_amplitude",
+            "Trend_slope",
+            "Spectral_centroid",
+            "Spectral_rolloff",
+            "Spectral_entropy",
+            "Strength_of_trend",
+            "Mean_crossing_rate",
+            "Median_crossing_rate",
+        ]
+
+        growing1_full_stats, growing1_train_stats, growing1_val_stats = self.Growing1.statistics();
+        rolling1_full_stats, rolling1_train_stats, rolling1_val_stats = self.Rolling1.statistics();
+
+        growing2_full_stats, growing2_train_stats, growing2_val_stats = self.Growing2.statistics();
+        rolling2_full_stats, rolling2_train_stats, rolling2_val_stats = self.Rolling2.statistics();
+
+        growing_gap_full_stats, growing_gap_train_stats, growing_gap_val_stats = self.Growing1_gap.statistics();
+        rolling_gap_full_stats, rolling_gap_train_stats, rolling_gap_val_stats = self.Rolling1_gap.statistics();
+
+        self.assertEqual(growing1_full_stats.shape[1], columns);
+        self.assertListEqual(growing1_full_stats.columns.tolist(), column_list);
+
+        self.assertEqual(growing1_full_stats.shape[0], 1);
+        self.assertEqual(growing1_train_stats.shape[0], 4);
+        self.assertEqual(growing1_val_stats.shape[0], 4);
+        self.assertEqual(rolling1_full_stats.shape[0], 1);
+        self.assertEqual(rolling1_train_stats.shape[0], 4);
+        self.assertEqual(rolling1_val_stats.shape[0], 4);
+
+        self.assertEqual(growing2_full_stats.shape[0], 1);
+        self.assertEqual(growing2_train_stats.shape[0], 4);
+        self.assertEqual(growing2_val_stats.shape[0], 4);
+        self.assertEqual(rolling2_full_stats.shape[0], 1);
+        self.assertEqual(rolling2_train_stats.shape[0], 4);
+        self.assertEqual(rolling2_val_stats.shape[0], 4);
+
+        self.assertEqual(growing_gap_full_stats.shape[0], 1);
+        self.assertEqual(growing_gap_train_stats.shape[0], 3);
+        self.assertEqual(growing_gap_val_stats.shape[0], 3);
+        self.assertEqual(rolling_gap_full_stats.shape[0], 1);
+        self.assertEqual(rolling_gap_train_stats.shape[0], 3);
+        self.assertEqual(rolling_gap_val_stats.shape[0], 3);
+
+        return;
 
     def test_plot(self):
 
@@ -481,7 +546,36 @@ class TestPrequential(unittest.TestCase):
         Test the 'plot' method.
         """
 
-        pass
+        height = 10;
+        width = 10;
+
+        self.Growing1.plot(height, width);
+        self.Growing2.plot(height, width);
+        self.Growing3.plot(height, width);
+        self.Growing1_gap.plot(height, width);
+        self.Growing2_gap.plot(height, width);
+        self.Growing3_gap.plot(height, width);
+        self.Growing1_linear.plot(height, width);
+        self.Growing2_linear.plot(height, width);
+        self.Growing3_linear.plot(height, width);
+        self.Growing1_exponential.plot(height, width);
+        self.Growing2_exponential.plot(height, width);
+        self.Growing3_exponential.plot(height, width);
+
+        self.Rolling1.plot(height, width);
+        self.Rolling2.plot(height, width);
+        self.Rolling3.plot(height, width);
+        self.Rolling1_gap.plot(height, width);
+        self.Rolling2_gap.plot(height, width);
+        self.Rolling3_gap.plot(height, width);
+        self.Rolling1_linear.plot(height, width);
+        self.Rolling2_linear.plot(height, width);
+        self.Rolling3_linear.plot(height, width);
+        self.Rolling1_exponential.plot(height, width);
+        self.Rolling2_exponential.plot(height, width);
+        self.Rolling3_exponential.plot(height, width);
+
+        return;
 
 
 if __name__ == "__main__":
