@@ -44,7 +44,11 @@ def recursive_forecast(model, series, pred_window, lags):
 
 
 def predict_lstm(
-    series: np.array, pred_window: int, lags: int = 3, epochs: int = 200
+    series: np.array,
+    pred_window: int,
+    lags: int = 3,
+    epochs: int = 200,
+    verbose: int = 0,
 ) -> np.array:
     """
     Predict future values using Long Short-Term Memory (LSTM).
@@ -60,7 +64,7 @@ def predict_lstm(
     model.compile(optimizer="adam", loss="mse")
 
     # Fit the model
-    model.fit(X, y, epochs=epochs, verbose=0)
+    model.fit(X, y, epochs=epochs, verbose=2)
 
     forecast = recursive_forecast(model, series, pred_window, lags)
 
