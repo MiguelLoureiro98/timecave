@@ -1,6 +1,46 @@
 import pandas as pd
 
 
+def check_column_order(df, time_col_name, fix=False):
+    cols = list(df.columns)
+    if cols[0] != time_col_name:
+        print("1. FAILED: First column is not time column!")
+
+        if fix:
+            cols.remove(time_col_name)
+            new_cols = [time_col_name].extend(cols)
+            return df[new_cols]
+        return
+
+    else:
+        print("1. Column order is correct!")
+        return
+
+
+def check_col_types(df):
+    wrong_types = 0
+
+    if not pd.api.types.is_integer_dtype(df.index):
+        print("Index type is not int")
+        wrong_types += 1
+
+    first_column_type = df.iloc[:, 0].dtype
+    if not pd.api.types.is_datetime64_any_dtype(first_column_type):
+        print("First column type is not datetime-like")
+        wrong_types += 1
+
+    for col in df.columns[1:]:
+        col_type = df[col].dtype
+        if not pd.api.types.is_numeric_dtype(col_type):
+            print(f"Column '{col}' type is not float or int: {col_type}")
+            wrong_types += 1
+
+    if wrong_types == 0:
+        print("2. All column types are correct!")
+    else:
+        print(f"2. Total {wrong_types} columns have wrong types.")
+
+
 def check_time_column(
     df: pd.DataFrame,
     time_col_name="Date",
@@ -14,7 +54,7 @@ def check_time_column(
     - If there are duplicated timestamps, only the first occurrence is kept.
     - If there are missing timestamps, they are added, and NA values are filled in for the remaining columns.
     """
-    if business_days == "False":
+    if business_days == False:
         date_range = pd.date_range(
             start=df[time_col_name].min(), end=df[time_col_name].max(), freq=freq
         )
@@ -29,23 +69,22 @@ def check_time_column(
     print(f"4. Number of duplicated timesteps: {nb_dup_timesteps}")
 
     if fix:
-        df_new = df.copy()
         if nb_dup_timesteps > 0:
-            df_new = df_new.drop_duplicates(subset=[time_col_name], keep="first")
+            df = df.drop_duplicates(subset=[time_col_name], keep="first")
 
         if nb_na_timesteps > 0:
             full_date_range_df = pd.DataFrame(
                 index=pd.date_range(
-                    start=df_new[time_col_name].min(),
-                    end=df_new[time_col_name].max(),
+                    start=df[time_col_name].min(),
+                    end=df[time_col_name].max(),
                     freq=freq,
                 )
             )
-            df_new = full_date_range_df.merge(
-                df_new, left_index=True, right_on=time_col_name, how="left"
+            df = full_date_range_df.merge(
+                df, left_index=True, right_on=time_col_name, how="left"
             ).reset_index(drop=True)
 
-        return df_new
+        return df
     else:
         return
 
@@ -64,53 +103,10 @@ def check_missing_values(df, alpha=1, fix=False):
     print(f"5. Number of Time Series with missing values : {nb_col_with_na}")
 
     if fix == True:
-        df_filtered = df[selected_columns]
-        df_filtered.fillna(method="ffill", inplace=True)
+        df_filtered = df[selected_columns].copy()
+        df_filtered.ffill(inplace=True)
         return df_filtered
     else:
-        return
-
-
-def check_col_types(df):
-    wrong_types = 0
-
-    # Check index type
-    if not pd.api.types.is_integer_dtype(df.index):
-        print("Index type is not int")
-        wrong_types += 1
-
-    # Check first column type
-    first_column_type = df.iloc[:, 0].dtype
-    if not pd.api.types.is_datetime64_any_dtype(first_column_type):
-        print("First column type is not datetime-like")
-        wrong_types += 1
-
-    # Check remaining columns
-    for col in df.columns[1:]:
-        col_type = df[col].dtype
-        if not pd.api.types.is_numeric_dtype(col_type):
-            print(f"Column '{col}' type is not float or int: {col_type}")
-            wrong_types += 1
-
-    if wrong_types == 0:
-        print("2. All column types are correct!")
-    else:
-        print(f"2. Total {wrong_types} columns have wrong types.")
-
-
-def check_column_order(df, time_col_name, fix=False):
-    cols = list(df.columns)
-    if cols[0] != time_col_name:
-        print("1. FAILED: First column is not time column!")
-
-        if fix:
-            cols.remove(time_col_name)
-            new_cols = [time_col_name].extend(cols)
-            return df[new_cols]
-        return
-
-    else:
-        print("1. Column order is correct!")
         return
 
 
