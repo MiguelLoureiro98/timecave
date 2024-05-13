@@ -64,10 +64,10 @@ def predict_lstm(
     model.compile(optimizer="adam", loss="mse")
 
     # Fit the model
-    model.fit(X, y, epochs=epochs, verbose=2)
+    model.fit(X, y, epochs=epochs, verbose=verbose)
 
     forecast = recursive_forecast(model, series, pred_window, lags)
 
     print("Forecasted values for the next", pred_window, "timesteps:")
     print(forecast)
-    return np.array(forecast)
+    return {"prediction": np.array(forecast), "trained_model": model}
