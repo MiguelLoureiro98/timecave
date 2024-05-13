@@ -29,8 +29,9 @@ def check_time_column(
     print(f"4. Number of duplicated timesteps: {nb_dup_timesteps}")
 
     if fix:
+        df_new = df.copy()
         if nb_dup_timesteps > 0:
-            df_new = df.drop_duplicates(subset=[time_col_name], keep="first")
+            df_new = df_new.drop_duplicates(subset=[time_col_name], keep="first")
 
         if nb_na_timesteps > 0:
             full_date_range_df = pd.DataFrame(
@@ -49,17 +50,25 @@ def check_time_column(
         return
 
 
-def check_missing_values(df, fix=False):
-    missing_counts = df.isnull().sum()
+def check_missing_values(df, alpha=1, fix=False):
+    na_df = df.isnull()
+    missing_counts = na_df.sum()
+    missing_percentage = df.isnull().mean()
     nb_col_with_na = 0
+    selected_columns = missing_percentage[missing_percentage <= alpha].index
+
     for column, count in missing_counts.items():
-        if count > 0:
+        if count > 0 and column in selected_columns:
             nb_col_with_na += 1
             print(f"Number of missing values in column '{column}' : {count}")
-    if fix == True:
-        df.fillna(method="ffill", inplace=True)
     print(f"5. Number of Time Series with missing values : {nb_col_with_na}")
-    return df
+
+    if fix == True:
+        df_filtered = df[selected_columns]
+        df_filtered.fillna(method="ffill", inplace=True)
+        return df_filtered
+    else:
+        return
 
 
 def check_col_types(df):
@@ -89,12 +98,29 @@ def check_col_types(df):
         print(f"2. Total {wrong_types} columns have wrong types.")
 
 
+def check_column_order(df, time_col_name, fix=False):
+    cols = list(df.columns)
+    if cols[0] != time_col_name:
+        print("1. FAILED: First column is not time column!")
+
+        if fix:
+            cols.remove(time_col_name)
+            new_cols = [time_col_name].extend(cols)
+            return df[new_cols]
+        return
+
+    else:
+        print("1. Column order is correct!")
+        return
+
+
 def data_report(
     df: pd.DataFrame, time_col_name="Date", freq="D", business_days: bool = False
 ):
     print("_" * 64)
     print(" " * 25, "DATA REPORT", " " * 25)
     print("_" * 64)
+    check_column_order(df, time_col_name)
     check_col_types(df)
     check_time_column(df, time_col_name, freq, business_days=business_days, fix=False)
     check_missing_values(df, fix=False)
