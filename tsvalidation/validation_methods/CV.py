@@ -51,13 +51,27 @@ class Block_CV(base_splitter):
         remainder = int(self._n_samples % self.n_splits)
         split_size = int(np.floor(self._n_samples / self.n_splits))
         split_ind = np.arange(0, self._n_samples, split_size)
-        split_ind[:remainder] += 1
 
-        if remainder != 0:
+        if(remainder != 0):
 
-            split_ind[remainder:] += remainder
+            if(split_ind.shape[0] > self.n_splits):
 
-        split_ind = np.append(split_ind, self._n_samples)
+                split_ind = split_ind[:-1];
+            
+            split_ind[1:remainder+1] += np.array([i for i in range(1, remainder+1)]);
+            split_ind[remainder+1:] += remainder;
+
+        else:
+
+            split_ind = np.append(split_ind, self._n_samples);
+
+        #split_ind[:remainder] += 1
+
+        #if remainder != 0:
+
+        #    split_ind[remainder:] += remainder
+
+        #split_ind = np.append(split_ind, self._n_samples)
 
         return split_ind
 
@@ -176,7 +190,7 @@ class Block_CV(base_splitter):
             The figure's width.
         """
 
-        fig, axs = plt.subplots(self.n_splits - self._gap - 1, 1, sharex=True)
+        fig, axs = plt.subplots(self.n_splits - 1, 1, sharex=True)
         fig.set_figheight(height)
         fig.set_figwidth(width)
         fig.supxlabel("Samples")
@@ -236,7 +250,7 @@ class hv_Block_CV(base_splitter):
 
             raise ValueError("Both 'h' and 'v' must be non-negative.")
 
-        if h + v > np.floor(self._n_samples / 2):
+        if h + v >= np.floor(self._n_samples / 2):
 
             raise ValueError(
                 "The sum of h and v should be less than half the amount of samples that compose the time series."
