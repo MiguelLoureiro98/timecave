@@ -53,10 +53,6 @@ class Block_CV(base_splitter):
         split_ind = np.arange(0, self._n_samples, split_size)
 
         if(remainder != 0):
-
-            if(split_ind.shape[0] > self.n_splits):
-
-                split_ind = split_ind[:-1];
             
             split_ind[1:remainder+1] += np.array([i for i in range(1, remainder+1)]);
             split_ind[remainder+1:] += remainder;
@@ -87,7 +83,7 @@ class Block_CV(base_splitter):
             _description_
         """
 
-        for i, (ind, weight) in enumerate(zip(self._splitting_ind[:-1]), self._weights):
+        for i, (ind, weight) in enumerate(zip(self._splitting_ind[:-1], self._weights)):
 
             next_ind = self._splitting_ind[i + 1]
 
@@ -103,7 +99,7 @@ class Block_CV(base_splitter):
         _extended_summary_
         """
 
-        min_fold_size = int(np.round(self._n_samples / self.n_splits))
+        min_fold_size = int(np.floor(self._n_samples / self.n_splits))
         max_fold_size = min_fold_size
 
         remainder = self._n_samples % self.n_splits
@@ -112,8 +108,8 @@ class Block_CV(base_splitter):
 
             max_fold_size += 1
 
-        min_fold_size_pct = np.round(min_fold_size / self._n_samples, 4) * 100
-        max_fold_size_pct = np.round(max_fold_size / self._n_samples, 4) * 100
+        min_fold_size_pct = np.round(min_fold_size / self._n_samples * 100, 2)
+        max_fold_size_pct = np.round(max_fold_size / self._n_samples * 100, 2)
 
         print("Block CV method")
         print("---------------")
@@ -162,7 +158,7 @@ class Block_CV(base_splitter):
         training_stats = []
         validation_stats = []
 
-        for training, validation in self.split():
+        for (training, validation, _) in self.split():
 
             training_feat = get_features(self._series[training], self.sampling_freq)
             training_stats.append(training_feat)
@@ -190,20 +186,22 @@ class Block_CV(base_splitter):
             The figure's width.
         """
 
-        fig, axs = plt.subplots(self.n_splits - 1, 1, sharex=True)
+        fig, axs = plt.subplots(self.n_splits, 1, sharex=True)
         fig.set_figheight(height)
         fig.set_figwidth(width)
         fig.supxlabel("Samples")
         fig.supylabel("Time Series")
         fig.suptitle("Block CV method")
 
-        for it, (training, validation) in enumerate(self.split()):
+        for it, (training, validation, w) in enumerate(self.split()):
 
             axs[it].scatter(training, self._series[training], label="Training set")
             axs[it].scatter(
                 validation, self._series[validation], label="Validation set"
             )
-            axs[it].set_title("Fold {}".format(it + 1))
+            axs[it].set_title("Fold: {} Weight: {}".format(it + 1, w))
+            axs[it].set_ylim([self._series.min() - 1, self._series.max() + 1])
+            axs[it].set_xlim([- 1, self._n_samples + 1])
             axs[it].legend()
 
         plt.show()
@@ -232,6 +230,7 @@ class hv_Block_CV(base_splitter):
     ) -> None:
 
         super().__init__(ts.shape[0], ts, fs)
+        self._check_hv(h, v)
         self._h = h
         self._v = v
 
@@ -291,15 +290,15 @@ class hv_Block_CV(base_splitter):
         _extended_summary_
         """
 
-        min_train_size = self._n_samples - 2 * (self._h + self._v + 1)
+        min_train_size = self._n_samples - 2 * (self._h + self._v + 1) + 1
         max_train_size = self._n_samples - self._h - self._v - 1
         min_val_size = self._v + 1
         max_val_size = 2 * self._v + 1
 
-        min_train_pct = np.round(min_train_size / self._n_samples, 4) * 100
-        max_train_pct = np.round(max_train_size / self._n_samples, 4) * 100
-        min_val_pct = np.round(min_val_size / self._n_samples, 4) * 100
-        max_val_pct = np.round(max_val_size / self._n_samples, 4) * 100
+        min_train_pct = np.round(min_train_size / self._n_samples * 100, 2)
+        max_train_pct = np.round(max_train_size / self._n_samples * 100, 2)
+        min_val_pct = np.round(min_val_size / self._n_samples * 100, 2)
+        max_val_pct = np.round(max_val_size / self._n_samples * 100, 2)
 
         print("hv-Block CV method")
         print("------------------")
@@ -391,7 +390,7 @@ class hv_Block_CV(base_splitter):
             The figure's width.
         """
 
-        fig, axs = plt.subplots(self.n_splits - 1, 1, sharex=True)
+        fig, axs = plt.subplots(self.n_splits, 1, sharex=True)
         fig.set_figheight(height)
         fig.set_figwidth(width)
         fig.supxlabel("Samples")
@@ -405,6 +404,8 @@ class hv_Block_CV(base_splitter):
                 validation, self._series[validation], label="Validation set"
             )
             axs[it].set_title("Fold {}".format(it + 1))
+            axs[it].set_ylim([self._series.min() - 1, self._series.max() + 1])
+            axs[it].set_xlim([- 1, self._n_samples + 1])
             axs[it].legend()
 
         plt.show()
