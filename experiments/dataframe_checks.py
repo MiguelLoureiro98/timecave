@@ -1,5 +1,20 @@
 import pandas as pd
 
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+def plot_time_series(df, legend=True, title="Time Series Data"):
+    df = df.set_index(df.columns[0])
+
+    df.plot(legend=legend)
+
+    plt.xlabel("Date")
+    plt.ylabel("Value")
+    plt.title(title)
+
+    plt.show()
+
 
 def check_column_order(df, time_col_name, fix=False):
     cols = list(df.columns)
@@ -89,12 +104,14 @@ def check_time_column(
         return
 
 
-def check_missing_values(df, alpha=1, fix=False):
+def check_missing_values(df, alpha=1, fix=False, check_na=False):
     na_df = df.isnull()
     missing_counts = na_df.sum()
     missing_percentage = df.isnull().mean()
     nb_col_with_na = 0
     selected_columns = missing_percentage[missing_percentage <= alpha].index
+    if check_na:
+        print(df[na_df.any(axis=1)].date)
 
     for column, count in missing_counts.items():
         if count > 0 and column in selected_columns:
