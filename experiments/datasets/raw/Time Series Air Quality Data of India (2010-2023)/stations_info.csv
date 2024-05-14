@@ -1,0 +1,454 @@
+file_name,state,city,agency,station_location,start_month,start_month_num,start_year
+AP001,Andhra Pradesh,Tirupati,APPCB,"Tirumala, Tirupati ",July,7,2016
+AP002,Andhra Pradesh,Vijayawada,APPCB,"PWD Grounds, Vijayawada ",May,5,2017
+AP003,Andhra Pradesh,Visakhapatnam,APPCB,"GVM Corporation, Visakhapatnam ",July,7,2017
+AP004,Andhra Pradesh,Rajamahendravaram,APPCB,"Anand Kala Kshetram, Rajamahendravaram ",September,9,2017
+AP005,Andhra Pradesh,Amaravati,APPCB,"Secretariat, Amaravati ",November,11,2017
+AP006,Andhra Pradesh,Anantapur,APPCB,"Gulzarpet, Anantapur ",August,8,2022
+AP007,Andhra Pradesh,Chittoor,APPCB,"Gangineni Cheruvu, Chittoor ",November,11,2022
+AP008,Andhra Pradesh,Tirupati,APPCB,"Vaikuntapuram, Tirupati ",November,11,2022
+AP009,Andhra Pradesh,Vijayawada,APPCB,"Kanuru, Vijayawada ",January,1,2023
+AP010,Andhra Pradesh,Kadapa,APPCB,"Yerramukkapalli, Kadapa ",January,1,2023
+AR001,Arunachal Pradesh,Naharlagun,APSPCB,"Naharlagun, Naharlagun ",March,3,2021
+AS001,Assam,Guwahati,PCBA,"Railway Colony, Guwahati ",March,3,2019
+AS002,Assam,Guwahati,PCBA,"Pan Bazaar, Guwahati ",December,12,2020
+AS003,Assam,Guwahati,PCBA,"IITG, Guwahati ",September,9,2022
+AS004,Assam,Sivasagar,PCBA,"Girls College, Sivasagar ",September,9,2022
+AS005,Assam,Nalbari,PCBA,"Bata Chowk, Nalbari ",November,11,2022
+AS006,Assam,Guwahati,PCBA,"LGBI Airport, Guwahati ",December,12,2022
+AS007,Assam,Byrnihat,PCBA,"Central Academy for SFS, Byrnihat ",December,12,2022
+AS008,Assam,Silchar,PCBA,"Tarapur, Silchar ",January,1,2023
+AS009,Assam,Nagaon,PCBA,"Christianpatty, Nagaon ",March,3,2023
+BR001,Bihar,Patna,BSPCB,"IGSC Planetarium Complex, Patna ",July,7,2012
+BR002,Bihar,Muzaffarpur,BSPCB,"Muzaffarpur Collectorate, Muzaffarpur ",October,10,2015
+BR003,Bihar,Gaya,BSPCB,"Collectorate, Gaya ",March,3,2016
+BR004,Bihar,Patna,BSPCB,"Samanpura, Patna ",December,12,2019
+BR005,Bihar,Patna,BSPCB,"Rajbansi Nagar, Patna ",December,12,2019
+BR006,Bihar,Patna,BSPCB,"Muradpur, Patna ",December,12,2019
+BR007,Bihar,Hajipur,BSPCB,"Industrial Area, Hajipur ",March,3,2020
+BR008,Bihar,Patna,BSPCB,"DRM Office Danapur, Patna ",March,3,2020
+BR009,Bihar,Gaya,BSPCB,"SFTI Kusdihra, Gaya ",March,3,2020
+BR010,Bihar,Patna,BSPCB,"Govt. High School Shikarpur, Patna ",March,3,2020
+BR011,Bihar,Muzaffarpur,BSPCB,"Buddha Colony, Muzaffarpur ",August,8,2020
+BR012,Bihar,Rajgir,BSPCB,"Dangi Tola, Rajgir ",July,7,2021
+BR013,Bihar,Bihar Sharif,BSPCB,"D M Colony, Bihar Sharif ",July,7,2021
+BR014,Bihar,Motihari,BSPCB,"Gandak Colony, Motihari ",July,7,2021
+BR015,Bihar,Bettiah,BSPCB,"Kamalnath Nagar, Bettiah ",July,7,2021
+BR016,Bihar,Darbhanga,BSPCB,"Town Hall   Lal Bagh, Darbhanga ",July,7,2021
+BR017,Bihar,Sasaram,BSPCB,"Dada Peer, Sasaram ",July,7,2021
+BR018,Bihar,Munger,BSPCB,"Town Hall, Munger ",July,7,2021
+BR019,Bihar,Muzaffarpur,BSPCB,"MIT Daudpur Kothi, Muzaffarpur ",July,7,2021
+BR020,Bihar,Chhapra,BSPCB,"Darshan Nagar, Chhapra ",November,11,2021
+BR021,Bihar,Bhagalpur,BSPCB,"Mayaganj, Bhagalpur ",November,11,2021
+BR022,Bihar,Aurangabad,BSPCB,"Gurdeo Nagar, Aurangabad ",November,11,2021
+BR023,Bihar,Bhagalpur,BSPCB,"DM Office_Kachari Chowk, Bhagalpur ",November,11,2021
+BR024,Bihar,Manguraha,BSPCB,"Forest Rest House, Manguraha ",November,11,2021
+BR025,Bihar,Purnia,BSPCB,"Mariam Nagar, Purnia ",November,11,2021
+BR026,Bihar,Gaya,BSPCB,"Kareemganj, Gaya ",November,11,2021
+BR027,Bihar,Buxar,BSPCB,"Central Jail, Buxar ",November,11,2021
+BR028,Bihar,Saharsa,BSPCB,"Police Line, Saharsa ",November,11,2021
+BR029,Bihar,Kishanganj,BSPCB,"SDM Office_Khagra, Kishanganj ",November,11,2021
+BR030,Bihar,Araria,BSPCB,"Kharahiya Basti, Araria ",November,11,2021
+BR031,Bihar,Siwan,BSPCB,"Chitragupta Nagar, Siwan ",November,11,2021
+BR032,Bihar,Katihar,BSPCB,"Mirchaibari, Katihar ",November,11,2021
+BR033,Bihar,Arrah,BSPCB,"New DM Office, Arrah ",December,12,2021
+BR034,Bihar,Samastipur,BSPCB,"DM Office_Kasipur, Samastipur ",March,3,2022
+BR035,Bihar,Begusarai,BSPCB,"DRCC Anandpur, Begusarai ",April,4,2022
+CG001,Chhattisgarh,Bilaspur,NTPC,"Mangala, Bilaspur ",September,9,2021
+CG002,Chhattisgarh,Bhilai,Bhilai Steel Plant,"Civic Center, Bhilai ",November,11,2021
+CG003,Chhattisgarh,Korba,CECB,"Urja Nagar, Korba ",October,10,2022
+CG004,Chhattisgarh,Raipur,CECB,"Bhatagaon New ISBT, Raipur ",October,10,2022
+CG005,Chhattisgarh,Bhilai,CECB,"Hathkhoj, Bhilai ",October,10,2022
+CG006,Chhattisgarh,Bhilai,CECB,"32Bungalows, Bhilai ",October,10,2022
+CG007,Chhattisgarh,Raipur,CECB,"Krishak Nagar, Raipur ",October,10,2022
+CG008,Chhattisgarh,Korba,CECB,"Rampur, Korba ",October,10,2022
+CG009,Chhattisgarh,Raipur,CECB,"Siltara Phase II, Raipur ",October,10,2022
+CG010,Chhattisgarh,Raipur,CECB,"AIIMS, Raipur ",October,10,2022
+CG011,Chhattisgarh,Tumidih,CECB,"OP Jindal Industrial Park, Tumidih ",January,1,2023
+CG012,Chhattisgarh,Kunjemura,CECB,"OP Jindal School, Kunjemura ",January,1,2023
+CG013,Chhattisgarh,Milupara,CECB,"Govt. Higher Secondary School, Milupara ",January,1,2023
+CG014,Chhattisgarh,Chhal,CECB,"Nawapara SECL Colony, Chhal ",January,1,2023
+CH001,Chandigarh,Chandigarh,CPCC,"Sector 25, Chandigarh ",August,8,2019
+CH002,Chandigarh,Chandigarh,CPCC,"Sector 22, Chandigarh ",August,8,2021
+CH003,Chandigarh,Chandigarh,CPCC,"Sector 53, Chandigarh ",January,1,2022
+DL001,Delhi,Delhi,CPCB,"ITO, Delhi ",January,1,2010
+DL002,Delhi,Delhi,CPCB,"Shadipur, Delhi ",January,1,2010
+DL003,Delhi,Delhi,CPCB,"Sirifort, Delhi ",January,1,2010
+DL004,Delhi,Delhi,CPCB,"NSIT Dwarka, Delhi ",January,1,2010
+DL005,Delhi,Delhi,CPCB,"IHBAS, Dilshad Garden, Delhi ",January,1,2010
+DL006,Delhi,Delhi,CPCB,"DTU, Delhi ",January,1,2010
+DL007,Delhi,Delhi,IMD,"Burari Crossing, Delhi ",March,3,2010
+DL008,Delhi,Delhi,IMD,"North Campus, DU, Delhi ",March,3,2010
+DL009,Delhi,Delhi,IMD,"Pusa, Delhi ",May,5,2010
+DL010,Delhi,Delhi,IMD,"CRRI Mathura Road, Delhi ",August,8,2010
+DL011,Delhi,Delhi,IMD,"Aya Nagar, Delhi ",September,9,2010
+DL012,Delhi,Delhi,DPCC,"Mandir Marg, Delhi ",May,5,2011
+DL013,Delhi,Delhi,DPCC,"R K Puram, Delhi ",May,5,2011
+DL014,Delhi,Delhi,DPCC,"Punjabi Bagh, Delhi ",June,6,2011
+DL015,Delhi,Delhi,DPCC,"Anand Vihar, Delhi ",August,8,2012
+DL016,Delhi,Delhi,IMD,"IGI Airport (T3), Delhi ",December,12,2013
+DL017,Delhi,Delhi,IMD,"Lodhi Road, Delhi ",January,1,2014
+DL018,Delhi,Delhi,CPCB,"East Arjun Nagar, Delhi ",November,11,2017
+DL019,Delhi,Delhi,DPCC,"Okhla Phase 2, Delhi ",February,2,2018
+DL020,Delhi,Delhi,DPCC,"Wazirpur, Delhi ",February,2,2018
+DL021,Delhi,Delhi,DPCC,"Najafgarh, Delhi ",February,2,2018
+DL022,Delhi,Delhi,DPCC,"Narela, Delhi ",February,2,2018
+DL023,Delhi,Delhi,DPCC,"Sonia Vihar, Delhi ",February,2,2018
+DL024,Delhi,Delhi,DPCC,"Rohini, Delhi ",February,2,2018
+DL025,Delhi,Delhi,DPCC,"Nehru Nagar, Delhi ",February,2,2018
+DL026,Delhi,Delhi,DPCC,"Vivek Vihar, Delhi ",February,2,2018
+DL027,Delhi,Delhi,DPCC,"Patparganj, Delhi ",February,2,2018
+DL028,Delhi,Delhi,DPCC,"Dr. Karni Singh Shooting Range, Delhi ",March,3,2018
+DL029,Delhi,Delhi,DPCC,"Major Dhyan Chand National Stadium, Delhi ",March,3,2018
+DL030,Delhi,Delhi,DPCC,"Dwarka Sector 8, Delhi ",March,3,2018
+DL031,Delhi,Delhi,DPCC,"Ashok Vihar, Delhi ",March,3,2018
+DL032,Delhi,Delhi,DPCC,"Jawaharlal Nehru Stadium, Delhi ",March,3,2018
+DL033,Delhi,Delhi,DPCC,"Jahangirpuri, Delhi ",March,3,2018
+DL034,Delhi,Delhi,DPCC,"Sri Aurobindo Marg, Delhi ",July,7,2018
+DL035,Delhi,Delhi,DPCC,"Bawana, Delhi ",July,7,2018
+DL036,Delhi,Delhi,DPCC,"Mundka, Delhi ",July,7,2018
+DL037,Delhi,Delhi,DPCC,"Pusa, Delhi ",July,7,2018
+DL038,Delhi,Delhi,DPCC,"Alipur, Delhi ",November,11,2018
+DL039,Delhi,Delhi,IITM,"Lodhi Road, Delhi ",November,11,2020
+DL040,Delhi,Delhi,IITM,"Chandni Chowk, Delhi ",November,11,2020
+GJ001,Gujarat,Ahmedabad,GPCB,"Maninagar, Ahmedabad ",November,11,2010
+GJ002,Gujarat,Ankleshwar,GPCB,"GIDC, Ankleshwar ",February,2,2019
+GJ003,Gujarat,Vapi,GPCB,"Phase 1 GIDC, Vapi ",February,2,2019
+GJ004,Gujarat,Vatva,GPCB,"Phase 4 GIDC, Vatva ",February,2,2019
+GJ005,Gujarat,Gandhinagar,GPCB,"Sector 10, Gandhinagar ",February,2,2019
+GJ006,Gujarat,Nandesari,Nandesari Ind. Association,"GIDC, Nandesari ",January,1,2020
+GJ007,Gujarat,Gandhinagar,IITM,"IIPHG Lekawada, Gandhinagar ",June,6,2021
+GJ008,Gujarat,Gandhinagar,IITM,"GIFT City, Gandhinagar ",June,6,2021
+GJ009,Gujarat,Ahmedabad,IITM,"SVPI Airport Hansol, Ahmedabad ",June,6,2021
+GJ010,Gujarat,Ahmedabad,IITM,"Chandkheda, Ahmedabad ",June,6,2021
+GJ011,Gujarat,Ahmedabad,IITM,"Rakhial, Ahmedabad ",June,6,2021
+GJ012,Gujarat,Ahmedabad,IITM,"SAC ISRO Bopal, Ahmedabad ",June,6,2021
+GJ013,Gujarat,Ahmedabad,IITM,"Gyaspur, Ahmedabad ",June,6,2021
+GJ014,Gujarat,Ahmedabad,IITM,"Raikhad, Ahmedabad ",June,6,2021
+GJ015,Gujarat,Ahmedabad,IITM,"SAC ISRO Satellite, Ahmedabad ",June,6,2021
+GJ016,Gujarat,Ahmedabad,IITM,"Sardar Vallabhbhai Patel Stadium, Ahmedabad ",June,6,2021
+GJ017,Gujarat,Surat,SMC,"Science Center, Surat ",November,11,2022
+HP001,Himachal Pradesh,Baddi,HPPCB,"HIMUDA Complex Phase 1, Baddi ",March,3,2022
+HR001,Haryana,Faridabad,HSPCB,"Sector  16A, Faridabad ",September,9,2010
+HR002,Haryana,Gurugram,HSPCB,"Vikas Sadan, Gurugram ",December,12,2015
+HR003,Haryana,Panchkula,HSPCB,"Sector 6, Panchkula ",December,12,2015
+HR004,Haryana,Rohtak,HSPCB,"MD University, Rohtak ",January,1,2016
+HR005,Haryana,Gurugram,IMD,"NISE Gwal Pahari, Gurugram ",October,10,2016
+HR006,Haryana,Manesar,HSPCB,"Sector 2 IMT, Manesar ",May,5,2018
+HR007,Haryana,Sonipat,HSPCB,"Murthal, Sonipat ",December,12,2018
+HR008,Haryana,Bhiwani,HSPCB,"H.B. Colony, Bhiwani ",January,1,2019
+HR009,Haryana,Jind,HSPCB,"Police Lines, Jind ",January,1,2019
+HR010,Haryana,Dharuhera,HSPCB,"Municipal Corporation Office, Dharuhera ",January,1,2019
+HR011,Haryana,Bahadurgarh,HSPCB,"Arya Nagar, Bahadurgarh ",January,1,2019
+HR012,Haryana,Yamuna Nagar,HSPCB,"Gobind Pura, Yamuna Nagar ",January,1,2019
+HR013,Haryana,Ballabgarh,HSPCB,"Nathu Colony, Ballabgarh ",January,1,2019
+HR014,Haryana,Ambala,HSPCB,"Patti Mehar, Ambala ",January,1,2019
+HR015,Haryana,Kurukshetra,HSPCB,"Sector 7, Kurukshetra ",January,1,2019
+HR016,Haryana,Panipat,HSPCB,"Sector 18, Panipat ",January,1,2019
+HR017,Haryana,Fatehabad,HSPCB,"Huda Sector, Fatehabad ",January,1,2019
+HR018,Haryana,Mandikhera,HSPCB,"General Hospital, Mandikhera ",January,1,2019
+HR019,Haryana,Karnal,HSPCB,"Sector 12, Karnal ",January,1,2019
+HR020,Haryana,Sirsa,HSPCB,"F Block, Sirsa ",January,1,2019
+HR021,Haryana,Hisar,HSPCB,"Urban Estate II, Hisar ",January,1,2019
+HR022,Haryana,Narnaul,HSPCB,"Shastri Nagar, Narnaul ",January,1,2019
+HR023,Haryana,Kaithal,HSPCB,"Rishi Nagar, Kaithal ",February,2,2019
+HR024,Haryana,Palwal,HSPCB,"Shyam Nagar, Palwal ",February,2,2019
+HR025,Haryana,Faridabad,HSPCB,"Sector 11, Faridabad ",March,3,2020
+HR026,Haryana,Faridabad,HSPCB,"New Industrial Town, Faridabad ",March,3,2020
+HR027,Haryana,Gurugram,HSPCB,"Teri Gram, Gurugram ",March,3,2020
+HR028,Haryana,Gurugram,HSPCB,"Sector 51, Gurugram ",March,3,2020
+HR029,Haryana,Charkhi Dadri,HSPCB,"Mini Secretariat, Charkhi Dadri ",March,3,2020
+HR030,Haryana,Faridabad,HSPCB,"Sector 30, Faridabad ",March,3,2020
+JH001,Jharkhand,Jorapokhar,JSPCB,"Tata Stadium, Jorapokhar ",May,5,2017
+JH002,Jharkhand,Dhanbad,JSPCB,"Sardar Patel Nagar, Dhanbad ",February,2,2023
+JK001,Jammu and Kashmir,Srinagar,JKSPCB,"Rajbagh, Srinagar ",February,2,2021
+KA001,Karnataka,Bengaluru,CPCB,"BTM Layout, Bengaluru ",January,1,2010
+KA002,Karnataka,Bengaluru,CPCB,"BWSSB Kadabesanahalli, Bengaluru ",January,1,2010
+KA003,Karnataka,Bengaluru,CPCB,"Peenya, Bengaluru ",January,1,2010
+KA004,Karnataka,Hubballi,KSPCB,"Deshpande Nagar, Hubballi ",January,1,2015
+KA005,Karnataka,Bengaluru,KSPCB,"City Railway Station, Bengaluru ",December,12,2015
+KA006,Karnataka,Bengaluru,KSPCB,"Sanegurava Halli, Bengaluru ",December,12,2015
+KA007,Karnataka,Bengaluru,KSPCB,"Silk Board, Bengaluru ",June,6,2018
+KA008,Karnataka,Bengaluru,KSPCB,"Hebbal, Bengaluru ",June,6,2018
+KA009,Karnataka,Kolar,KSPCB,"Tamaka Ind. Area, Kolar ",June,6,2018
+KA010,Karnataka,Bengaluru,KSPCB,"Bapuji Nagar, Bengaluru ",June,6,2018
+KA011,Karnataka,Chikkaballapur,KSPCB,"Chikkaballapur Rural, Chikkaballapur ",June,6,2018
+KA012,Karnataka,Bengaluru,KSPCB,"Jayanagar 5th Block, Bengaluru ",June,6,2018
+KA013,Karnataka,Kalaburagi,KSPCB,"Lal Bahadur Shastri Nagar, Kalaburagi ",July,7,2018
+KA014,Karnataka,Bengaluru,KSPCB,"Hombegowda Nagar, Bengaluru ",July,7,2018
+KA015,Karnataka,Mysuru,KSPCB,"Hebbal 1st Stage, Mysuru ",July,7,2019
+KA016,Karnataka,Chamarajanagar,KSPCB,"Urban, Chamarajanagar ",July,7,2019
+KA017,Karnataka,Ramanagara,KSPCB,"Vijay Nagar, Ramanagara ",September,9,2019
+KA018,Karnataka,Yadgir,KSPCB,"Collector Office, Yadgir ",September,9,2019
+KA019,Karnataka,Chikkamagaluru,KSPCB,"Kalyana Nagara, Chikkamagaluru ",January,1,2020
+KA020,Karnataka,Shivamogga,KSPCB,"Vinoba Nagara, Shivamogga ",January,1,2020
+KA021,Karnataka,Vijayapura,KSPCB,"Ibrahimpur, Vijayapura ",January,1,2020
+KA022,Karnataka,Bagalkot,KSPCB,"Vidayagiri, Bagalkot ",January,1,2020
+KA023,Karnataka,Madikeri,KSPCB,"Stuart Hill, Madikeri ",October,10,2020
+KA024,Karnataka,Koppal,KSPCB,"Diwator Nagar, Koppal ",December,12,2020
+KA025,Karnataka,Raichur,KSPCB,"Haji Colony, Raichur ",December,12,2020
+KA026,Karnataka,Mangalore,KSPCB,"Kadri, Mangalore ",January,1,2021
+KA027,Karnataka,Bidar,KSPCB,"Naubad, Bidar ",January,1,2021
+KA028,Karnataka,Gadag,KSPCB,"Panchal Nagar, Gadag ",January,1,2021
+KA029,Karnataka,Davanagere,KSPCB,"Devaraj Urs Badavane, Davanagere ",January,1,2021
+KA030,Karnataka,Udupi,KSPCB,"Brahmagiri, Udupi ",February,2,2021
+KA031,Karnataka,Hassan,KSPCB,"B.Katihalli, Hassan ",March,3,2021
+KA032,Karnataka,Haveri,KSPCB,"Ashwini Nagar, Haveri ",April,4,2022
+KA033,Karnataka,Belgaum,KSPCB,"Ramteerth Nagar, Belgaum ",August,8,2022
+KA034,Karnataka,Dharwad,KSPCB,"Kalabhavan, Dharwad ",August,8,2022
+KA035,Karnataka,Tumakuru,KSPCB,"Thimmalapura, Tumakuru ",December,12,2022
+KA036,Karnataka,Bengaluru,KSPCB,"RVCE Mailasandra, Bengaluru ",December,12,2022
+KA037,Karnataka,Kalaburagi,KSPCB,"Mahatma Basaveswar Colony, Kalaburgi ",December,12,2022
+KA038,Karnataka,Hubballi,KSPCB,"Lingaraj Nagar, Hubballi ",December,12,2022
+KA039,Karnataka,Bengaluru,KSPCB,"Shivapura_Peenya, Bengaluru ",February,2,2023
+KL001,Kerala,Thiruvananthapuram,Kerala PCB,"Plammoodu, Thiruvananthapuram ",June,6,2017
+KL002,Kerala,Eloor,Kerala PCB,"Udyogamandal, Eloor ",May,5,2019
+KL003,Kerala,Kochi,Kerala PCB,"Vyttila, Kochi ",January,1,2020
+KL004,Kerala,Kozhikode,Kerala PCB,"Palayam, Kozhikode ",January,1,2020
+KL005,Kerala,Ernakulam,Kerala PCB,"Kacheripady, Ernakulam ",January,1,2020
+KL006,Kerala,Thiruvananthapuram,Kerala PCB,"Kariavattom, Thiruvananthapuram ",February,2,2020
+KL007,Kerala,Kollam,Kerala PCB,"Polayathode, Kollam ",February,2,2020
+KL008,Kerala,Kannur,Kerala PCB,"Thavakkara, Kannur ",February,2,2020
+KL009,Kerala,Thrissur,Kerala PCB,"Corporation Ground, Thrissur ",October,10,2020
+MH001,Maharashtra,Pune,MPCB,"Karve Road, Pune ",January,1,2010
+MH002,Maharashtra,Mumbai,MPCB,"Bandra, Mumbai ",January,1,2010
+MH003,Maharashtra,Navi Mumbai,MPCB,"Airoli, Navi Mumbai ",January,1,2010
+MH004,Maharashtra,Chandrapur,MPCB,"Chauhan Colony, Chandrapur ",July,7,2015
+MH005,Maharashtra,Solapur,MPCB,"Solapur, Solapur ",December,12,2015
+MH006,Maharashtra,Nagpur,MPCB,"Opp GPO Civil Lines, Nagpur ",April,4,2016
+MH007,Maharashtra,Chandrapur,MPCB,"MIDC Khutala, Chandrapur ",August,8,2016
+MH008,Maharashtra,Nashik,MPCB,"Gangapur Road, Nashik ",September,9,2016
+MH009,Maharashtra,Thane,MPCB,"Pimpleshwar Mandir, Thane ",September,9,2016
+MH010,Maharashtra,Aurangabad,MPCB,"More Chowk Waluj, Aurangabad ",September,9,2017
+MH011,Maharashtra,Navi Mumbai,MPCB,"Nerul, Navi Mumbai ",March,3,2019
+MH012,Maharashtra,Kalyan,MPCB,"Khadakpada, Kalyan ",June,6,2019
+MH013,Maharashtra,Mumbai,MPCB,"Colaba, Mumbai ",June,6,2019
+MH014,Maharashtra,Mumbai,MPCB,"Worli, Mumbai ",June,6,2019
+MH015,Maharashtra,Mumbai,MPCB,"Sion, Mumbai ",June,6,2019
+MH016,Maharashtra,Mumbai,MPCB,"Vile Parle West, Mumbai ",June,6,2019
+MH017,Maharashtra,Mumbai,MPCB,"Borivali East, Mumbai ",June,6,2019
+MH018,Maharashtra,Mumbai,MPCB,"Chhatrapati Shivaji Intl. Airport (T2), Mumbai ",June,6,2019
+MH019,Maharashtra,Mumbai,MPCB,"Kurla, Mumbai ",June,6,2019
+MH020,Maharashtra,Mumbai,MPCB,"Vasai West, Mumbai ",June,6,2019
+MH021,Maharashtra,Mumbai,MPCB,"Powai, Mumbai ",June,6,2019
+MH022,Maharashtra,Mumbai,IITM,"Navy Nagar Colaba, Mumbai ",November,11,2020
+MH023,Maharashtra,Mumbai,IITM,"Malad West, Mumbai ",November,11,2020
+MH024,Maharashtra,Pune,IITM,"Revenue Colony Shivajinagar, Pune ",November,11,2020
+MH025,Maharashtra,Mumbai,IITM,"Chakala Andheri East, Mumbai ",November,11,2020
+MH026,Maharashtra,Mumbai,IITM,"Bandra Kurla Complex, Mumbai ",November,11,2020
+MH027,Maharashtra,Pune,IITM,"Mhada Colony, Pune ",November,11,2020
+MH028,Maharashtra,Pune,IITM,"Transport Nagar Nigdi, Pune ",November,11,2020
+MH029,Maharashtra,Mumbai,IITM,"Mazgaon, Mumbai ",November,11,2020
+MH030,Maharashtra,Pune,IITM,"Bhosari, Pune ",November,11,2020
+MH031,Maharashtra,Pune,IITM,"Alandi, Pune ",November,11,2020
+MH032,Maharashtra,Navi Mumbai,IITM,"Sector 19A Nerul, Navi Mumbai ",November,11,2020
+MH033,Maharashtra,Mumbai,IITM,"Deonar, Mumbai ",November,11,2020
+MH034,Maharashtra,Mumbai,IITM,"Borivali East, Mumbai ",November,11,2020
+MH035,Maharashtra,Mumbai,IITM,"Khindipada Bhandup West, Mumbai ",December,12,2020
+MH036,Maharashtra,Mumbai,MPCB,"Kandivali East, Mumbai ",December,12,2020
+MH037,Maharashtra,Mumbai,MPCB,"Mulund West, Mumbai ",December,12,2020
+MH038,Maharashtra,Pune,IITM,"MIT Kothrud, Pune ",January,1,2021
+MH039,Maharashtra,Mumbai,IITM,"Siddharth Nagar Worli, Mumbai ",January,1,2021
+MH040,Maharashtra,Pune,IITM,"Hadapsar, Pune ",January,1,2021
+MH041,Maharashtra,Navi Mumbai,MPCB,"Mahape, Navi Mumbai ",March,3,2021
+ML001,Meghalaya,Shillong,Meghalaya PCB,"Lumpyngngad, Shillong ",August,8,2019
+ML002,Meghalaya,Shillong,Meghalaya PCB,"JN Stadium, Shillong ",April,4,2022
+MN001,Manipur,Imphal,Manipur PCB,"Manipur University, Imphal ",April,4,2022
+MN002,Manipur,Imphal,Manipur PCB,"DM College of Science, Imphal ",April,4,2022
+MP001,Madhya Pradesh,Ujjain,MPPCB,"Mahakaleshwar Temple, Ujjain ",February,2,2017
+MP002,Madhya Pradesh,Dewas,MPPCB,"Bhopal Chauraha, Dewas ",November,11,2017
+MP003,Madhya Pradesh,Pithampur,MPPCB,"Sector 2 Industrial Area, Pithampur ",November,11,2017
+MP004,Madhya Pradesh,Singrauli,MPPCB,"Suryakiran Bhawan NCL, Singrauli ",December,12,2017
+MP005,Madhya Pradesh,Mandideep,MPPCB,"Sector D Industrial Area, Mandideep ",January,1,2018
+MP006,Madhya Pradesh,Satna,Birla Cement,"Bandhavgar Colony, Satna ",February,2,2018
+MP007,Madhya Pradesh,Ratlam,IPCA Lab,"Shasthri Nagar, Ratlam ",December,12,2018
+MP008,Madhya Pradesh,Damoh,MPPCB,"Shrivastav Colony, Damoh ",December,12,2018
+MP009,Madhya Pradesh,Maihar,KJS Cements,"Sahilara, Maihar ",February,2,2019
+MP010,Madhya Pradesh,Katni,MPPCB,"Gole Bazar, Katni ",September,9,2019
+MP011,Madhya Pradesh,Indore,MPPCB,"Chhoti Gwaltoli, Indore ",September,9,2019
+MP012,Madhya Pradesh,Bhopal,MPPCB,"T T Nagar, Bhopal ",September,9,2019
+MP013,Madhya Pradesh,Jabalpur,MPPCB,"Marhatal, Jabalpur ",September,9,2019
+MP014,Madhya Pradesh,Sagar,MPPCB,"Deen Dayal Nagar, Sagar ",January,1,2020
+MP015,Madhya Pradesh,Gwalior,MPPCB,"City Center, Gwalior ",January,1,2020
+MP016,Madhya Pradesh,Gwalior,Mondelez Ind. Food,"Phool Bagh, Gwalior ",January,1,2020
+MP017,Madhya Pradesh,Bhopal,MPPCB,"Paryavaran Parisar, Bhopal ",September,9,2022
+MP018,Madhya Pradesh,Gwalior,MPPCB,"Maharaj Bada, Gwalior ",October,10,2022
+MP019,Madhya Pradesh,Sagar,MPPCB,"Civil Lines, Sagar ",October,10,2022
+MP020,Madhya Pradesh,Gwalior,MPPCB,"Deen Dayal Nagar, Gwalior ",December,12,2022
+MP021,Madhya Pradesh,Bhopal,MPPCB,"Idgah Hills, Bhopal ",February,2,2023
+MP022,Madhya Pradesh,Indore,Glenmark,"Vijay Nagar Scheme 78, Indore ",March,3,2023
+MZ001,Mizoram,Aizawl,Mizoram PCB,"Sikulpuikawn, Aizawl ",March,3,2020
+NL001,Nagaland,Kohima,NPCB,"PWD Juction, Kohima ",September,9,2020
+OR001,Odisha,Brajrajnagar,OSPCB,"GM Office, Brajrajnagar ",April,4,2017
+OR002,Odisha,Talcher,OSPCB,"Talcher Coalfields,Talcher ",December,12,2017
+OR003,Odisha,Suakati,OSPCB,"OMC Colony, Suakati ",November,11,2022
+OR004,Odisha,Nayagarh,OSPCB,"Dabuna, Nayagarh ",November,11,2022
+OR005,Odisha,Baripada,OSPCB,"Meher Colony, Baripada ",November,11,2022
+OR006,Odisha,Bileipada,OSPCB,"Tata Township, Bileipada ",November,11,2022
+OR007,Odisha,Tensa,OSPCB,"Barsua Iron Ore Mines, Tensa ",November,11,2022
+OR008,Odisha,Rairangpur,OSPCB,"Divisional Forest Office, Rairangpur ",November,11,2022
+OR009,Odisha,Keonjhar,OSPCB,"Jagamohanpur, Keonjhar ",November,11,2022
+OR010,Odisha,Rourkela,OSPCB,"Sector 2, Rourkela ",January,1,2023
+OR011,Odisha,Rourkela,OSPCB,"Fertilizer Township, Rourkela ",January,1,2023
+OR012,Odisha,Rourkela,OSPCB,"Raghunathpali, Rourkela ",February,2,2023
+PB001,Punjab,Amritsar,PPCB,"Golden Temple, Amritsar ",March,3,2017
+PB002,Punjab,Mandi Gobindgarh,PPCB,"RIMT University, Mandi Gobindgarh ",April,4,2017
+PB003,Punjab,Ludhiana,PPCB,"Punjab Agricultural University, Ludhiana ",May,5,2017
+PB004,Punjab,Jalandhar,PPCB,"Civil Line, Jalandhar ",February,2,2018
+PB005,Punjab,Patiala,PPCB,"Model Town, Patiala ",February,2,2018
+PB006,Punjab,Khanna,PPCB,"Kalal Majra, Khanna ",April,4,2018
+PB007,Punjab,Rupnagar,Ambuja Cements,"Ratanpura, Rupnagar ",April,4,2018
+PB008,Punjab,Bathinda,PPCB,"Hardev Nagar, Bathinda ",June,6,2018
+PY001,Puducherry,Puducherry,PPCC,"Jawahar Nagar, Puducherry ",January,1,2021
+RJ001,Rajasthan,Jodhpur,RSPCB,"Collectorate, Jodhpur ",December,12,2015
+RJ002,Rajasthan,Jaipur,RSPCB,"Adarsh Nagar, Jaipur ",February,2,2017
+RJ003,Rajasthan,Jaipur,RSPCB,"Police Commissionerate, Jaipur ",July,7,2017
+RJ004,Rajasthan,Bhiwadi,RSPCB,"RIICO Ind. Area III, Bhiwadi ",October,10,2017
+RJ005,Rajasthan,Pali,RSPCB,"Indira Colony Vistar, Pali ",October,10,2017
+RJ006,Rajasthan,Alwar,RSPCB,"Moti Doongri, Alwar ",October,10,2017
+RJ007,Rajasthan,Ajmer,RSPCB,"Civil Lines,  Ajmer ",October,10,2017
+RJ008,Rajasthan,Kota,RSPCB,"Shrinath Puram, Kota ",October,10,2017
+RJ009,Rajasthan,Jaipur,RSPCB,"Shastri Nagar, Jaipur ",October,10,2017
+RJ010,Rajasthan,Udaipur,RSPCB,"Ashok Nagar, Udaipur ",October,10,2017
+RJ011,Rajasthan,Jaisalmer,RSPCB,"Sadar Bazar, Jaisalmer ",January,1,2023
+RJ012,Rajasthan,Dausa,RSPCB,"Khatikan Mohalla, Dausa ",February,2,2023
+RJ013,Rajasthan,Banswara,RSPCB,"Rati Talai, Banswara ",February,2,2023
+RJ014,Rajasthan,Jodhpur,RSPCB,"Samrat Ashok Udhyan, Jodhpur ",February,2,2023
+RJ015,Rajasthan,Hanumangarh,RSPCB,"Housing Board, Hanumangarh ",February,2,2023
+RJ016,Rajasthan,Sirohi,RSPCB,"Vedhaynath Colony, Sirohi ",February,2,2023
+RJ017,Rajasthan,Kota,RSPCB,"Dhanmandi, Kota ",February,2,2023
+RJ018,Rajasthan,Bikaner,RSPCB,"MM Ground, Bikaner ",February,2,2023
+RJ019,Rajasthan,Kota,RSPCB,"Nayapura, Kota ",February,2,2023
+RJ020,Rajasthan,Barmer,RSPCB,"Railway Colony, Barmer ",February,2,2023
+RJ021,Rajasthan,Bharatpur,RSPCB,"Krishna Nagar, Bharatpur ",February,2,2023
+RJ022,Rajasthan,Churu,RSPCB,"Subash Chowk, Churu ",February,2,2023
+RJ023,Rajasthan,Dholpur,RSPCB,"Raja Ganj, Dholpur ",February,2,2023
+RJ024,Rajasthan,Sawai Madhopur,RSPCB,"Sahu Nagar, Sawai Madhopur ",February,2,2023
+RJ025,Rajasthan,Chittorgarh,RSPCB,"Shastri Nagar, Chittorgarh ",February,2,2023
+RJ026,Rajasthan,Jhunjhunu,RSPCB,"Indra Nagar, Jhunjhunu ",March,3,2023
+RJ027,Rajasthan,Jaipur,RSPCB,"Sector 2 Murlipura, Jaipur ",March,3,2023
+RJ028,Rajasthan,Jodhpur,RSPCB,"Jhalamand, Jodhpur ",March,3,2023
+RJ029,Rajasthan,Pratapgarh,RSPCB,"Pragati Nagar, Pratapgarh ",March,3,2023
+RJ030,Rajasthan,Jaipur,RSPCB,"Mansarovar Sector 12, Jaipur ",March,3,2023
+RJ031,Rajasthan,Jhalawar,RSPCB,"Rajlaxmi Nagar, Jhalawar ",March,3,2023
+RJ032,Rajasthan,Karauli,RSPCB,"Satyawati Vihar, Karauli ",March,3,2023
+RJ033,Rajasthan,Sri Ganganagar,RSPCB,"Old City, Sri Ganganagar ",March,3,2023
+RJ034,Rajasthan,Sikar,RSPCB,"Radhakishan Pura, Sikar ",March,3,2023
+RJ035,Rajasthan,Rajsamand,RSPCB,"Dhoinda, Rajsamand ",March,3,2023
+SK001,Sikkim,Gangtok,SSPCB,"Zero Point GICI, Gangtok ",April,4,2022
+TG001,Telangana,Hyderabad,TSPCB,"Sanathnagar, Hyderabad ",December,12,2010
+TG002,Telangana,Hyderabad,TSPCB,"Zoo Park, Hyderabad ",October,10,2015
+TG003,Telangana,Hyderabad,TSPCB,"IDA Pashamylaram, Hyderabad ",September,9,2016
+TG004,Telangana,Hyderabad,TSPCB,"Bollaram Industrial Area, Hyderabad ",March,3,2017
+TG005,Telangana,Hyderabad,TSPCB,"ICRISAT Patancheru, Hyderabad ",March,3,2017
+TG006,Telangana,Hyderabad,TSPCB,"Central University, Hyderabad ",July,7,2017
+TG007,Telangana,Hyderabad,TSPCB,"ECIL Kapra, Hyderabad ",May,5,2022
+TG008,Telangana,Hyderabad,TSPCB,"Nacharam_TSIIC IALA, Hyderabad ",May,5,2022
+TG009,Telangana,Hyderabad,TSPCB,"Kompally Municipal Office, Hyderabad ",May,5,2022
+TG010,Telangana,Hyderabad,TSPCB,"IITH Kandi, Hyderabad ",May,5,2022
+TG011,Telangana,Hyderabad,TSPCB,"New Malakpet, Hyderabad ",May,5,2022
+TG012,Telangana,Hyderabad,TSPCB,"Somajiguda, Hyderabad ",May,5,2022
+TG013,Telangana,Hyderabad,TSPCB,"Kokapet, Hyderabad ",June,6,2022
+TG014,Telangana,Hyderabad,TSPCB,"Ramachandrapuram, Hyderabad ",June,6,2022
+TN001,Tamil Nadu,Chennai,CPCB,"Alandur Bus Depot, Chennai ",January,1,2010
+TN002,Tamil Nadu,Chennai,CPCB,"Manali, Chennai ",January,1,2010
+TN003,Tamil Nadu,Chennai,CPCB,"Velachery Res. Area, Chennai ",January,1,2010
+TN004,Tamil Nadu,Chennai,TNPCB,"Manali Village, Chennai ",March,3,2019
+TN005,Tamil Nadu,Coimbatore,TNPCB,"SIDCO Kurichi, Coimbatore ",June,6,2019
+TN006,Tamil Nadu,Chennai,TNPCB,"Arumbakkam, Chennai ",November,11,2020
+TN007,Tamil Nadu,Thoothukudi,TNPCB,"Meelavittan, Thoothukudi ",November,11,2020
+TN008,Tamil Nadu,Chennai,TNPCB,"Royapuram, Chennai ",November,11,2020
+TN009,Tamil Nadu,Chennai,TNPCB,"Kodungaiyur, Chennai ",November,11,2020
+TN010,Tamil Nadu,Chennai,TNPCB,"Perungudi, Chennai ",December,12,2020
+TN011,Tamil Nadu,Gummidipoondi,TNPCB,"Anthoni Pillai Nagar, Gummidipoondi ",January,1,2021
+TN012,Tamil Nadu,Hosur,TNPCB,"SIPCOT Phase 1, Hosur ",August,8,2022
+TN013,Tamil Nadu,Tirupur,TNPCB,"Kumaran College, Tirupur ",August,8,2022
+TN014,Tamil Nadu,Chengalpattu,TNPCB,"Crescent University, Chengalpattu ",August,8,2022
+TN015,Tamil Nadu,Chennai,TNPCB,"Gandhi Nagar_Ennore, Chennai ",August,8,2022
+TN016,Tamil Nadu,Vellore,TNPCB,"Vasanthapuram, Vellore ",August,8,2022
+TN017,Tamil Nadu,Salem,TNPCB,"Sona College of Technology, Salem ",August,8,2022
+TN018,Tamil Nadu,Ramanathapuram,TNPCB,"Chalai Bazaar, Ramanathapuram ",August,8,2022
+TN019,Tamil Nadu,Dindigul,TNPCB,"Mendonsa Colony, Dindigul ",September,9,2022
+TN020,Tamil Nadu,Coimbatore,TNPCB,"PSG College of Arts and Science, Coimbatore ",September,9,2022
+TN021,Tamil Nadu,Ooty,TNPCB,"Bombay Castel, Ooty ",October,10,2022
+TN022,Tamil Nadu,Kanchipuram,TNPCB,"Kilambi, Kanchipuram ",October,10,2022
+TN023,Tamil Nadu,Ariyalur,TNPCB,"Keelapalur, Ariyalur ",December,12,2022
+TN024,Tamil Nadu,Cuddalore,TNPCB,"Kudikadu, Cuddalore ",March,3,2023
+TN025,Tamil Nadu,Cuddalore,TNPCB,"Semmandalam, Cuddalore ",March,3,2023
+TN026,Tamil Nadu,Palkalaiperur,TNPCB,"Bharathidasan University, Palkalaiperur ",March,3,2023
+TR001,Tripura,Agartala,Tripura SPCB,"Kunjaban, Agartala ",November,11,2020
+TR002,Tripura,Agartala,Tripura SPCB,"Bardowali, Agartala ",March,3,2022
+UK001,Uttarakhand,Dehradun,UKPCB,"Doon University, Dehradun ",April,4,2022
+UK002,Uttarakhand,Kashipur,UKPCB,"Govt. Girls Inter College, Kashipur ",February,2,2023
+UK003,Uttarakhand,Rishikesh,UKPCB,"Shivaji Nagar, Rishikesh ",February,2,2023
+UP001,Uttar Pradesh,Lucknow,CPCB,"Talkatora District Industries Center, Lucknow ",January,1,2010
+UP002,Uttar Pradesh,Lucknow,CPCB,"Kendriya Vidyalaya, Lucknow ",January,1,2010
+UP003,Uttar Pradesh,Varanasi,UPPCB,"Ardhali Bazar, Varanasi ",October,10,2010
+UP004,Uttar Pradesh,Agra,UPPCB,"Sanjay Palace, Agra ",October,10,2010
+UP005,Uttar Pradesh,Kanpur,UPPCB,"Nehru Nagar, Kanpur ",October,10,2010
+UP006,Uttar Pradesh,Lucknow,CPCB,"Lalbagh, Lucknow ",November,11,2010
+UP007,Uttar Pradesh,Noida,IMD,"Sector   62, Noida ",December,12,2012
+UP008,Uttar Pradesh,Noida,UPPCB,"Sector   125, Noida ",September,9,2017
+UP009,Uttar Pradesh,Ghaziabad,UPPCB,"Vasundhara, Ghaziabad ",September,9,2017
+UP010,Uttar Pradesh,Moradabad,UPPCB,"Lajpat Nagar, Moradabad ",November,11,2017
+UP011,Uttar Pradesh,Lucknow,UPPCB,"Nishant Ganj, Lucknow ",December,12,2017
+UP012,Uttar Pradesh,Greater Noida,UPPCB,"Knowledge Park   III, Greater Noida ",May,5,2018
+UP013,Uttar Pradesh,Bulandshahr,UPPCB,"Yamunapuram, Bulandshahr ",May,5,2018
+UP014,Uttar Pradesh,Muzaffarnagar,UPPCB,"New Mandi, Muzaffarnagar ",June,6,2018
+UP015,Uttar Pradesh,Baghpat,UPPCB,"New Collectorate, Baghpat ",July,7,2018
+UP016,Uttar Pradesh,Hapur,UPPCB,"Anand Vihar, Hapur ",October,10,2018
+UP017,Uttar Pradesh,Ghaziabad,UPPCB,"Sanjay Nagar, Ghaziabad ",February,2,2019
+UP018,Uttar Pradesh,Ghaziabad,UPPCB,"Indirapuram, Ghaziabad ",February,2,2019
+UP019,Uttar Pradesh,Ghaziabad,UPPCB,"Loni, Ghaziabad ",February,2,2019
+UP020,Uttar Pradesh,Greater Noida,UPPCB,"Knowledge Park   V, Greater Noida ",June,6,2019
+UP021,Uttar Pradesh,Noida,UPPCB,"Sector 1, Noida ",June,6,2019
+UP022,Uttar Pradesh,Noida,UPPCB,"Sector 116, Noida ",June,6,2019
+UP023,Uttar Pradesh,Meerut,UPPCB,"Jai Bhim Nagar, Meerut ",June,6,2019
+UP024,Uttar Pradesh,Lucknow,UPPCB,"Gomti Nagar, Lucknow ",August,8,2019
+UP025,Uttar Pradesh,Meerut,UPPCB,"Ganga Nagar, Meerut ",October,10,2019
+UP026,Uttar Pradesh,Meerut,UPPCB,"Pallavpuram Phase 2, Meerut ",October,10,2019
+UP027,Uttar Pradesh,Kanpur,IITK,"IITK, Kanpur ",December,12,2020
+UP028,Uttar Pradesh,Agra,UPPCB,"Shastripuram, Agra ",June,6,2021
+UP029,Uttar Pradesh,Varanasi,UPPCB,"Bhelupur, Varanasi ",June,6,2021
+UP030,Uttar Pradesh,Agra,UPPCB,"Sector 3B Avas Vikas Colony, Agra ",June,6,2021
+UP031,Uttar Pradesh,Varanasi,UPPCB,"IESD Banaras Hindu University, Varanasi ",June,6,2021
+UP032,Uttar Pradesh,Gorakhpur,UPPCB,"Madan Mohan Malaviya University of Technology, Gorakhpur ",June,6,2021
+UP033,Uttar Pradesh,Prayagraj,UPPCB,"Motilal Nehru NIT, Prayagraj ",June,6,2021
+UP034,Uttar Pradesh,Agra,UPPCB,"Manoharpur, Agra ",June,6,2021
+UP035,Uttar Pradesh,Lucknow,UPPCB,"B R Ambedkar University, Lucknow ",June,6,2021
+UP036,Uttar Pradesh,Prayagraj,UPPCB,"Jhunsi, Prayagraj ",June,6,2021
+UP037,Uttar Pradesh,Firozabad,UPPCB,"Nagla Bhau, Firozabad ",July,7,2021
+UP038,Uttar Pradesh,Prayagraj,UPPCB,"Nagar Nigam, Prayagraj ",July,7,2021
+UP039,Uttar Pradesh,Lucknow,UPPCB,"Kukrail Picnic Spot 1, Lucknow ",July,7,2021
+UP040,Uttar Pradesh,Kanpur,UPPCB,"NSI Kalyanpur, Kanpur ",July,7,2021
+UP041,Uttar Pradesh,Varanasi,UPPCB,"Maldahiya, Varanasi ",July,7,2021
+UP042,Uttar Pradesh,Agra,UPPCB,"Rohta, Agra ",July,7,2021
+UP043,Uttar Pradesh,Vrindavan,UPPCB,"Omex Eternity, Vrindavan ",August,8,2021
+UP044,Uttar Pradesh,Kanpur,UPPCB,"FTI Kidwai Nagar, Kanpur ",September,9,2021
+UP045,Uttar Pradesh,Agra,UPPCB,"Shahjahan Garden, Agra ",September,9,2021
+UP046,Uttar Pradesh,Moradabad,UPPCB,"Employment Office, Moradabad ",November,11,2021
+UP047,Uttar Pradesh,Moradabad,UPPCB,"Buddhi Vihar, Moradabad ",December,12,2021
+UP048,Uttar Pradesh,Moradabad,UPPCB,"Jigar Colony, Moradabad ",December,12,2021
+UP049,Uttar Pradesh,Moradabad,UPPCB,"Eco Herbal Park, Moradabad ",January,1,2022
+UP050,Uttar Pradesh,Baghpat,UPPCB,"Sardar Patel Inter College, Baghpat ",January,1,2022
+UP051,Uttar Pradesh,Firozabad,UPPCB,"Vibhab Nagar, Firozabad ",February,2,2022
+UP052,Uttar Pradesh,Jhansi,UPPCB,"Shivaji Nagar, Jhansi ",February,2,2022
+UP053,Uttar Pradesh,Bareilly,UPPCB,"Rajendra Nagar, Bareilly ",May,5,2022
+UP054,Uttar Pradesh,Khurja,UPPCB,"Kalindi Kunj, Khurja ",June,6,2022
+UP055,Uttar Pradesh,Moradabad,UPPCB,"Transport Nagar, Moradabad ",June,6,2022
+UP056,Uttar Pradesh,Moradabad,UPPCB,"Kashiram Nagar, Moradabad ",June,6,2022
+UP057,Uttar Pradesh,Bareilly,UPPCB,"Civil Lines, Bareilly ",August,8,2022
+WB001,West Bengal,Haldia,WBPCB,"Priyambada Housing Estate, Haldia ",December,12,2015
+WB002,West Bengal,Kolkata,WBPCB,"Victoria, Kolkata ",January,1,2016
+WB003,West Bengal,Howrah,WBPCB,"Ghusuri, Howrah ",June,6,2016
+WB004,West Bengal,Durgapur,WBPCB,"Sidhu Kanhu Indoor Stadium, Durgapur ",July,7,2016
+WB005,West Bengal,Kolkata,WBPCB,"Rabindra Bharati University, Kolkata ",September,9,2016
+WB006,West Bengal,Howrah,WBPCB,"Padmapukur, Howrah ",January,1,2018
+WB007,West Bengal,Asansol,WBPCB,"Asansol Court Area, Asansol ",February,2,2018
+WB008,West Bengal,Siliguri,WBPCB,"Ward 32 Bapupara, Siliguri ",February,2,2018
+WB009,West Bengal,Kolkata,WBPCB,"Fort William, Kolkata ",May,5,2019
+WB010,West Bengal,Howrah,WBPCB,"Belur Math, Howrah ",May,5,2019
+WB011,West Bengal,Kolkata,WBPCB,"Jadavpur, Kolkata ",June,6,2019
+WB012,West Bengal,Kolkata,WBPCB,"Rabindra Sarobar, Kolkata ",August,8,2019
+WB013,West Bengal,Kolkata,WBPCB,"Bidhannagar, Kolkata ",August,8,2019
+WB014,West Bengal,Kolkata,WBPCB,"Ballygunge, Kolkata ",August,8,2019
