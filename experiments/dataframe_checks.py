@@ -62,6 +62,7 @@ def check_time_column(
     freq="D",
     fix: bool = False,
     business_days: bool = False,
+    check_na=False,
 ) -> pd.DataFrame:
     """
     In order to check all 'freq' options, follow the link: https://pandas.pydata.org/docs/user_guide/timeseries.html#timeseries-offset-aliases
@@ -75,10 +76,13 @@ def check_time_column(
         )
     else:
         date_range = pd.bdate_range(
-            start=df[time_col_name].min(), end=df[time_col_name].max(), freq=freq
+            start=df[time_col_name].min(), end=df[time_col_name].max(), freq="B"
         )
     nb_na_timesteps = len(date_range) - df[time_col_name].nunique()
     print(f"3. Number of missing timesteps: {nb_na_timesteps}")
+
+    if check_na:
+        print([dr for dr in date_range if dr not in df[time_col_name].unique()])
 
     nb_dup_timesteps = len(df[time_col_name][df[time_col_name].duplicated()])
     print(f"4. Number of duplicated timesteps: {nb_dup_timesteps}")
@@ -88,13 +92,7 @@ def check_time_column(
             df = df.drop_duplicates(subset=[time_col_name], keep="first")
 
         if nb_na_timesteps > 0:
-            full_date_range_df = pd.DataFrame(
-                index=pd.date_range(
-                    start=df[time_col_name].min(),
-                    end=df[time_col_name].max(),
-                    freq=freq,
-                )
-            )
+            full_date_range_df = pd.DataFrame(index=date_range)
             df = full_date_range_df.merge(
                 df, left_index=True, right_on=time_col_name, how="left"
             ).reset_index(drop=True)
