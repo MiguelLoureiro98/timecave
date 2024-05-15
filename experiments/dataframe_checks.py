@@ -21,7 +21,8 @@ def check_column_order(df, time_col_name, fix=False):
 
         if fix:
             cols.remove(time_col_name)
-            new_cols = [time_col_name].extend(cols)
+            new_cols = [time_col_name]
+            new_cols.extend(cols)
             return df[new_cols]
         return
 
