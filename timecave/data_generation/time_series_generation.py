@@ -12,7 +12,7 @@ TimeSeriesGenerator
 import numpy as np
 
 import matplotlib.pyplot as plt
-from tsvalidation.data_generation._utils import (
+from timecave.data_generation._utils import (
     _generate_random_parameters,
     _generate_seeds,
 )
@@ -203,8 +203,8 @@ class TimeSeriesGenerator:
 
 if __name__ == "__main__":
 
-    from tsvalidation.data_generation import frequency_modulation as dgu
-    from tsvalidation.data_generation import time_series_functions as tsf
+    from timecave.data_generation import frequency_modulation as dgu
+    from timecave.data_generation import time_series_functions as tsf
 
     linear_parameters = {"max_interval_size": 1, "slope": 5, "intercept": [5, 30]}
 

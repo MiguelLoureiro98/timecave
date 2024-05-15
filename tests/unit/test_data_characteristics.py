@@ -3,7 +3,7 @@ This file contains tests targetting the 'data_characteristics' module.
 """
 
 import unittest
-from tsvalidation.data_characteristics import get_features, strength_of_trend, mean_crossing_rate, median_crossing_rate
+from timecave.data_characteristics import get_features, strength_of_trend, mean_crossing_rate, median_crossing_rate
 import numpy as np
 import pandas as pd
 

@@ -1,5 +1,5 @@
 import unittest
-from tsvalidation.data_generation.frequency_modulation import (
+from timecave.data_generation.frequency_modulation import (
     FrequencyModulationWithStep,
     FrequencyModulationLinear,
 )

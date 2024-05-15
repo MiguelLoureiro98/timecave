@@ -3,7 +3,7 @@ This file contains tests targetting the 'utils' module.
 """
 
 import unittest
-from tsvalidation.utils import Nyquist_min_samples, heuristic_min_samples, true_test_indices
+from timecave.utils import Nyquist_min_samples, heuristic_min_samples, true_test_indices
 import numpy as np
 
 class TestUtils(unittest.TestCase):

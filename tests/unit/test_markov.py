@@ -3,7 +3,7 @@ This file contains unit tests regarding the 'MarkovCV' class.
 """
 
 import unittest
-from tsvalidation.validation_methods.markov import MarkovCV
+from timecave.validation_methods.markov import MarkovCV
 import numpy as np
 from itertools import combinations
 from typing import List

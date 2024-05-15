@@ -3,8 +3,8 @@ This file contains unit tests targetting the 'CV' module.
 """
 
 import unittest
-from tsvalidation.validation_methods.CV import Block_CV, hv_Block_CV
-from tsvalidation.validation_methods.weights import linear_weights, exponential_weights
+from timecave.validation_methods.CV import Block_CV, hv_Block_CV
+from timecave.validation_methods.weights import linear_weights, exponential_weights
 import numpy as np
 
 

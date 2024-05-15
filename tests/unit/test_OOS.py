@@ -3,7 +3,7 @@ This file contains unit tests targetting the 'OOS' module.
 """
 
 import unittest
-from tsvalidation.validation_methods.OOS import (
+from timecave.validation_methods.OOS import (
     Holdout,
     Repeated_Holdout,
     Rolling_Origin_Update,

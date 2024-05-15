@@ -3,9 +3,9 @@ This file contains unit tests targetting the 'OOS' module.
 """
 
 import unittest
-from tsvalidation.data_generation import frequency_modulation as dgu
-from tsvalidation.data_generation.time_series_generation import TimeSeriesGenerator
-from tsvalidation.data_generation import time_series_functions as tsf
+from timecave.data_generation import frequency_modulation as dgu
+from timecave.data_generation.time_series_generation import TimeSeriesGenerator
+from timecave.data_generation import time_series_functions as tsf
 
 import numpy as np
 

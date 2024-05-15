@@ -28,8 +28,8 @@ nonlinear_ar_ts
 
 import numpy as np
 from statsmodels.tsa.arima_process import ArmaProcess
-from tsvalidation.data_generation.frequency_modulation import BaseFrequency
-from tsvalidation.data_generation._utils import _nonlin_func, _get_arma_parameters
+from timecave.data_generation.frequency_modulation import BaseFrequency
+from timecave.data_generation._utils import _nonlin_func, _get_arma_parameters
 
 
 def sinusoid_ts(

@@ -3,7 +3,7 @@ This file contains tests targetting the 'weights' module.
 """
 
 import unittest
-from tsvalidation.validation_methods.weights import (
+from timecave.validation_methods.weights import (
     constant_weights,
     linear_weights,
     exponential_weights,

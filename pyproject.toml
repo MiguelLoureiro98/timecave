@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tsvalidation"
-version = "0.1.1"
+name = "timecave"
+version = "0.2.0"
 authors=[  
     {name = "Miguel Santos Loureiro", email = "miguel.santos.loureiro@tecnico.ulisboa.pt"},
     {name = "Beatriz Pereira Lourenço", email = "beatriz.p.lourenco@tecnico.ulisboa.pt"}
@@ -30,9 +30,20 @@ dependencies = [
     "numpy>=1.26.3",
     "pandas>=2.1.4",
     "matplotlib>=3.8",
-    "tsfel==0.1.7",
-    "black==24.4.2"
+    "tsfel==0.1.7"
 ]
 
+[project.optional-dependencies]
+dev = ["black>=24.4.2"]
+exp = [
+    "tensorflow>=2.16.1",
+    "keras>=3.3.3",
+    "scikit-learn>=1.4.0",
+    "statsmodels>=0.14.0"
+]
+
+[project.urls]
+repository = "https://github.com/MiguelLoureiro98/timecave"
+
 [tool.setuptools.packages.find]
-include=["tsvalidation*"]
+include = ["timecave*"]

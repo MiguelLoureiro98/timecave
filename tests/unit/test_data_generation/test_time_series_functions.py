@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from tsvalidation.data_generation.time_series_functions import (
+from timecave.data_generation.time_series_functions import (
     sinusoid_ts,
     scaled_right_indicator_ts,
     scaled_unit_impulse_function_ts,
@@ -11,7 +11,7 @@ from tsvalidation.data_generation.time_series_functions import (
     arma_ts,
     nonlinear_ar_ts,
 )
-from tsvalidation.data_generation.frequency_modulation import FrequencyModulationLinear
+from timecave.data_generation.frequency_modulation import FrequencyModulationLinear
 
 
 class TestTimeSeriesFunctions(unittest.TestCase):

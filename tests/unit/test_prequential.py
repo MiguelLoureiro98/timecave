@@ -3,8 +3,8 @@ This file contains unit tests targetting the 'Prequential' module.
 """
 
 import unittest
-from tsvalidation.validation_methods.prequential import Growing_Window, Rolling_Window
-from tsvalidation.validation_methods.weights import linear_weights, exponential_weights
+from timecave.validation_methods.prequential import Growing_Window, Rolling_Window
+from timecave.validation_methods.weights import linear_weights, exponential_weights
 import numpy as np
 
 

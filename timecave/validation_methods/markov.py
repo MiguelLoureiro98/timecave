@@ -7,8 +7,8 @@ MarkovCV
 
 """
 
-from tsvalidation.validation_methods._base import base_splitter
-from tsvalidation.data_characteristics import get_features
+from timecave.validation_methods._base import base_splitter
+from timecave.data_characteristics import get_features
 import warnings
 import numpy as np
 import pandas as pd

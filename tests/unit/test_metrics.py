@@ -3,7 +3,7 @@ This file contains tests targetting the 'validation_strategy_metrics' module.
 """
 
 import unittest
-from tsvalidation.validation_strategy_metrics import PAE, APAE, RPAE, RAPAE, MC_metric, under_over_estimation
+from timecave.validation_strategy_metrics import PAE, APAE, RPAE, RAPAE, MC_metric, under_over_estimation
 import numpy as np
 
 class TestMetrics(unittest.TestCase):

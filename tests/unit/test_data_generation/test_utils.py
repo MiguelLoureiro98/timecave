@@ -1,12 +1,12 @@
 import unittest
 import numpy as np
-from tsvalidation.data_generation._utils import (
+from timecave.data_generation._utils import (
     _nonlin_func,
     _generate_random_parameters,
     _get_arma_parameters,
     _generate_seeds,
 )
-from tsvalidation.data_generation.frequency_modulation import FrequencyModulationLinear
+from timecave.data_generation.frequency_modulation import FrequencyModulationLinear
 import random
 
 
