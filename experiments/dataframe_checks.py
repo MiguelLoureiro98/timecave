@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def plot_time_series(df, legend=True, title="Time Series Data"):
+"""def plot_time_series(df, legend=True, title="Time Series Data"):
     df = df.set_index(df.columns[0])
 
     df.plot(legend=legend)
@@ -10,6 +10,23 @@ def plot_time_series(df, legend=True, title="Time Series Data"):
     plt.xlabel("Date")
     plt.ylabel("Value")
     plt.title(title)
+
+    plt.show()
+
+"""
+
+
+def plot_time_series(df, legend=True, title="Time Series Data"):
+    df = df.set_index(df.columns[0])
+    for column in df.columns:
+        plt.plot(df.index, df[column], label=column)
+
+    plt.xlabel("Date")
+    plt.ylabel("Value")
+    plt.title(title)
+
+    if legend:
+        plt.legend()
 
     plt.show()
 
