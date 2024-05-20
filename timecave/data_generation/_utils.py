@@ -41,21 +41,17 @@ def _nonlin_func(nb: int, x: float) -> float:
     return nonlin_x
 
 
-def _get_arma_parameters(lags: int, max_root: int or float, seed: int = 1) -> np.array:
+def _get_arma_parameters(lags: int, max_root: int or float) -> np.array:
     """
     This function generates autoregressive (AR) parameters for an ARMA (AutoRegressive
     Moving Average) model with the specified number of lags (`lags`) and maximum root
     value (`max_root`).
     """
-    np.random.seed(seed)
     if max_root <= 1.1:
         raise ValueError("max_root must be bigger than 1.1")
 
     if isinstance(max_root, (int, float)) is False:
         raise TypeError("'max_root' must be int or float")
-
-    if isinstance(seed, int) is False:
-        raise TypeError("'seed' must be int")
 
     if isinstance(lags, int) is False:
         raise TypeError("'lags' must be int")
@@ -87,7 +83,6 @@ def _generate_random_parameters(param_possibilities: dict, seed=1) -> dict:
     if isinstance(seed, int) is False:
         raise TypeError("'seed' must be int")
 
-    random.seed(seed)
     params = {}
     for key, values in param_possibilities.items():
         if isinstance(values, tuple):

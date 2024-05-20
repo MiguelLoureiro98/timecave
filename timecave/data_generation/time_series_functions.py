@@ -310,7 +310,6 @@ def arma_ts(
     max_root: float,
     ar: bool = True,
     ma: bool = True,
-    seed: bool = 1,
     **kwargs,
 ):
     """
@@ -354,8 +353,8 @@ def arma_ts(
     if ar == False and ma == False:
         raise ValueError("At least one of 'ar' or 'ma' must be set to True.")
 
-    params_ar = _get_arma_parameters(lags, max_root, seed=seed)
-    params_ma = _get_arma_parameters(lags, max_root, seed=seed)
+    params_ar = _get_arma_parameters(lags, max_root)
+    params_ma = _get_arma_parameters(lags, max_root)
     ar_coeff = np.r_[1, -params_ar]
     ma_coeff = np.r_[1, params_ma]
 

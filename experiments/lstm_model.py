@@ -2,9 +2,10 @@ import numpy as np
 import pandas as pd
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 
-def split_sequence_for_lstm(sequence, lags):
+def shaping(sequence, lags):
     """
     Reshapes input in order to be used for the lstm.
     """
@@ -42,6 +43,8 @@ def recursive_forecast(model, series, pred_window, lags):
         forecast.append(yhat[0][0])
         x_input = np.append(x_input[:, 1:, :], [[yhat[0]]], axis=1)
 
+    return forecast
+
 
 def predict_lstm(
     series: np.array,
@@ -53,21 +56,34 @@ def predict_lstm(
     """
     Predict future values using Long Short-Term Memory (LSTM).
     """
-    X, y = split_sequence_for_lstm(series, lags)
+
+    X, y = shaping(series, lags)
 
     # Reshape input to be [samples, time steps, features]
     n_features = 1  # univariate time series
     X = X.reshape((X.shape[0], X.shape[1], n_features))
 
     # Define the LSTM model
-    model = lstm_model(lags, n_features)
+    model = lstm_model(lags)
     model.compile(optimizer="adam", loss="mse")
 
     # Fit the model
     model.fit(X, y, epochs=epochs, verbose=verbose)
 
     forecast = recursive_forecast(model, series, pred_window, lags)
+    mse = mean_squared_error(y, forecast)
+    mae = mean_absolute_error(y, forecast)
 
     print("Forecasted values for the next", pred_window, "timesteps:")
     print(forecast)
-    return {"prediction": np.array(forecast), "trained_model": model}
+    return {
+        "prediction": np.array(forecast),
+        "trained_model": model,
+        "mse": mse,
+        "rmse": np.sqrt(mse),
+        "mae": mae,
+    }
+
+
+if __name__ == "__main__":
+    predict_lstm(np.ones(100), pred_window=20)
