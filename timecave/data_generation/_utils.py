@@ -78,7 +78,7 @@ def _generate_random_parameters(param_possibilities: dict, seed=1) -> dict:
         raise TypeError("'param_possibilities' must be a dictionary")
 
     if len(param_possibilities.keys()) == 0:
-        raise ValueError("'param_possibilities' must be a non-empty dictionary")
+        return {}
 
     if isinstance(seed, int) is False:
         raise TypeError("'seed' must be int")
