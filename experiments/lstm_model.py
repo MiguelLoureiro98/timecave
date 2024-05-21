@@ -12,15 +12,6 @@ def shaping(sequence, lags):
     """
     series = shape_series(sequence, lags)
     series = series.drop(series.columns[0], axis=1)
-
-    """X, y = [], []
-    for i in range(len(sequence)):
-        end_ix = i + lags
-        if end_ix > len(sequence) - 1:
-            break
-        seq_x, seq_y = sequence[i:end_ix], sequence[end_ix]
-        X.append(seq_x)
-        y.append(seq_y)"""
     return series.iloc[:, :-1].values, series.iloc[:, -1].values
 
 
