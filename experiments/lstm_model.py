@@ -30,14 +30,14 @@ def lstm_model(lags: int):
     return model
 
 
-def recursive_forecast(model, series, pred_window, lags):
+def recursive_forecast(model, train_series, pred_window, lags):
     """
     Performs recursive forecasting using a trained LSTM model,
     predicting 'pred_window' future timesteps based on single-step predictions.
     """
     # Make predictions
     forecast = []
-    x_input = series[-lags:].reshape((1, lags, 1))
+    x_input = train_series[-lags:].reshape((1, lags, 1))
     for _ in range(pred_window):
         yhat = model.predict(x_input, verbose=0)
         forecast.append(yhat[0][0])
@@ -47,8 +47,8 @@ def recursive_forecast(model, series, pred_window, lags):
 
 
 def predict_lstm(
-    series: np.array,
-    pred_window: int,
+    train_series: np.array,
+    test_series: np.array,
     lags: int = 3,
     epochs: int = 200,
     verbose: int = 0,
@@ -57,24 +57,26 @@ def predict_lstm(
     Predict future values using Long Short-Term Memory (LSTM).
     """
 
-    X, y = shaping(series, lags)
+    X_test, y_test = shaping(test_series, lags)
+    X_train, y_train = shaping(train_series, lags)
 
     # Reshape input to be [samples, time steps, features]
     n_features = 1  # univariate time series
-    X = X.reshape((X.shape[0], X.shape[1], n_features))
+    X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], n_features))
+    X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], n_features))
 
     # Define the LSTM model
     model = lstm_model(lags)
     model.compile(optimizer="adam", loss="mse")
 
     # Fit the model
-    model.fit(X, y, epochs=epochs, verbose=verbose)
+    model.fit(X_train, y_train, epochs=epochs, verbose=verbose)
 
-    forecast = recursive_forecast(model, series, pred_window, lags)
-    mse = mean_squared_error(y, forecast)
-    mae = mean_absolute_error(y, forecast)
+    forecast = recursive_forecast(model, train_series, len(test_series), lags)
+    mse = mean_squared_error(test_series, forecast)
+    mae = mean_absolute_error(test_series, forecast)
 
-    print("Forecasted values for the next", pred_window, "timesteps:")
+    print("Forecasted values for the next", len(test_series), "timesteps:")
     print(forecast)
     return {
         "prediction": np.array(forecast),
@@ -86,4 +88,5 @@ def predict_lstm(
 
 
 if __name__ == "__main__":
-    predict_lstm(np.ones(100), pred_window=20)
+    results = predict_lstm(np.ones(80), np.ones(20))
+    print(results)
