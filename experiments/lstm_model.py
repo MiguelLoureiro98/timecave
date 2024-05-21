@@ -3,21 +3,25 @@ import pandas as pd
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from sklearn.metrics import mean_squared_error, mean_absolute_error
+from experiment_utils import shape_series, input_output
 
 
 def shaping(sequence, lags):
     """
     Reshapes input in order to be used for the lstm.
     """
-    X, y = [], []
+    series = shape_series(sequence, lags)
+    series = series.drop(series.columns[0], axis=1)
+
+    """X, y = [], []
     for i in range(len(sequence)):
         end_ix = i + lags
         if end_ix > len(sequence) - 1:
             break
         seq_x, seq_y = sequence[i:end_ix], sequence[end_ix]
         X.append(seq_x)
-        y.append(seq_y)
-    return np.array(X), np.array(y)
+        y.append(seq_y)"""
+    return series.iloc[:, :-1].values, series.iloc[:, -1].values
 
 
 def lstm_model(lags: int):
@@ -37,7 +41,7 @@ def recursive_forecast(model, train_series, pred_window, lags):
     """
     # Make predictions
     forecast = []
-    x_input = train_series[-lags:].reshape((1, lags, 1))
+    x_input = train_series[-lags:].to_numpy().reshape((1, lags, 1))
     for _ in range(pred_window):
         yhat = model.predict(x_input, verbose=0)
         forecast.append(yhat[0][0])
@@ -49,6 +53,7 @@ def recursive_forecast(model, train_series, pred_window, lags):
 def predict_lstm(
     train_series: np.array,
     test_series: np.array,
+    prediction_point: np.array = None,
     lags: int = 3,
     epochs: int = 200,
     verbose: int = 0,
@@ -57,13 +62,13 @@ def predict_lstm(
     Predict future values using Long Short-Term Memory (LSTM).
     """
 
-    X_test, y_test = shaping(test_series, lags)
-    X_train, y_train = shaping(train_series, lags)
+    X_test, y_test = input_output(test_series, lags)
+    X_train, y_train = input_output(train_series, lags)
 
     # Reshape input to be [samples, time steps, features]
     n_features = 1  # univariate time series
-    X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], n_features))
-    X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], n_features))
+    # X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], n_features))
+    # X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], n_features))
 
     # Define the LSTM model
     model = lstm_model(lags)
@@ -73,8 +78,8 @@ def predict_lstm(
     model.fit(X_train, y_train, epochs=epochs, verbose=verbose)
 
     forecast = recursive_forecast(model, train_series, len(test_series), lags)
-    mse = mean_squared_error(test_series, forecast)
-    mae = mean_absolute_error(test_series, forecast)
+    mse = mean_squared_error(test_series.to_numpy(), forecast)
+    mae = mean_absolute_error(test_series.to_numpy(), forecast)
 
     print("Forecasted values for the next", len(test_series), "timesteps:")
     print(forecast)
@@ -88,5 +93,5 @@ def predict_lstm(
 
 
 if __name__ == "__main__":
-    results = predict_lstm(np.ones(80), np.ones(20))
+    results = predict_lstm(pd.Series(np.ones(80)), pd.Series(np.ones(20)))
     print(results)
