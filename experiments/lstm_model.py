@@ -58,8 +58,8 @@ def predict_lstm(
 
     # Reshape input to be [samples, time steps, features]
     n_features = 1  # univariate time series
-    # X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], n_features))
-    # X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], n_features))
+    X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], n_features))
+    X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], n_features))
 
     # Define the LSTM model
     model = lstm_model(lags)

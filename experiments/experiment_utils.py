@@ -47,5 +47,4 @@ def input_output(ts: pd.Series, n_lags: int = 5) -> tuple[np.array]:
     Reshapes data in order to be used for the lstm or the decision tree. Returns input/output numpy arrays
     """
     series = shape_series(ts, n_lags)
-    series = series.drop(series.columns[0], axis=1)
     return series.iloc[:, :-1].values, series.iloc[:, -1].values
