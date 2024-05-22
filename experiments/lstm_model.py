@@ -3,7 +3,7 @@ import pandas as pd
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from experiment_utils import shape_series, input_output
+from experiment_utils import shape_series, get_X_y
 
 
 def shaping(sequence, lags):
@@ -25,7 +25,7 @@ def lstm_model(lags: int):
     return model
 
 
-def recursive_forecast(model, train_series, pred_window, lags):
+def recursive_forecast(model, train_series: pd.Series, pred_window: int, lags: int):
     """
     Performs recursive forecasting using a trained LSTM model,
     predicting 'pred_window' future timesteps based on single-step predictions.
@@ -42,9 +42,8 @@ def recursive_forecast(model, train_series, pred_window, lags):
 
 
 def predict_lstm(
-    train_series: np.array,
-    test_series: np.array,
-    prediction_point: np.array = None,
+    train_series: pd.Series or pd.DataFrame,
+    test_series: pd.Series or pd.DataFrame,
     lags: int = 3,
     epochs: int = 200,
     verbose: int = 0,
@@ -53,8 +52,8 @@ def predict_lstm(
     Predict future values using Long Short-Term Memory (LSTM).
     """
 
-    X_test, y_test = input_output(test_series, lags)
-    X_train, y_train = input_output(train_series, lags)
+    # X_test, y_test = get_X_y(test_series, lags)
+    X_train, y_train = get_X_y(train_series, lags)
 
     # Reshape input to be [samples, time steps, features]
     n_features = 1  # univariate time series

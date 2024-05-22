@@ -1,17 +1,21 @@
-import pandas as pd
-from pmdarima.arima import auto_arima
 import numpy as np
+import pandas as pd
+from sklearn.tree import DecisionTreeRegressor
+from statsmodels.tsa.arima.model import ARIMA
+from experiment_utils import split_series, shape_series
 
+def predict_tree(ts_train: pd.Series | np.ndarray, ts_val: pd.Series | np.ndarray, model: DecisionTreeRegressor) -> dict:
+    
+    """
+    Train and test a decision tree model.
+    """
 
-def predict_arima(
-    series: pd.DataFrame or pd.Series or np.array, pred_window: int
-) -> np.array:
-    # auto_arima chooses the best values for p,d,q alone.
-    model = auto_arima(series)
+    pass
 
-    forecast = model.predict(n_periods=pred_window)
+def predict_ARMA(ts_train: pd.Series | np.ndarray, ts_val: pd.Series | np.ndarray, model: ARIMA) -> dict:
 
-    print("Forecasted values for the next", pred_window, "timesteps:")
-    print(forecast)
+    """
+    Train and test an ARMA model.
+    """
 
-    return {"prediction": np.array(forecast), "model": model}
+    pass

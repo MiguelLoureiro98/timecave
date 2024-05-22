@@ -42,7 +42,7 @@ def shape_series(ts: pd.Series, n_lags: int = 5) -> pd.DataFrame:
     return series
 
 
-def input_output(ts: pd.Series, n_lags: int = 5) -> tuple[np.array]:
+def get_X_y(ts: pd.Series, n_lags: int = 5) -> tuple[np.array]:
     """
     Reshapes data in order to be used for the lstm or the decision tree. Returns input/output numpy arrays
     """
