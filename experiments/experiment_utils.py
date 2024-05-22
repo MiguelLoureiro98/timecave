@@ -30,14 +30,14 @@ def shape_series(ts: pd.Series, n_lags: int = 5) -> pd.DataFrame:
     Format a time series so it can be fed to an LSTM and a Decision Tree.
     """
 
-    lags = [ts.shift(lag) for lag in range(1, n_lags + 1)]
-    col_names = ["t + {}".format(i) for i in range(n_lags + 1)]
+    lags = [ts.shift(lag) for lag in range(0, -(n_lags + 1), -1)]
+    col_names = ["t {}".format(i) for i in range(-n_lags, 0)] + ["t"]
 
-    lags = pd.concat(lags, axis=1)
-    series = pd.concat([ts, lags], axis=1)
+    series = pd.concat(lags, axis=1)
+    # series = pd.concat([ts, lags], axis=1)
     series.columns = col_names
     # series = series.dropna(how="all")
-    series = series[n_lags:].reset_index(drop=True)
+    series = series[:-n_lags].reset_index(drop=True)
 
     return series
 
