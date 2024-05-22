@@ -1,5 +1,21 @@
 import numpy as np
 import pandas as pd
+from os import getcwd
+import glob
+
+
+def get_freq(df: pd.DataFrame, date_column: str):
+    """
+    Gets frequency given the date column of a pandas dataframe.
+    """
+    df[date_column] = pd.to_datetime(df[date_column])
+    df["diff"] = df[date_column].diff()
+    return 1 / df["diff"].iloc[1].total_seconds()
+
+
+def get_csv_filenames(folder: str):
+    folder = getcwd() + "\\" + folder + "\\*.csv"
+    return glob.glob(folder)
 
 
 def get_univariate_series(dataset: pd.DataFrame) -> list[pd.Series]:
