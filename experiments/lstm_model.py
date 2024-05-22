@@ -23,11 +23,14 @@ def recursive_forecast(model, forecast_origin, pred_window: int, lags: int):
     """
     # Make predictions
     forecast = []
-    x_input = forecast_origin
+    x_input = forecast_origin.reshape(
+        (1, forecast_origin.shape[0], forecast_origin.shape[1])
+    )
     for _ in range(pred_window):
         yhat = model.predict(x_input, verbose=0)
-        forecast.append(yhat[0][0])
-        x_input = np.append(x_input[:, -lags:, :], [[yhat[0]]], axis=1)
+        pred = yhat[0][0]
+        forecast.append(pred)
+        x_input = np.append(x_input[:, -lags + 1 :, :], [[[pred]]], axis=1)
 
     return forecast
 
