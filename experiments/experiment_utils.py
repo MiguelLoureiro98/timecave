@@ -2,13 +2,15 @@ import numpy as np
 import pandas as pd
 from os import getcwd
 import glob
+import pandas.api.types as pdt
 
 
 def get_freq(df: pd.DataFrame, date_column: str):
     """
     Gets frequency given the date column of a pandas dataframe.
     """
-    df[date_column] = pd.to_datetime(df[date_column])
+    if not pdt.is_datetime64_any_dtype(df[date_column]):
+        return 1
     df["diff"] = df[date_column].diff()
     return 1 / df["diff"].iloc[1].total_seconds()
 
@@ -33,7 +35,7 @@ def split_series(ts: pd.Series, test_set_proportion: float = 0.2) -> tuple[pd.Se
     Split a univariate time series into training and test sets.
     """
 
-    splitting_index = np.round((1 - test_set_proportion) * ts.shape[0])
+    splitting_index = int(np.round((1 - test_set_proportion) * ts.shape[0]))
 
     train = ts.iloc[:splitting_index]
     test = ts.iloc[splitting_index:]
