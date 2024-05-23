@@ -72,8 +72,6 @@ def predict_lstm(
     mse = mean_squared_error(y_test, forecast)
     mae = mean_absolute_error(y_test, forecast)
 
-    print("Forecasted values for the next", len(test_series), "timesteps:")
-    print(forecast)
     return {
         "prediction": np.array(forecast),
         "trained_model": model,

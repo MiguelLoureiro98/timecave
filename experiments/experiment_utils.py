@@ -18,6 +18,37 @@ from timecave.validation_methods.weights import (
     linear_weights,
     exponential_weights,
 )
+from datetime import datetime
+
+
+def save_tables(
+    table_A: pd.DataFrame,
+    table_B: pd.DataFrame,
+    stats_total: pd.DataFrame,
+    stats_train: pd.DataFrame,
+    stats_val: pd.DataFrame,
+    dir: str,
+    add_name: str = "",
+    add_timestamp: bool = True,
+):
+    """
+    Saves all the tables resulting from experiments.
+    """
+    now = datetime.now()
+    timestamp = now.strftime("%Y_%m_%d__%H_%M_%S") if add_timestamp else ""
+    append_to_name = f"{add_name}_{timestamp}"
+    table_A.to_csv(dir + "table_A_" + append_to_name, index=False)
+    table_B.to_csv(dir + "table_B_" + append_to_name, index=False)
+    stats_total.to_csv(dir + "stats_total" + append_to_name, index=False)
+    stats_train.to_csv(dir + "stats_train" + append_to_name, index=False)
+    stats_val.to_csv(dir + "stats_val" + append_to_name, index=False)
+
+
+"""def read_tables(table_A_dir: str,
+    table_B_dir: str,
+    stats_total_dir: str,
+    stats_train_dir: str,
+    stats_val_dir: str):"""
 
 
 def get_methods_list(ts, freq):
