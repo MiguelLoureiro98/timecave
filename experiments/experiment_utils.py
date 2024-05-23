@@ -3,6 +3,87 @@ import pandas as pd
 from os import getcwd
 import glob
 import pandas.api.types as pdt
+from timecave.validation_methods._base import base_splitter
+
+
+def initialize_tables():
+    table_A = pd.DataFrame(
+        columns=[
+            "filename",
+            "column_index",
+            "method",
+            "iteration",
+            "model",
+            "mse",
+            "mae",
+            "rmse",
+        ]
+    )
+    colname_stats = [
+        "filename",
+        "column_index",
+        "Frequency",
+        "Mean",
+        "Median",
+        "Min",
+        "Max",
+        "Variance",
+        "P2P_amplitude",
+        "Trend_slope",
+        "Spectral_centroid",
+        "Spectral_rolloff",
+        "Spectral_entropy",
+        "Strength_of_trend",
+        "Mean_crossing_rate",
+        "Median_crossing_rate",
+    ]
+    table_B = pd.DataFrame(columns=colname_stats)
+    stats_total = pd.DataFrame(columns=colname_stats)
+    stats_train = pd.DataFrame(columns=colname_stats)
+    stats_val = pd.DataFrame(columns=colname_stats)
+    return table_A, table_B, stats_total, stats_train, stats_val
+
+
+def update_stats_tables(
+    stats_total: pd.DataFrame,
+    stats_train: pd.DataFrame,
+    stats_test: pd.DataFrame,
+    method: base_splitter,
+    filename: str,
+    col_idx: int,
+    freq,
+):
+    """
+    Updates the statistics dataframes.
+    """
+    df1, df2, df3 = method.statistics()
+    df1["filename"], df2["filename"], df3["filename"] = (
+        filename,
+        filename,
+        filename,
+    )
+
+    df1["column_index"], df2["column_index"], df3["column_index"] = (
+        col_idx,
+        col_idx,
+        col_idx,
+    )
+
+    df1["Frequency"], df2["Frequency"], df3["Frequency"] = (
+        freq,
+        freq,
+        freq,
+    )
+
+    assert set(df1.columns) == set(stats_total.columns), "Columns do not match"
+    assert set(df2.columns) == set(stats_train.columns), "Columns do not match"
+    assert set(df3.columns) == set(stats_test.columns), "Columns do not match"
+
+    stats_total = pd.concat([stats_total, df1])
+    stats_train = pd.concat([stats_train, df2])
+    stats_test = pd.concat([stats_test, df3])
+
+    return stats_total, stats_train, stats_test
 
 
 def get_freq(df: pd.DataFrame, date_column: str):

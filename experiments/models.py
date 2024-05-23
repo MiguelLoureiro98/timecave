@@ -6,7 +6,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from experiment_utils import get_X_y
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Input
-import os
+from timecave.validation_methods._base import base_splitter
 
 
 def lstm_model(lags: int):
@@ -147,14 +147,14 @@ def predict_models(
     filename,
     col_idx,
     table: pd.DataFrame,
-    method_name: str,
+    method: base_splitter,
     it: int,
 ):
     tree_results = predict_tree(train, val)
     row = [
         filename,
         col_idx,
-        method_name,
+        method,
         it,
         "Tree",
         tree_results["mse"],
@@ -167,7 +167,7 @@ def predict_models(
     row = [
         filename,
         col_idx,
-        method_name,
+        method,
         it,
         "LSTM",
         lstm_results["mse"],
@@ -180,7 +180,7 @@ def predict_models(
     row = [
         filename,
         col_idx,
-        method_name,
+        method,
         it,
         "ARMA",
         ARMA_results["mse"],
