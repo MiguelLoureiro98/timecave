@@ -147,47 +147,54 @@ def predict_models(
     filename,
     col_idx,
     table: pd.DataFrame,
-    method: base_splitter,
-    it: int,
+    method: base_splitter = None,
+    it: int = None,
 ):
+
     tree_results = predict_tree(train, val)
-    row = [
-        filename,
-        col_idx,
-        method,
-        it,
-        "Tree",
-        tree_results["mse"],
-        tree_results["mae"],
-        tree_results["rmse"],
-    ]
-    table.loc[len(table.index)] = row
+    row = pd.Series(
+        {
+            "filename": filename,
+            "column_index": col_idx,
+            "method": method,
+            "iteration": it,
+            "model": "Tree",
+            "mse": tree_results["mse"],
+            "mae": tree_results["mae"],
+            "rmse": tree_results["rmse"],
+        }
+    )
+    table.loc[len(table.index)] = row[table.columns]
 
     lstm_results = predict_lstm(train, val, lags=5, epochs=5, verbose=0)
-    row = [
-        filename,
-        col_idx,
-        method,
-        it,
-        "LSTM",
-        lstm_results["mse"],
-        lstm_results["mae"],
-        lstm_results["rmse"],
-    ]
-    table.loc[len(table.index)] = row
+    row = pd.Series(
+        {
+            "filename": filename,
+            "column_index": col_idx,
+            "method": method,
+            "iteration": it,
+            "model": "LSTM",
+            "mse": lstm_results["mse"],
+            "mae": lstm_results["mae"],
+            "rmse": lstm_results["rmse"],
+        }
+    )
+    table.loc[len(table.index)] = row[table.columns]
 
     ARMA_results = predict_ARMA(train, val, n_lags=5)
-    row = [
-        filename,
-        col_idx,
-        method,
-        it,
-        "ARMA",
-        ARMA_results["mse"],
-        ARMA_results["mae"],
-        ARMA_results["rmse"],
-    ]
-    table.loc[len(table.index)] = row
+    row = pd.Series(
+        {
+            "filename": filename,
+            "column_index": col_idx,
+            "method": method,
+            "iteration": it,
+            "model": "ARMA",
+            "mse": ARMA_results["mse"],
+            "mae": ARMA_results["mae"],
+            "rmse": ARMA_results["rmse"],
+        }
+    )
+    table.loc[len(table.index)] = row[table.columns]
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ def run(filenames: list[str]):
             train_val, test = split_series(ts, test_set_proportion=0.2)
 
             # Validation Methods
-            methods = get_methods_list()
+            methods = get_methods_list(train_val, freq)
             for method in methods:
                 for it, (t_idx, v_idx) in enumerate(method.split()):
                     predict_models(
@@ -47,18 +47,9 @@ def run(filenames: list[str]):
                     idx,
                     freq=freq,
                 )
-                print()
 
             # "True" results
-            predict_models(
-                train_val,
-                test,
-                file[len(os.getcwd()) :],
-                idx,
-                table_A,
-                method,
-                it,
-            )
+            predict_models(train_val, test, file[len(os.getcwd()) :], idx, table_B)
 
 
 if __name__ == "__main__":

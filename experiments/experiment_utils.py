@@ -29,7 +29,7 @@ def get_methods_list(ts, freq):
     rol_origin_cal = Rolling_Origin_Recalibration(ts, freq, origin=0.7)
     fix_size_roll_wind = Fixed_Size_Rolling_Window(ts, freq, origin=0.7)
     grow_window = Growing_Window(5, ts, freq, gap=0)
-    gap_grow_window = Growing_Window(5, ts, freq, gap=5)
+    gap_grow_window = Growing_Window(5, ts, freq, gap=1)
     weighted_grow_window = Growing_Window(
         5,
         ts,
@@ -39,7 +39,7 @@ def get_methods_list(ts, freq):
         params={"base": 2},
     )
     roll_window = Rolling_Window(5, ts, freq, gap=0)
-    gap_roll_window = Rolling_Window(5, ts, freq, gap=5)
+    gap_roll_window = Rolling_Window(5, ts, freq, gap=1)
     weighted_roll_window = Rolling_Window(
         5,
         ts,
@@ -73,18 +73,26 @@ def get_methods_list(ts, freq):
 
 
 def initialize_tables():
-    table_A = pd.DataFrame(
-        columns=[
-            "filename",
-            "column_index",
-            "method",
-            "iteration",
-            "model",
-            "mse",
-            "mae",
-            "rmse",
-        ]
-    )
+    colname_A = [
+        "filename",
+        "column_index",
+        "method",
+        "iteration",
+        "model",
+        "mse",
+        "mae",
+        "rmse",
+    ]
+    table_A = pd.DataFrame(columns=colname_A)
+    colname_B = [
+        "filename",
+        "column_index",
+        "model",
+        "mse",
+        "mae",
+        "rmse",
+    ]
+    table_B = pd.DataFrame(columns=colname_B)
     colname_stats = [
         "filename",
         "column_index",
@@ -103,7 +111,6 @@ def initialize_tables():
         "Mean_crossing_rate",
         "Median_crossing_rate",
     ]
-    table_B = pd.DataFrame(columns=colname_stats)
     stats_total = pd.DataFrame(columns=colname_stats)
     stats_train = pd.DataFrame(columns=colname_stats)
     stats_val = pd.DataFrame(columns=colname_stats)
