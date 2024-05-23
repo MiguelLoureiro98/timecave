@@ -57,13 +57,7 @@ def run(filenames: list[str], backup_dir: str, results_dir: str, save_freq: int)
             nb_ts = +1
             if nb_ts % save_freq == 0:
                 save_tables(
-                    table_A,
-                    table_B,
-                    stats_total,
-                    stats_train,
-                    stats_val,
-                    backup_dir,
-                    add_name=f"nb{nb_ts}",
+                    table_A, table_B, stats_total, stats_train, stats_val, backup_dir
                 )
 
             print()

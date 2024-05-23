@@ -19,6 +19,7 @@ from timecave.validation_methods.weights import (
     exponential_weights,
 )
 from datetime import datetime
+import re, os
 
 
 def save_tables(
@@ -36,19 +37,66 @@ def save_tables(
     """
     now = datetime.now()
     timestamp = now.strftime("%Y_%m_%d__%H_%M_%S") if add_timestamp else ""
-    append_to_name = f"{add_name}_{timestamp}"
-    table_A.to_csv(dir + "table_A_" + append_to_name, index=False)
-    table_B.to_csv(dir + "table_B_" + append_to_name, index=False)
-    stats_total.to_csv(dir + "stats_total" + append_to_name, index=False)
-    stats_train.to_csv(dir + "stats_train" + append_to_name, index=False)
-    stats_val.to_csv(dir + "stats_val" + append_to_name, index=False)
+    append_to_name = f"{add_name}_{timestamp}.csv"
+    table_A.to_csv(dir + "/table_A_" + append_to_name, index=False)
+    table_B.to_csv(dir + "/table_B_" + append_to_name, index=False)
+    stats_total.to_csv(dir + "/stats_total_" + append_to_name, index=False)
+    stats_train.to_csv(dir + "/stats_train_" + append_to_name, index=False)
+    stats_val.to_csv(dir + "/stats_val_" + append_to_name, index=False)
 
 
-"""def read_tables(table_A_dir: str,
-    table_B_dir: str,
-    stats_total_dir: str,
-    stats_train_dir: str,
-    stats_val_dir: str):"""
+def get_lastest_csv_dirs(folder_dir: str):
+    """
+    Gets the latest .csv names within a folder based on the timestamps in their name.
+    """
+    pattern = re.compile(
+        rf"table_A_(\d{{4}}_\d{{2}}_\d{{2}}__\d{{2}}_\d{{2}}_\d{{2}}).csv"
+    )
+    files = os.listdir(folder_dir)
+
+    timestamps = []
+    for file in files:
+        match = pattern.match(file)
+        if match:
+            timestamps.append((file, match.group(1)))
+
+    if not timestamps:
+        return None, None, None, None, None
+
+    timestamps.sort(
+        key=lambda x: datetime.strptime(x[1], "%Y_%m_%d__%H_%M_%S"), reverse=True
+    )
+    latest_timestamp = timestamps[0][1]
+
+    table_A_file = f"table_A__{latest_timestamp}.csv"
+    table_B_file = f"table_B__{latest_timestamp}.csv"
+    stats_total_file = f"stats_total__{latest_timestamp}.csv"
+    stats_train_file = f"stats_train__{latest_timestamp}.csv"
+    stats_val_file = f"stats_val__{latest_timestamp}.csv"
+    return (
+        table_A_file,
+        table_B_file,
+        stats_total_file,
+        stats_train_file,
+        stats_val_file,
+    )
+
+
+def read_tables(
+    table_A_file: str,
+    table_B_file: str,
+    stats_total_file: str,
+    stats_train_file: str,
+    stats_val_file: str,
+    dir: str,
+):
+    table_A = pd.read_csv(dir + table_A_file)
+    table_B = pd.read_csv(dir + table_B_file)
+    stats_total = pd.read_csv(dir + stats_total_file)
+    stats_train = pd.read_csv(dir + stats_train_file)
+    stats_val = pd.read_csv(dir + stats_val_file)
+
+    return table_A, table_B, stats_total, stats_train, stats_val
 
 
 def get_methods_list(ts, freq):
