@@ -7,17 +7,9 @@ from experiment_utils import (
     get_freq,
     update_stats_tables,
     initialize_tables,
+    get_methods_list,
 )
-from timecave.validation_methods.OOS import (
-    Holdout,
-    Repeated_Holdout,
-    Rolling_Origin_Update,
-    Rolling_Origin_Recalibration,
-    Fixed_Size_Rolling_Window,
-)
-from timecave.validation_methods.prequential import Growing_Window, Rolling_Window
-from timecave.validation_methods.CV import Block_CV, hv_Block_CV
-from models import predict_models, predict_ARMA, predict_lstm, predict_tree
+from models import predict_models
 import os
 
 
@@ -34,30 +26,39 @@ def run(filenames: list[str]):
             train_val, test = split_series(ts, test_set_proportion=0.2)
 
             # Validation Methods
-            holdout = Holdout(train_val, freq, validation_size=0.7)
-
-            for it, (t_idx, v_idx) in enumerate(holdout.split()):
-                predict_models(
-                    ts[t_idx],
-                    ts[v_idx],
+            methods = get_methods_list()
+            for method in methods:
+                for it, (t_idx, v_idx) in enumerate(method.split()):
+                    predict_models(
+                        train_val[t_idx],
+                        train_val[v_idx],
+                        file[len(os.getcwd()) :],
+                        idx,
+                        table_A,
+                        method,
+                        it,
+                    )
+                stats_total, stats_train, stats_val = update_stats_tables(
+                    stats_total,
+                    stats_train,
+                    stats_val,
+                    method,
                     file[len(os.getcwd()) :],
                     idx,
-                    table_A,
-                    holdout,
-                    it,
+                    freq=freq,
                 )
-            stats_total, stats_train, stats_val = update_stats_tables(
-                stats_total,
-                stats_train,
-                stats_val,
-                holdout,
-                file[len(os.getcwd()) :],
-                idx,
-                freq=freq,
-            )
-            print()
+                print()
 
             # "True" results
+            predict_models(
+                train_val,
+                test,
+                file[len(os.getcwd()) :],
+                idx,
+                table_A,
+                method,
+                it,
+            )
 
 
 if __name__ == "__main__":

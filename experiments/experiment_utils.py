@@ -4,6 +4,72 @@ from os import getcwd
 import glob
 import pandas.api.types as pdt
 from timecave.validation_methods._base import base_splitter
+from timecave.validation_methods.OOS import (
+    Holdout,
+    Repeated_Holdout,
+    Rolling_Origin_Update,
+    Rolling_Origin_Recalibration,
+    Fixed_Size_Rolling_Window,
+)
+from timecave.validation_methods.prequential import Growing_Window, Rolling_Window
+from timecave.validation_methods.CV import Block_CV, hv_Block_CV
+from timecave.validation_methods.weights import (
+    constant_weights,
+    linear_weights,
+    exponential_weights,
+)
+
+
+def get_methods_list(ts, freq):
+    holdout = Holdout(ts, freq, validation_size=0.7)
+    rep_hold = Repeated_Holdout(
+        ts, freq, iterations=5, splitting_interval=[0.7, 0.8], seed=0
+    )
+    rol_origin_update = Rolling_Origin_Update(ts, freq, origin=0.7)
+    rol_origin_cal = Rolling_Origin_Recalibration(ts, freq, origin=0.7)
+    fix_size_roll_wind = Fixed_Size_Rolling_Window(ts, freq, origin=0.7)
+    grow_window = Growing_Window(5, ts, freq, gap=0)
+    gap_grow_window = Growing_Window(5, ts, freq, gap=5)
+    weighted_grow_window = Growing_Window(
+        5,
+        ts,
+        freq,
+        gap=3,
+        weight_function=exponential_weights,
+        params={"base": 2},
+    )
+    roll_window = Rolling_Window(5, ts, freq, gap=0)
+    gap_roll_window = Rolling_Window(5, ts, freq, gap=5)
+    weighted_roll_window = Rolling_Window(
+        5,
+        ts,
+        freq,
+        gap=3,
+        weight_function=exponential_weights,
+        params={"base": 2},
+    )
+    block_cv = Block_CV(5, ts, freq)
+    weight_block_cv = Block_CV(
+        5, ts, freq, weight_function=exponential_weights, params={"base": 2}
+    )
+    hv_block = hv_Block_CV(ts, freq, h=5, v=5)
+
+    return [
+        holdout,
+        rep_hold,
+        rol_origin_update,
+        rol_origin_cal,
+        fix_size_roll_wind,
+        grow_window,
+        gap_grow_window,
+        weighted_grow_window,
+        roll_window,
+        gap_roll_window,
+        weighted_roll_window,
+        block_cv,
+        weight_block_cv,
+        hv_block,
+    ]
 
 
 def initialize_tables():
