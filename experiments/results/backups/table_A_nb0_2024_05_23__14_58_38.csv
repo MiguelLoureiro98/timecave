@@ -1,0 +1,4 @@
+filename,column_index,method,iteration,model,mse,mae,rmse
+\experiments\datasets\processed_data\aire_discharge_environment_data.csv,0,<timecave.validation_methods.OOS.Holdout object at 0x0000023F0B805D00>,0,Tree,49.644106188376774,4.158922129014225,7.045857377805541
+\experiments\datasets\processed_data\aire_discharge_environment_data.csv,0,<timecave.validation_methods.OOS.Holdout object at 0x0000023F0B805D00>,0,LSTM,42.42689358835447,3.285613427190124,6.51359298608337
+\experiments\datasets\processed_data\aire_discharge_environment_data.csv,0,<timecave.validation_methods.OOS.Holdout object at 0x0000023F0B805D00>,0,ARMA,2.8349362176619264e+18,1014489078.4809005,1683726883.3340895
