@@ -4,9 +4,14 @@ Post-processing module.
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import timecave.validation_strategy_metrics as metrics
 
 def series_name(data: pd.DataFrame) -> pd.DataFrame:
+
+    """
+    Merges file name and column name columns into a single series column.
+    """
 
     # ! Check the column names!!!
 
@@ -17,10 +22,18 @@ def series_name(data: pd.DataFrame) -> pd.DataFrame:
     return new_data;
 
 def weighted_average(data: pd.DataFrame, values: str, weights: str):
+
+    """
+    Computes a weighted average from a column of values and a column of weights.
+    """
     
     return (data[values] * data[weights]).sum() / data[weights].sum();
 
 def error_estimation(processed_data: pd.DataFrame) -> pd.DataFrame:
+
+    """
+    Computes the error estimates for every method, model and time series, and merges these into a single data frame.
+    """
     
     mse_est = processed_data.groupby(["series", "method", "model"]).apply(weighted_average, "mse", "weights").reset_index().rename(columns={0: "mse"});
     mae_est = processed_data.groupby(["series", "method", "model"]).apply(weighted_average, "mae", "weights").reset_index().rename(columns={0: "mae"});
@@ -33,11 +46,19 @@ def error_estimation(processed_data: pd.DataFrame) -> pd.DataFrame:
 
 def merge_estimates_true(estimation_data: pd.DataFrame, test_data: pd.DataFrame) -> pd.DataFrame: # can be used to merge data for the iterations experiment
 
+    """
+    Merges the data frames containing estimation and test data into a single data frame.
+    """
+
     aggregate_data = pd.merge(left=estimation_data, right=test_data, on=["series", "model"], suffixes=["_estimate", "_true"]);
 
     return aggregate_data;
 
 def compute_val_metrics(aggregate_data: pd.DataFrame, performance_metric: str = "mse") -> pd.DataFrame: # this can be used with S1, S2 and S3 individually
+
+    """
+    Computes the validation strategy metrics ... .
+    """
 
     models = aggregate_data["model"].unique().tolist();
     methods = aggregate_data["method"].unique().tolist();
@@ -52,22 +73,26 @@ def compute_val_metrics(aggregate_data: pd.DataFrame, performance_metric: str = 
             filters = (aggregate_data["model"] == model) & (aggregate_data["method"] == method);
             data = aggregate_data.loc[filters].copy();
 
-            res_dict = [metrics.MC_metric(data["{}_estimate".format(performance_metric)].to_list(), data["{}_true".format(performance_metric)], val_met) for val_met in val_metrics];
-            res_df = [pd.DataFrame(res) for res in res_dict];
+            res_dict = [metrics.MC_metric(data["{}_estimate".format(performance_metric)].to_list(), data["{}_true".format(performance_metric)], val_met) for val_met in val_metrics];   
+            res_df = [pd.DataFrame(res, index=[0]) for res in res_dict];
             
             for df in res_df:
 
                 df["method"] = method;
                 df["model"] = model;
     
-            final_df = pd.concat(res_df, axis=0);
+            final_df = pd.concat(res_df, axis=0).reset_index().drop(columns=["index"]);
             frames.append(final_df);
     
-    results = pd.concat(frames, axis=0);
+    results = pd.concat(frames, axis=0).reset_index().drop(columns=["index"]);
 
     return results;
 
 def under_over_analysis(aggregate_data: pd.DataFrame, performance_metric: str = "mse") -> tuple[pd.DataFrame]:
+
+    """
+    ...
+    """
 
     models = aggregate_data["model"].unique().tolist();
     methods = aggregate_data["method"].unique().tolist();
@@ -106,6 +131,10 @@ def under_over_analysis(aggregate_data: pd.DataFrame, performance_metric: str = 
 
 def under_over_by_method(aggregate_data: pd.DataFrame, performance_metric: str = "mse") -> pd.DataFrame:
 
+    """
+    ...
+    """
+
     methods = aggregate_data["method"].unique().tolist();
 
     under_frames = [];
@@ -138,21 +167,41 @@ def under_over_by_method(aggregate_data: pd.DataFrame, performance_metric: str =
 
 def PAE_row(row, metric: str):
 
+    """
+    Computes the PAE metric by row.
+    """
+
     return metrics.PAE(row[f"{metric}_estimated"], row[f"{metric}_true"]);
 
 def APAE_row(row, metric: str):
+
+    """
+    Computes the APAE metric by row.
+    """
 
     return metrics.APAE(row[f"{metric}_estimated"], row[f"{metric}_true"]);
 
 def RPAE_row(row, metric: str):
 
+    """
+    Computes the RPAE metric by row.
+    """
+
     return metrics.RPAE(row[f"{metric}_estimated"], row[f"{metric}_true"]);
 
 def RAPAE_row(row, metric: str):
 
+    """
+    Computes the RAPAE metric by row.
+    """
+
     return metrics.RAPAE(row[f"{metric}_estimated"], row[f"{metric}_true"]);
 
 def compute_metrics_per_row(aggregate_data: pd.DataFrame, performance_metric: str) -> pd.DataFrame:
+
+    """
+    Computes every validation strategy metric by row.
+    """
 
     aggregate_data["PAE"] = aggregate_data.apply(PAE_row, args=[performance_metric], axis=1);
     aggregate_data["APAE"] = aggregate_data.apply(APAE_row, args=[performance_metric], axis=1);
@@ -162,6 +211,10 @@ def compute_metrics_per_row(aggregate_data: pd.DataFrame, performance_metric: st
     return aggregate_data;
 
 def val_metrics_per_iteration(aggregate_data: pd.DataFrame, performance_metric: str) -> pd.DataFrame:
+
+    """
+    ...
+    """
 
     methods_list = ["Growing_Window",
                     "Rolling_Window",
@@ -178,14 +231,52 @@ def val_metrics_per_iteration(aggregate_data: pd.DataFrame, performance_metric: 
 
     val_metrics = compute_metrics_per_row(preq_CV_data, performance_metric);
     
+    metrics_per_it = val_metrics.groupby(["method", "model", "iteration"])[["PAE", "APAE", "RPAE", "RAPAE"]].agg(["mean", np.median, "min", "max", "std"]).reset_index();
 
-    return;
+    return metrics_per_it;
 
 def boxplots(aggregate_data: pd.DataFrame, performance_metric: str) -> None:
 
+    """
+    ...
+    """
+
     val_metrics = compute_metrics_per_row(aggregate_data, performance_metric);
 
-    pass
+    # Do it separately for each model.
+    boxplot = val_metrics.boxplot(column=["PAE", "APAE", "RPAE", "RAPAE"], by=["model", "method"], layout=(4, 1), return_type="axes");
+    plt.axhline(0, c="r", linestyle="--");
+    plt.show();
+
+    return;
+
+def boxplots_per_iteration(aggregate_data: pd.DataFrame, performance_metric: str) -> None:
+
+    """
+    ...
+    """
+
+    methods_list = ["Growing_Window",
+                    "Rolling_Window",
+                    "Weighted_Growing_Window",
+                    "Weighted_Rolling_Window",
+                    "Gap_Growing_Window",
+                    "Gap_Rolling_Window",
+                    "Block_CV",
+                    "Weighted_Block_CV",
+                    "hv_Block_CV"];
+    
+    filters = (aggregate_data["method"].isin(methods_list));
+    preq_CV_data = aggregate_data.loc[filters].copy();
+
+    val_metrics = compute_metrics_per_row(preq_CV_data, performance_metric);
+    
+    # Do it separately for each model.
+    boxplot = val_metrics.boxplot(column=["PAE", "APAE", "RPAE", "RAPAE"], by=["model", "method"], layout=(4, 1), return_type="axes");
+    plt.axhline(0, c="r", linestyle="--");
+    plt.show();
+
+    return;
 
 if __name__ == "__main__":
 
