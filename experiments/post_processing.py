@@ -82,6 +82,7 @@ def compute_val_metrics(aggregate_data: pd.DataFrame, performance_metric: str = 
                 df["model"] = model;
     
             final_df = pd.concat(res_df, axis=0).reset_index().drop(columns=["index"]);
+            final_df["metric"] = ["PAE", "APAE", "RPAE", "RAPAE"];
             frames.append(final_df);
     
     results = pd.concat(frames, axis=0).reset_index().drop(columns=["index"]);
@@ -109,8 +110,8 @@ def under_over_analysis(aggregate_data: pd.DataFrame, performance_metric: str = 
             data = aggregate_data.loc[filters].copy();
 
             res_dict = [metrics.under_over_estimation(data["{}_estimate".format(performance_metric)].to_list(), data["{}_true".format(performance_metric)], val_met) for val_met in val_metrics];
-            res_under = [pd.DataFrame(res[0]) for res in res_dict];
-            res_over = [pd.DataFrame(res[1]) for res in res_dict];
+            res_under = [pd.DataFrame(res[0], index=[0]) for res in res_dict];
+            res_over = [pd.DataFrame(res[1], index=[0]) for res in res_dict];
             
             for (under_df, over_df) in zip(res_under, res_over):
 
@@ -119,13 +120,15 @@ def under_over_analysis(aggregate_data: pd.DataFrame, performance_metric: str = 
                 over_df["method"] = method;
                 over_df["model"] = model;
     
-            final_under = pd.concat(res_under, axis=0);
-            final_over = pd.concat(res_over, axis=0);
+            final_under = pd.concat(res_under, axis=0).reset_index().drop(columns=["index"]);
+            final_under["metric"] = ["PAE", "APAE", "RPAE", "RAPAE"];
+            final_over = pd.concat(res_over, axis=0).reset_index().drop(columns=["index"]);
+            final_over["metric"] = ["PAE", "APAE", "RPAE", "RAPAE"];
             under_frames.append(final_under);
             over_frames.append(final_over);
     
-    results_under = pd.concat(under_frames, axis=0);
-    results_over = pd.concat(over_frames, axis=0);
+    results_under = pd.concat(under_frames, axis=0).reset_index().drop(columns=["index"]);
+    results_over = pd.concat(over_frames, axis=0).reset_index().drop(columns=["index"]);
 
     return (results_under, results_over);
 
@@ -147,21 +150,23 @@ def under_over_by_method(aggregate_data: pd.DataFrame, performance_metric: str =
         data = aggregate_data.loc[filters].copy();
 
         res_dict = [metrics.under_over_estimation(data["{}_estimate".format(performance_metric)].to_list(), data["{}_true".format(performance_metric)], val_met) for val_met in val_metrics];
-        res_under = [pd.DataFrame(res[0]) for res in res_dict];
-        res_over = [pd.DataFrame(res[1]) for res in res_dict];
+        res_under = [pd.DataFrame(res[0], index=[0]) for res in res_dict];
+        res_over = [pd.DataFrame(res[1], index=[0]) for res in res_dict];
             
         for (under_df, over_df) in zip(res_under, res_over):
 
             under_df["method"] = method;
             over_df["method"] = method;
     
-        final_under = pd.concat(res_under, axis=0);
-        final_over = pd.concat(res_over, axis=0);
+        final_under = pd.concat(res_under, axis=0).reset_index().drop(columns=["index"]);
+        final_under["metric"] = ["PAE", "APAE", "RPAE", "RAPAE"];
+        final_over = pd.concat(res_over, axis=0).reset_index().drop(columns=["index"]);
+        final_over["metric"] = ["PAE", "APAE", "RPAE", "RAPAE"];
         under_frames.append(final_under);
         over_frames.append(final_over);
     
-    results_under = pd.concat(under_frames, axis=0);
-    results_over = pd.concat(over_frames, axis=0);
+    results_under = pd.concat(under_frames, axis=0).reset_index().drop(columns=["index"]);
+    results_over = pd.concat(over_frames, axis=0).reset_index().drop(columns=["index"]);
 
     return (results_under, results_over);
 
@@ -171,7 +176,7 @@ def PAE_row(row, metric: str):
     Computes the PAE metric by row.
     """
 
-    return metrics.PAE(row[f"{metric}_estimated"], row[f"{metric}_true"]);
+    return metrics.PAE(row[f"{metric}_estimate"], row[f"{metric}_true"]);
 
 def APAE_row(row, metric: str):
 
@@ -179,7 +184,7 @@ def APAE_row(row, metric: str):
     Computes the APAE metric by row.
     """
 
-    return metrics.APAE(row[f"{metric}_estimated"], row[f"{metric}_true"]);
+    return metrics.APAE(row[f"{metric}_estimate"], row[f"{metric}_true"]);
 
 def RPAE_row(row, metric: str):
 
@@ -187,7 +192,7 @@ def RPAE_row(row, metric: str):
     Computes the RPAE metric by row.
     """
 
-    return metrics.RPAE(row[f"{metric}_estimated"], row[f"{metric}_true"]);
+    return metrics.RPAE(row[f"{metric}_estimate"], row[f"{metric}_true"]);
 
 def RAPAE_row(row, metric: str):
 
@@ -195,7 +200,7 @@ def RAPAE_row(row, metric: str):
     Computes the RAPAE metric by row.
     """
 
-    return metrics.RAPAE(row[f"{metric}_estimated"], row[f"{metric}_true"]);
+    return metrics.RAPAE(row[f"{metric}_estimate"], row[f"{metric}_true"]);
 
 def compute_metrics_per_row(aggregate_data: pd.DataFrame, performance_metric: str) -> pd.DataFrame:
 
@@ -210,38 +215,38 @@ def compute_metrics_per_row(aggregate_data: pd.DataFrame, performance_metric: st
 
     return aggregate_data;
 
-def val_metrics_per_iteration(aggregate_data: pd.DataFrame, performance_metric: str) -> pd.DataFrame:
+def val_metrics_per_iteration(processed_data: pd.DataFrame, performance_metric: str, methods_list: list[str]) -> pd.DataFrame:
 
     """
     ...
     """
 
-    methods_list = ["Growing_Window",
-                    "Rolling_Window",
-                    "Weighted_Growing_Window",
-                    "Weighted_Rolling_Window",
-                    "Gap_Growing_Window",
-                    "Gap_Rolling_Window",
-                    "Block_CV",
-                    "Weighted_Block_CV",
-                    "hv_Block_CV"];
+    #methods_list = ["Growing_Window",
+    #                "Rolling_Window",
+    #                "Weighted_Growing_Window",
+    #                "Weighted_Rolling_Window",
+    #                "Gap_Growing_Window",
+    #                "Gap_Rolling_Window",
+    #                "Block_CV",
+    #                "Weighted_Block_CV",
+    #                "hv_Block_CV"];
     
-    filters = (aggregate_data["method"].isin(methods_list));
-    preq_CV_data = aggregate_data.loc[filters].copy();
+    filters = (processed_data["method"].isin(methods_list));
+    preq_CV_data = processed_data.loc[filters].copy();
 
     val_metrics = compute_metrics_per_row(preq_CV_data, performance_metric);
     
-    metrics_per_it = val_metrics.groupby(["method", "model", "iteration"])[["PAE", "APAE", "RPAE", "RAPAE"]].agg(["mean", np.median, "min", "max", "std"]).reset_index();
+    metrics_per_it = val_metrics.groupby(["method", "model", "iteration"])[["PAE", "APAE", "RPAE", "RAPAE"]].agg(["mean", "median", "min", "max", "std"]).reset_index();
 
     return metrics_per_it;
 
-def boxplots(aggregate_data: pd.DataFrame, performance_metric: str) -> None:
+def boxplots(processed_data: pd.DataFrame, performance_metric: str) -> None:
 
     """
     ...
     """
 
-    val_metrics = compute_metrics_per_row(aggregate_data, performance_metric);
+    val_metrics = compute_metrics_per_row(processed_data, performance_metric);
 
     # Do it separately for each model.
     boxplot = val_metrics.boxplot(column=["PAE", "APAE", "RPAE", "RAPAE"], by=["model", "method"], layout=(4, 1), return_type="axes");
@@ -250,24 +255,24 @@ def boxplots(aggregate_data: pd.DataFrame, performance_metric: str) -> None:
 
     return;
 
-def boxplots_per_iteration(aggregate_data: pd.DataFrame, performance_metric: str) -> None:
+def boxplots_per_iteration(processed_data: pd.DataFrame, performance_metric: str, methods_list: list[str]) -> None:
 
     """
     ...
     """
 
-    methods_list = ["Growing_Window",
-                    "Rolling_Window",
-                    "Weighted_Growing_Window",
-                    "Weighted_Rolling_Window",
-                    "Gap_Growing_Window",
-                    "Gap_Rolling_Window",
-                    "Block_CV",
-                    "Weighted_Block_CV",
-                    "hv_Block_CV"];
+    #methods_list = ["Growing_Window",
+    #                "Rolling_Window",
+    #                "Weighted_Growing_Window",
+    #                "Weighted_Rolling_Window",
+    #                "Gap_Growing_Window",
+    #                "Gap_Rolling_Window",
+    #                "Block_CV",
+    #                "Weighted_Block_CV",
+    #                "hv_Block_CV"];
     
-    filters = (aggregate_data["method"].isin(methods_list));
-    preq_CV_data = aggregate_data.loc[filters].copy();
+    filters = (processed_data["method"].isin(methods_list));
+    preq_CV_data = processed_data.loc[filters].copy();
 
     val_metrics = compute_metrics_per_row(preq_CV_data, performance_metric);
     
