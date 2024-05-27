@@ -31,7 +31,7 @@ def run(filenames: list[str], backup_dir: str, results_dir: str, save_freq: int)
             methods = get_methods_list(train_val, freq)
             for method in methods:
                 for it, (t_idx, v_idx) in enumerate(method.split()):
-                    predict_models(
+                    tree, lstm, arma = predict_models(
                         train_val[t_idx],
                         train_val[v_idx],
                         file[len(os.getcwd()) :],

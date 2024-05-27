@@ -11,6 +11,7 @@ from timecave.validation_methods.OOS import (
     Rolling_Origin_Recalibration,
     Fixed_Size_Rolling_Window,
 )
+from timecave.validation_methods.markov import MarkovCV
 from timecave.validation_methods.prequential import Growing_Window, Rolling_Window
 from timecave.validation_methods.CV import Block_CV, hv_Block_CV
 from timecave.validation_methods.weights import (
@@ -20,6 +21,7 @@ from timecave.validation_methods.weights import (
 )
 from datetime import datetime
 import re, os
+import statsmodels.api as sm
 
 
 def save_tables(
@@ -99,6 +101,28 @@ def read_tables(
     return table_A, table_B, stats_total, stats_train, stats_val
 
 
+def get_last_iteration(df: pd.DataFrame):
+    last_row = df.iloc[-1].to_dict()
+
+
+def get_autocorrelation_order(ts, nlags=5):
+    acf_values, confint = sm.tsa.acf(ts, nlags=nlags, alpha=0.05)
+
+    # Determine the order by finding the first lag where the acf value is not significant
+    # Confint provides the confidence interval for each lag; if the acf value is within this interval, it is not significant.
+    lower_bound = confint[:, 0]
+    upper_bound = confint[:, 1]
+    autocorrelation_order = np.where(
+        (acf_values < lower_bound) | (acf_values > upper_bound),
+    )[0]
+    if len(autocorrelation_order) == 0:
+        # If no significant lag is found, return the maximum lag
+        return nlags
+    else:
+        # Return the first significant lag
+        return autocorrelation_order[0]
+
+
 def get_methods_list(ts, freq):
     holdout = Holdout(ts, freq, validation_size=0.7)
     rep_hold = Repeated_Holdout(
@@ -109,29 +133,15 @@ def get_methods_list(ts, freq):
     fix_size_roll_wind = Fixed_Size_Rolling_Window(ts, freq, origin=0.7)
     grow_window = Growing_Window(5, ts, freq, gap=0)
     gap_grow_window = Growing_Window(5, ts, freq, gap=1)
-    weighted_grow_window = Growing_Window(
-        5,
-        ts,
-        freq,
-        gap=3,
-        weight_function=exponential_weights,
-        params={"base": 2},
-    )
+    # weighted_grow_window = Growing_Window(5,ts,freq,gap=3, weight_function=exponential_weights,params={"base": 2})
     roll_window = Rolling_Window(5, ts, freq, gap=0)
     gap_roll_window = Rolling_Window(5, ts, freq, gap=1)
-    weighted_roll_window = Rolling_Window(
-        5,
-        ts,
-        freq,
-        gap=3,
-        weight_function=exponential_weights,
-        params={"base": 2},
-    )
+    # weighted_roll_window = Rolling_Window(5,ts,freq,gap=3,weight_function=exponential_weights,params={"base": 2},)
     block_cv = Block_CV(5, ts, freq)
-    weight_block_cv = Block_CV(
-        5, ts, freq, weight_function=exponential_weights, params={"base": 2}
-    )
+    # weight_block_cv = Block_CV( 5, ts, freq, weight_function=exponential_weights, params={"base": 2})
     hv_block = hv_Block_CV(ts, freq, h=5, v=5)
+    p = get_autocorrelation_order(ts)
+    markov = MarkovCV(ts, p, seed=1)
 
     return [
         holdout,
@@ -141,13 +151,11 @@ def get_methods_list(ts, freq):
         fix_size_roll_wind,
         grow_window,
         gap_grow_window,
-        weighted_grow_window,
         roll_window,
         gap_roll_window,
-        weighted_roll_window,
         block_cv,
-        weight_block_cv,
         hv_block,
+        markov,
     ]
 
 
@@ -299,3 +307,12 @@ def get_X_y(ts: pd.Series, n_lags: int = 5) -> tuple[np.array]:
     """
     series = shape_series(ts, n_lags)
     return series.iloc[:, :-1].values, series.iloc[:, -1].values
+
+
+if __name__ == "__main__":
+    ts = np.arange(100)
+    assert get_autocorrelation_order(ts, 5) == 5
+
+    ts = np.ones(100)
+    assert get_autocorrelation_order(ts, 5) == 0
+    print()

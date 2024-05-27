@@ -128,7 +128,7 @@ def predict_ARMA(
     Train and test an ARMA model.
     """
 
-    model = ARIMA(ts_train, order=(n_lags, n_lags, 0))
+    model = ARIMA(ts_train, order=(n_lags, 0, n_lags))
     res = model.fit()
 
     y_pred = res.forecast(ts_val.shape[0])
@@ -193,6 +193,8 @@ def predict_models(
         }
     )
     table.loc[len(table.index)] = row[table.columns]
+
+    return tree_results["model"], lstm_results["model"], ARMA_results["model"]
 
 
 if __name__ == "__main__":
