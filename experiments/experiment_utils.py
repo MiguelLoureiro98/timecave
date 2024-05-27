@@ -47,41 +47,14 @@ def save_tables(
     stats_val.to_csv(dir + "/stats_val_" + append_to_name, index=False)
 
 
-def get_lastest_csv_dirs(folder_dir: str):
-    """
-    Gets the latest .csv names within a folder based on the timestamps in their name.
-    """
-    pattern = re.compile(
-        rf"table_A_(\d{{4}}_\d{{2}}_\d{{2}}__\d{{2}}_\d{{2}}_\d{{2}}).csv"
-    )
-    files = os.listdir(folder_dir)
+def get_latest_files(directory, prefix):
+    file_pattern = os.path.join(directory, f"{prefix}*")
+    files = glob.glob(file_pattern)
 
-    timestamps = []
-    for file in files:
-        match = pattern.match(file)
-        if match:
-            timestamps.append((file, match.group(1)))
+    if not files:
+        raise f"The files in the {prefix} in {directory} were not found!!"
 
-    if not timestamps:
-        return None, None, None, None, None
-
-    timestamps.sort(
-        key=lambda x: datetime.strptime(x[1], "%Y_%m_%d__%H_%M_%S"), reverse=True
-    )
-    latest_timestamp = timestamps[0][1]
-
-    table_A_file = f"table_A__{latest_timestamp}.csv"
-    table_B_file = f"table_B__{latest_timestamp}.csv"
-    stats_total_file = f"stats_total__{latest_timestamp}.csv"
-    stats_train_file = f"stats_train__{latest_timestamp}.csv"
-    stats_val_file = f"stats_val__{latest_timestamp}.csv"
-    return (
-        table_A_file,
-        table_B_file,
-        stats_total_file,
-        stats_train_file,
-        stats_val_file,
-    )
+    return max(files, key=os.path.getmtime)
 
 
 def read_tables(

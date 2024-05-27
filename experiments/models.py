@@ -164,7 +164,7 @@ def predict_models(
     )
     table.loc[len(table.index)] = row[table.columns]
 
-    lstm_results = predict_lstm(train, val, lags=5, epochs=5, verbose=0)
+    lstm_results = predict_lstm(train, val, lags=5, epochs=50, verbose=0)
     row = pd.Series(
         {
             "filename": filename,
