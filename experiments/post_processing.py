@@ -240,22 +240,29 @@ def val_metrics_per_iteration(processed_data: pd.DataFrame, performance_metric: 
 
     return metrics_per_it;
 
-def boxplots(processed_data: pd.DataFrame, performance_metric: str) -> None:
+def boxplots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int) -> None:
 
     """
     ...
     """
 
-    val_metrics = compute_metrics_per_row(processed_data, performance_metric);
+    model_data = processed_data.loc[processed_data["model"] == model].copy();
+    val_metrics = compute_metrics_per_row(model_data, performance_metric);
 
     # Do it separately for each model.
-    boxplot = val_metrics.boxplot(column=["PAE", "APAE", "RPAE", "RAPAE"], by=["model", "method"], layout=(4, 1), return_type="axes");
-    plt.axhline(0, c="r", linestyle="--");
+    boxplot = val_metrics.boxplot(column=validation_metrics, by="method", layout=(len(validation_metrics), 1), return_type="axes", figsize=(width, height));
+
+    for ax in boxplot:
+
+        ax.axhline(0, c="r", linestyle="--");
+    
+    fig = boxplot.iloc[0].get_figure();
+    fig.suptitle(f"Validation method performance - {model} model");
     plt.show();
 
     return;
 
-def boxplots_per_iteration(processed_data: pd.DataFrame, performance_metric: str, methods_list: list[str]) -> None:
+def boxplots_per_iteration(processed_data: pd.DataFrame, performance_metric: str, model: str, method: str, validation_metrics: list[str], height: int, width: int) -> None:
 
     """
     ...
@@ -271,14 +278,20 @@ def boxplots_per_iteration(processed_data: pd.DataFrame, performance_metric: str
     #                "Weighted_Block_CV",
     #                "hv_Block_CV"];
     
-    filters = (processed_data["method"].isin(methods_list));
+    filters = (processed_data["method"] == method) & (processed_data["model"] == model);
     preq_CV_data = processed_data.loc[filters].copy();
 
     val_metrics = compute_metrics_per_row(preq_CV_data, performance_metric);
     
     # Do it separately for each model.
-    boxplot = val_metrics.boxplot(column=["PAE", "APAE", "RPAE", "RAPAE"], by=["model", "method"], layout=(4, 1), return_type="axes");
-    plt.axhline(0, c="r", linestyle="--");
+    boxplot = val_metrics.boxplot(column=validation_metrics, by="iteration", layout=(len(validation_metrics), 1), return_type="axes", figsize=(width, height));
+
+    for ax in boxplot:
+
+        ax.axhline(0, c="r", linestyle="--");
+    
+    fig = boxplot.iloc[0].get_figure();
+    fig.suptitle(f"Estimation accuracy per iteration - {model} model");
     plt.show();
 
     return;
