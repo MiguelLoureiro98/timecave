@@ -20,6 +20,24 @@ def lstm_model(lags: int):
     return model
 
 
+def recursive_forecast_tree(
+    ts_val: np.ndarray, pred_window: int, model: DecisionTreeRegressor
+) -> np.ndarray:
+    """
+    Recursive forecasting for decision trees.
+    """
+
+    forecasts = np.zeros(pred_window)
+    input = ts_val[0]
+
+    for ind in range(pred_window):
+
+        forecasts[ind] = model.predict(input.reshape(1, -1)).item()
+        input = np.hstack((input[1:], forecasts[ind]))
+
+    return forecasts
+
+
 def recursive_forecast(model, forecast_origin, pred_window: int, lags: int):
     """
     Performs recursive forecasting using a trained LSTM model,
@@ -79,24 +97,6 @@ def predict_lstm(
         "rmse": np.sqrt(mse),
         "mae": mae,
     }
-
-
-def recursive_forecast_tree(
-    ts_val: np.ndarray, pred_window: int, model: DecisionTreeRegressor
-) -> np.ndarray:
-    """
-    Recursive forecasting for decision trees.
-    """
-
-    forecasts = np.zeros(pred_window)
-    input = ts_val[0]
-
-    for ind in range(pred_window):
-
-        forecasts[ind] = model.predict(input.reshape(1, -1)).item()
-        input = np.hstack((input[1:], forecasts[ind]))
-
-    return forecasts
 
 
 def predict_tree(ts_train: pd.Series, ts_val: pd.Series) -> dict:
