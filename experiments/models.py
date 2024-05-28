@@ -5,17 +5,19 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from statsmodels.tsa.arima.model import ARIMA
 from experiment_utils import get_X_y
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Input
+from tensorflow.keras.layers import LSTM, Dense, Input, GRU, SimpleRNN
 from timecave.validation_methods._base import base_splitter
+import tensorflow as tf
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 
-def lstm_model(lags: int):
+def rnn_model(lags: int):
     """
     Defines the LSTM architecture to be used.
     """
     model = Sequential()
     model.add(Input(shape=(lags, 1)))
-    model.add(LSTM(50, activation="relu"))
+    model.add(GRU(50))
     model.add(Dense(1))
     return model
 
@@ -47,6 +49,7 @@ def predict_lstm(
     lags: int = 5,
     epochs: int = 200,
     verbose: int = 0,
+    one_step_head_eval: bool = True,
 ) -> np.array:
     """
     Predict future values using Long Short-Term Memory (LSTM).
@@ -56,8 +59,8 @@ def predict_lstm(
     X_train, y_train = get_X_y(train_series, lags)
 
     # LSTM model
-    model = lstm_model(lags)
-    model.compile(optimizer="adam", loss="mse")
+    model = rnn_model(lags)
+    model.compile(optimizer="adam", loss="mean_squared_error")
 
     # Fit the model
     model.fit(X_train, y_train, epochs=epochs, verbose=verbose)
@@ -65,20 +68,27 @@ def predict_lstm(
     pred_window = len(y_val)
 
     # Forecast
-    forecast = recursive_forecast(X_val, pred_window, model, args={"verbose": verbose})
+    if not one_step_head_eval:
+        forecast = recursive_forecast(
+            X_val, pred_window, model, args={"verbose": verbose}
+        )
+    else:
+        forecast = model.predict(X_val, verbose=0)
     mse = mean_squared_error(y_val, forecast)
     mae = mean_absolute_error(y_val, forecast)
 
     return {
         "prediction": np.array(forecast),
-        "trained_model": model,
+        "model": model,
         "mse": mse,
         "rmse": np.sqrt(mse),
         "mae": mae,
     }
 
 
-def predict_tree(ts_train: pd.Series, ts_val: pd.Series) -> dict:
+def predict_tree(
+    ts_train: pd.Series, ts_val: pd.Series, one_step_head_eval: bool = True
+) -> dict:
     """
     Train and test a decision tree model.
     """
@@ -92,7 +102,41 @@ def predict_tree(ts_train: pd.Series, ts_val: pd.Series) -> dict:
 
     model.fit(X_train, y_train)
 
-    y_pred = recursive_forecast(X_val, y_val.shape[0], model)
+    if not one_step_head_eval:
+        y_pred = recursive_forecast(X_val, y_val.shape[0], model)
+    else:
+        y_pred = model.predict(X_val)
+    mse = mean_squared_error(y_true=y_val, y_pred=y_pred)
+    rmse = np.sqrt(mse)
+    mae = mean_absolute_error(y_true=y_val, y_pred=y_pred)
+
+    return {"prediction": y_pred, "model": model, "mse": mse, "rmse": rmse, "mae": mae}
+
+
+def next_pred(obs, model_params, kwargs):
+    fake_model = SARIMAX(obs, **kwargs)
+    res = fake_model.filter(model_params)
+    return res.forecast(1).item()
+
+
+def predict_ARMA_osh(
+    ts_train: pd.Series | np.ndarray, ts_val: pd.Series | np.ndarray, n_lags: int = 5
+) -> dict:
+    X_val, y_val = get_X_y(ts_val)
+
+    # Define SARIMAX model parameters
+    kwargs = {"order": (n_lags, 0, n_lags)}
+
+    # Initialize SARIMAX model with initial data
+    model = SARIMAX(ts_train, **kwargs)
+    res_fit = model.fit()
+    params = res_fit.params
+
+    # One-step ahead prediction
+    y_pred = np.apply_along_axis(
+        lambda obs: next_pred(obs, params, kwargs), axis=1, arr=X_val
+    )
+    # Evaluation
     mse = mean_squared_error(y_true=y_val, y_pred=y_pred)
     rmse = np.sqrt(mse)
     mae = mean_absolute_error(y_true=y_val, y_pred=y_pred)
@@ -111,6 +155,7 @@ def predict_ARMA(
     res = model.fit()
 
     y_pred = res.forecast(ts_val.shape[0])
+
     mse = mean_squared_error(y_true=ts_val, y_pred=y_pred)
     rmse = np.sqrt(mse)
     mae = mean_absolute_error(y_true=ts_val, y_pred=y_pred)
@@ -127,6 +172,9 @@ def predict_models(
     method: base_splitter = None,
     it: int = None,
 ):
+    """
+    Runs all models and saves results to the given table.
+    """
 
     tree_results = predict_tree(train, val)
     row = pd.Series(
@@ -158,7 +206,7 @@ def predict_models(
     )
     table.loc[len(table.index)] = row[table.columns]
 
-    ARMA_results = predict_ARMA(train, val, n_lags=5)
+    ARMA_results = predict_ARMA_osh(train, val, n_lags=5)
     row = pd.Series(
         {
             "filename": filename,
@@ -187,6 +235,10 @@ if __name__ == "__main__":
     a = np.arange(100)
     b = np.arange(100, 120)
 
+    a = pd.Series(a)
+    b = pd.Series(b)
+
+    ARMA_results = predict_ARMA_osh(a, b)
     ARMA_results = predict_ARMA(a, b)
 
     print(ARMA_results)

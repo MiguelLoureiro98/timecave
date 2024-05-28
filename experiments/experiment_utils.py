@@ -99,7 +99,7 @@ def get_autocorrelation_order(ts, nlags=5):
 def get_methods_list(ts, freq):
     holdout = Holdout(ts, freq, validation_size=0.7)
     rep_hold = Repeated_Holdout(
-        ts, freq, iterations=5, splitting_interval=[0.7, 0.8], seed=0
+        ts, freq, iterations=4, splitting_interval=[0.7, 0.8], seed=0
     )
     rol_origin_update = Rolling_Origin_Update(ts, freq, origin=0.7)
     rol_origin_cal = Rolling_Origin_Recalibration(ts, freq, origin=0.7)
