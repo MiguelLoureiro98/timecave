@@ -9,6 +9,8 @@ from tensorflow.keras.layers import LSTM, Dense, Input, GRU, SimpleRNN
 from timecave.validation_methods._base import base_splitter
 import tensorflow as tf
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.ar_model import AutoReg
+import time
 
 
 def rnn_model(lags: int):
@@ -120,23 +122,27 @@ def next_pred(obs, model_params, kwargs):
 
 
 def predict_ARMA_osh(
-    ts_train: pd.Series | np.ndarray, ts_val: pd.Series | np.ndarray, n_lags: int = 5
+    ts_train: pd.Series | np.ndarray,
+    ts_val: pd.Series | np.ndarray,
+    n_lags: int = 5,
+    one_step_head_eval: bool = True,
 ) -> dict:
+
     X_val, y_val = get_X_y(ts_val)
 
     # Define SARIMAX model parameters
     kwargs = {"order": (n_lags, 0, n_lags)}
+    # kwargs = {"lags": n_lags}
 
     # Initialize SARIMAX model with initial data
     model = SARIMAX(ts_train, **kwargs)
     res_fit = model.fit()
     params = res_fit.params
 
-    # One-step ahead prediction
     y_pred = np.apply_along_axis(
         lambda obs: next_pred(obs, params, kwargs), axis=1, arr=X_val
     )
-    # Evaluation
+
     mse = mean_squared_error(y_true=y_val, y_pred=y_pred)
     rmse = np.sqrt(mse)
     mae = mean_absolute_error(y_true=y_val, y_pred=y_pred)
@@ -191,6 +197,22 @@ def predict_models(
     )
     table.loc[len(table.index)] = row[table.columns]
 
+    ARMA_results = predict_ARMA(train, val, n_lags=5)
+
+    row = pd.Series(
+        {
+            "filename": filename,
+            "column_index": col_idx,
+            "method": method,
+            "iteration": it,
+            "model": "ARMA",
+            "mse": ARMA_results["mse"],
+            "mae": ARMA_results["mae"],
+            "rmse": ARMA_results["rmse"],
+        }
+    )
+    table.loc[len(table.index)] = row[table.columns]
+
     lstm_results = predict_lstm(train, val, lags=5, epochs=50, verbose=0)
     row = pd.Series(
         {
@@ -206,21 +228,6 @@ def predict_models(
     )
     table.loc[len(table.index)] = row[table.columns]
 
-    ARMA_results = predict_ARMA_osh(train, val, n_lags=5)
-    row = pd.Series(
-        {
-            "filename": filename,
-            "column_index": col_idx,
-            "method": method,
-            "iteration": it,
-            "model": "ARMA",
-            "mse": ARMA_results["mse"],
-            "mae": ARMA_results["mae"],
-            "rmse": ARMA_results["rmse"],
-        }
-    )
-    table.loc[len(table.index)] = row[table.columns]
-
     return tree_results["model"], lstm_results["model"], ARMA_results["model"]
 
 
@@ -232,13 +239,26 @@ if __name__ == "__main__":
     a = np.append(np.arange(100), np.arange(100, 120))
     b = np.arange(100, 110, 1)
 
-    a = np.arange(100)
-    b = np.arange(100, 120)
+    a = np.arange(1000)
+    b = np.arange(1000, 1200)
 
     a = pd.Series(a)
     b = pd.Series(b)
 
+    # --------------------- TIME -------------------- #
+    start_time = time.time()
+    # --------------------- TIME -------------------- #
     ARMA_results = predict_ARMA_osh(a, b)
+
+    # --------------------- TIME -------------------- #
+    end_time = time.time()
+    runtime_seconds = end_time - start_time
+
+    minutes = int(runtime_seconds // 60)
+    seconds = int(runtime_seconds % 60)
+    print(f"ARIMA: {minutes} minutes {seconds} seconds")
+    # --------------------- TIME -------------------- #
+
     ARMA_results = predict_ARMA(a, b)
 
     print(ARMA_results)
