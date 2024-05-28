@@ -29,27 +29,28 @@ def add_weights(processed_data: pd.DataFrame, preq_methods: list[str], CV_method
     """
 
     data = processed_data.copy();
-    data["weights"] = 1;
+    #data["weights"] = 1;
 
     paper_weights = exponential_weights_paper(5);
     exp_weights_CV = exponential_weights(5);
     exp_weights_preq = exponential_weights(5, compensation=1);
 
-    paper_weights_df = pd.DataFrame({"iteration": [1, 2, 3, 4, 5], "weights": paper_weights.tolist()});
-    exp_weights_df = pd.DataFrame({"iteration": [1, 2, 3, 4, 5], "weights": exp_weights_CV.tolist()});
-    exp_weights_preq_df = pd.DataFrame({"iteration": [1, 2, 3, 4], "weights": exp_weights_preq.tolist()});
+    paper_weights_df = pd.DataFrame({"iterations": [1, 2, 3, 4, 5], "weights": paper_weights.tolist()});
+    exp_weights_df = pd.DataFrame({"iterations": [1, 2, 3, 4, 5], "weights": exp_weights_CV.tolist()});
+    exp_weights_preq_df = pd.DataFrame({"iterations": [1, 2, 3, 4], "weights": exp_weights_preq.tolist()});
 
     CV_weights_paper = data.loc[data["method"].isin(CV_methods)].copy();
     CV_weights = data.loc[data["method"].isin(CV_methods)].copy();
     preq_weights = data.loc[data["method"].isin(preq_methods)].copy();
 
-    CV_weights_paper_df = pd.merge(left=CV_weights_paper, right=paper_weights_df, on=["iteration"]);
-    CV_weights_df = pd.merge(left=CV_weights, right=exp_weights_df, on=["iteration"]);
-    preq_weights_df = pd.merge(left=preq_weights, right=exp_weights_preq_df, on=["iteration"]);
+    CV_weights_paper_df = pd.merge(left=CV_weights_paper, right=paper_weights_df, on=["iterations"]);
+    CV_weights_df = pd.merge(left=CV_weights, right=exp_weights_df, on=["iterations"]);
+    preq_weights_df = pd.merge(left=preq_weights, right=exp_weights_preq_df, on=["iterations"]);
 
-    CV_all_weighted_df = pd.concat([CV_weights_paper_df, CV_weights_df], axis=0);
-    all_weighted_df = pd.concat([CV_all_weighted_df, preq_weights_df], axis=0);
-    data = pd.concat([data, all_weighted_df], axis=0);
+    CV_all_weighted_df = pd.concat([CV_weights_paper_df, CV_weights_df], axis=0).reset_index().drop(columns=["index"]);
+    all_weighted_df = pd.concat([CV_all_weighted_df, preq_weights_df], axis=0).reset_index().drop(columns=["index"]);
+    data = pd.concat([data, all_weighted_df], axis=0).reset_index().drop(columns=["index"]);
+    data["weights"] = data["weights"].fillna(1);
 
     return data;
 
