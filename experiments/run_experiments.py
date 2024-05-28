@@ -24,7 +24,7 @@ def run(
     backup_dir: str,
     results_dir: str,
     save_freq: int,
-    resume_run: str = None,
+    resume_run: bool = False,
     from_ts: range = None,
     until_ts: range = None,
 ):
@@ -39,7 +39,13 @@ def run(
         s2_dir = get_latest_files(backup_dir, "stats_train_")
         s3_dir = get_latest_files(backup_dir, "stats_val_")
         print(f"Directories found: \n{ta_dir}, {tb_dir}, {s1_dir}, {s2_dir}, {s3_dir}")
-        table_A, table_B, stats_total, stats_train, stats_val = read_tables()
+        table_A, table_B, stats_total, stats_train, stats_val = read_tables(
+            ta_dir,
+            tb_dir,
+            s1_dir,
+            s2_dir,
+            s3_dir,
+        )
         lastit = get_last_iteration(table_A)
         file1, col_id1 = lastit["filename"], lastit["column_index"]
         filenames = filenames[filenames.index(file1) :]
@@ -54,25 +60,26 @@ def run(
         first_col = df.columns[0]
         freq = get_freq(df, first_col)
         ts_list = get_univariate_series(df)
-        ts_list = ts_list[col_id1 + 1 :]
+        ts_list = ts_list[col_id1 + 1 :][:1]
 
         for idx, ts in enumerate(ts_list):
             train_val, test = split_series(ts, test_set_proportion=0.2)
 
             # Validation Methods
-            methods = get_methods_list(train_val, freq)
+            methods = get_methods_list(train_val, freq)[:1]  # TODO
 
             for method in methods:
                 print(f"Method: {method}")
                 for it, (t_idx, v_idx) in enumerate(method.split()):
                     print(f"Iteration: {it}")
+
                     # --------------------- TIME -------------------- #
                     start_time = time.time()
                     # --------------------- TIME -------------------- #
                     predict_models(
                         train_val[t_idx],
                         train_val[v_idx],
-                        file[len(os.getcwd()) :],
+                        file,
                         idx,
                         table_A,
                         method,
@@ -96,13 +103,13 @@ def run(
                     stats_train,
                     stats_val,
                     method,
-                    file[len(os.getcwd()) :],
+                    file,
                     idx,
                     freq=freq,
                 )
 
             # "True" results
-            predict_models(train_val, test, file[len(os.getcwd()) :], idx, table_B)
+            predict_models(train_val, test, file, idx, table_B)
 
             # save backups
             nb_ts = +1
@@ -166,5 +173,5 @@ if __name__ == "__main__":
 
     files = transportes
 
-    run(files, backup_dir, results_dir, save_freq=1)
+    run(files, backup_dir, results_dir, save_freq=1, resume_run=False)
     print("!!")

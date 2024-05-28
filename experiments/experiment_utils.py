@@ -63,19 +63,18 @@ def read_tables(
     stats_total_file: str,
     stats_train_file: str,
     stats_val_file: str,
-    dir: str,
 ):
-    table_A = pd.read_csv(dir + table_A_file)
-    table_B = pd.read_csv(dir + table_B_file)
-    stats_total = pd.read_csv(dir + stats_total_file)
-    stats_train = pd.read_csv(dir + stats_train_file)
-    stats_val = pd.read_csv(dir + stats_val_file)
+    table_A = pd.read_csv(table_A_file)
+    table_B = pd.read_csv(table_B_file)
+    stats_total = pd.read_csv(stats_total_file)
+    stats_train = pd.read_csv(stats_train_file)
+    stats_val = pd.read_csv(stats_val_file)
 
     return table_A, table_B, stats_total, stats_train, stats_val
 
 
 def get_last_iteration(df: pd.DataFrame):
-    last_row = df.iloc[-1].to_dict()
+    return df.iloc[-1].to_dict()
 
 
 def get_autocorrelation_order(ts, nlags=5):
@@ -212,9 +211,10 @@ def update_stats_tables(
     assert set(df2.columns) == set(stats_train.columns), "Columns do not match"
     assert set(df3.columns) == set(stats_test.columns), "Columns do not match"
 
-    stats_total = pd.concat([stats_total, df1])
-    stats_train = pd.concat([stats_train, df2])
-    stats_test = pd.concat([stats_test, df3])
+    if not stats_total.empty:
+        stats_total = pd.concat([stats_total, df1])
+        stats_train = pd.concat([stats_train, df2])
+        stats_test = pd.concat([stats_test, df3])
 
     return stats_total, stats_train, stats_test
 
