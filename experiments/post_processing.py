@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import timecave.validation_strategy_metrics as metrics
+from timecave.validation_methods.weights import exponential_weights
 
 def series_name(data: pd.DataFrame) -> pd.DataFrame:
 
@@ -20,6 +21,49 @@ def series_name(data: pd.DataFrame) -> pd.DataFrame:
     new_data = new_data.drop(columns=["file_name", "column_name"]);
 
     return new_data;
+
+def add_weights(processed_data: pd.DataFrame, preq_methods: list[str], CV_methods: list[str]) -> pd.DataFrame:
+    
+    """
+    Adds the 'weights' column to a data frame.
+    """
+
+    data = processed_data.copy();
+    data["weights"] = 1;
+
+    paper_weights = exponential_weights_paper(5);
+    exp_weights_CV = exponential_weights(5);
+    exp_weights_preq = exponential_weights(5, compensation=1);
+
+    paper_weights_df = pd.DataFrame({"iteration": [1, 2, 3, 4, 5], "weights": paper_weights.tolist()});
+    exp_weights_df = pd.DataFrame({"iteration": [1, 2, 3, 4, 5], "weights": exp_weights_CV.tolist()});
+    exp_weights_preq_df = pd.DataFrame({"iteration": [1, 2, 3, 4], "weights": exp_weights_preq.tolist()});
+
+    CV_weights_paper = data.loc[data["method"].isin(CV_methods)].copy();
+    CV_weights = data.loc[data["method"].isin(CV_methods)].copy();
+    preq_weights = data.loc[data["method"].isin(preq_methods)].copy();
+
+    CV_weights_paper_df = pd.merge(left=CV_weights_paper, right=paper_weights_df, on=["iteration"]);
+    CV_weights_df = pd.merge(left=CV_weights, right=exp_weights_df, on=["iteration"]);
+    preq_weights_df = pd.merge(left=preq_weights, right=exp_weights_preq_df, on=["iteration"]);
+
+    CV_all_weighted_df = pd.concat([CV_weights_paper_df, CV_weights_df], axis=0);
+    all_weighted_df = pd.concat([CV_all_weighted_df, preq_weights_df], axis=0);
+    data = pd.concat([data, all_weighted_df], axis=0);
+
+    return data;
+
+def exponential_weights_paper(n_splits: int, gap: int = 0, compensation: int = 0, params: dict = {"base": 2}) -> np.ndarray:
+
+    """
+    Exponential weights as defined in ... for Block CV.
+    """
+
+    splits = n_splits - gap - compensation;
+    weights = np.array([1/(2 ** (splits + 1 - j)) for j in range(2, splits + 1)]);
+    weights = np.hstack((np.array([1 - weights.sum()]), weights));
+
+    return weights;
 
 def weighted_average(data: pd.DataFrame, values: str, weights: str):
 
@@ -57,7 +101,7 @@ def merge_estimates_true(estimation_data: pd.DataFrame, test_data: pd.DataFrame)
 def compute_val_metrics(aggregate_data: pd.DataFrame, performance_metric: str = "mse") -> pd.DataFrame: # this can be used with S1, S2 and S3 individually
 
     """
-    Computes the validation strategy metrics ... .
+    Computes validation strategy metrics based on error estimates and the true errors (i.e. test errors).
     """
 
     models = aggregate_data["model"].unique().tolist();
@@ -92,7 +136,7 @@ def compute_val_metrics(aggregate_data: pd.DataFrame, performance_metric: str = 
 def under_over_analysis(aggregate_data: pd.DataFrame, performance_metric: str = "mse") -> tuple[pd.DataFrame]:
 
     """
-    ...
+    Computes validation strategy metrics ... .
     """
 
     models = aggregate_data["model"].unique().tolist();
