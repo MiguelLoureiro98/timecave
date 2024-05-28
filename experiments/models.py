@@ -20,8 +20,11 @@ def lstm_model(lags: int):
     return model
 
 
-def recursive_forecast_tree(
-    ts_val: np.ndarray, pred_window: int, model: DecisionTreeRegressor
+def recursive_forecast(
+    ts_val: np.ndarray,
+    pred_window: int,
+    model: DecisionTreeRegressor,
+    args: dict = {},
 ) -> np.ndarray:
     """
     Recursive forecasting for decision trees.
@@ -32,35 +35,16 @@ def recursive_forecast_tree(
 
     for ind in range(pred_window):
 
-        forecasts[ind] = model.predict(input.reshape(1, -1)).item()
+        forecasts[ind] = model.predict(input.reshape(1, -1), **args).item()
         input = np.hstack((input[1:], forecasts[ind]))
 
     return forecasts
 
 
-def recursive_forecast(model, forecast_origin, pred_window: int, lags: int):
-    """
-    Performs recursive forecasting using a trained LSTM model,
-    predicting 'pred_window' future timesteps based on single-step predictions.
-    """
-    # Make predictions
-    forecast = []
-    x_input = forecast_origin.reshape(
-        (1, forecast_origin.shape[0], forecast_origin.shape[1])
-    )
-    for _ in range(pred_window):
-        yhat = model.predict(x_input, verbose=0)
-        pred = yhat[0][0]
-        forecast.append(pred)
-        x_input = np.append(x_input[:, -lags + 1 :, :], [[[pred]]], axis=1)
-
-    return forecast
-
-
 def predict_lstm(
     train_series: pd.Series or pd.DataFrame,
-    test_series: pd.Series or pd.DataFrame,
-    lags: int = 3,
+    val_series: pd.Series or pd.DataFrame,
+    lags: int = 5,
     epochs: int = 200,
     verbose: int = 0,
 ) -> np.array:
@@ -68,13 +52,8 @@ def predict_lstm(
     Predict future values using Long Short-Term Memory (LSTM).
     """
 
-    X_test, y_test = get_X_y(test_series, lags)
+    X_val, y_val = get_X_y(val_series, lags)
     X_train, y_train = get_X_y(train_series, lags)
-
-    # Reshape input to be [samples, time steps, features]
-    n_features = 1  # univariate time series
-    X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], n_features))
-    X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], n_features))
 
     # LSTM model
     model = lstm_model(lags)
@@ -83,12 +62,12 @@ def predict_lstm(
     # Fit the model
     model.fit(X_train, y_train, epochs=epochs, verbose=verbose)
 
-    forecast_origin = X_test[0]
-    pred_window = len(y_test)
+    pred_window = len(y_val)
 
-    forecast = recursive_forecast(model, forecast_origin, pred_window, lags)
-    mse = mean_squared_error(y_test, forecast)
-    mae = mean_absolute_error(y_test, forecast)
+    # Forecast
+    forecast = recursive_forecast(X_val, pred_window, model, args={"verbose": verbose})
+    mse = mean_squared_error(y_val, forecast)
+    mae = mean_absolute_error(y_val, forecast)
 
     return {
         "prediction": np.array(forecast),
@@ -113,7 +92,7 @@ def predict_tree(ts_train: pd.Series, ts_val: pd.Series) -> dict:
 
     model.fit(X_train, y_train)
 
-    y_pred = recursive_forecast_tree(X_val, y_val.shape[0], model)
+    y_pred = recursive_forecast(X_val, y_val.shape[0], model)
     mse = mean_squared_error(y_true=y_val, y_pred=y_pred)
     rmse = np.sqrt(mse)
     mae = mean_absolute_error(y_true=y_val, y_pred=y_pred)
