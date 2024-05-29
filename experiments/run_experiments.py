@@ -163,21 +163,4 @@ if __name__ == "__main__":
     ]
 
     run(files, backup_dir, results_dir, resume_run=False)
-
-    run(
-        files,
-        backup_dir,
-        results_dir,
-        resume_run=True,
-        resume_files=resume_files,
-    )
-
-    run(
-        syn_data_filenames,
-        backup_dir,
-        results_dir,
-        resume_run=False,
-        from_ts=0,
-        until_ts=50,
-    )
     print("!!")
