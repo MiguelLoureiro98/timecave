@@ -107,7 +107,7 @@ def get_methods_list(ts, freq):
     gap_grow_window = Growing_Window(5, ts, freq, gap=1)
     # weighted_grow_window = Growing_Window(5,ts,freq,gap=3, weight_function=exponential_weights,params={"base": 2})
     roll_window = Rolling_Window(5, ts, freq, gap=0)
-    gap_roll_window = Rolling_Window(5, ts, freq, gap=1)
+    gap_roll_window = Rolling_Window(splits=5, ts=ts, fs=freq, gap=1)
     # weighted_roll_window = Rolling_Window(5,ts,freq,gap=3,weight_function=exponential_weights,params={"base": 2},)
     block_cv = Block_CV(5, ts, freq)
     # weight_block_cv = Block_CV( 5, ts, freq, weight_function=exponential_weights, params={"base": 2})
