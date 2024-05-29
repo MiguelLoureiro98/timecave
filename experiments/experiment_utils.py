@@ -47,41 +47,14 @@ def save_tables(
     stats_val.to_csv(dir + "/stats_val_" + append_to_name, index=False)
 
 
-def get_lastest_csv_dirs(folder_dir: str):
-    """
-    Gets the latest .csv names within a folder based on the timestamps in their name.
-    """
-    pattern = re.compile(
-        rf"table_A_(\d{{4}}_\d{{2}}_\d{{2}}__\d{{2}}_\d{{2}}_\d{{2}}).csv"
-    )
-    files = os.listdir(folder_dir)
+def get_latest_files(directory, prefix):
+    file_pattern = os.path.join(directory, f"{prefix}*")
+    files = glob.glob(file_pattern)
 
-    timestamps = []
-    for file in files:
-        match = pattern.match(file)
-        if match:
-            timestamps.append((file, match.group(1)))
+    if not files:
+        raise f"The files in the {prefix} in {directory} were not found!!"
 
-    if not timestamps:
-        return None, None, None, None, None
-
-    timestamps.sort(
-        key=lambda x: datetime.strptime(x[1], "%Y_%m_%d__%H_%M_%S"), reverse=True
-    )
-    latest_timestamp = timestamps[0][1]
-
-    table_A_file = f"table_A__{latest_timestamp}.csv"
-    table_B_file = f"table_B__{latest_timestamp}.csv"
-    stats_total_file = f"stats_total__{latest_timestamp}.csv"
-    stats_train_file = f"stats_train__{latest_timestamp}.csv"
-    stats_val_file = f"stats_val__{latest_timestamp}.csv"
-    return (
-        table_A_file,
-        table_B_file,
-        stats_total_file,
-        stats_train_file,
-        stats_val_file,
-    )
+    return max(files, key=os.path.getmtime)
 
 
 def read_tables(
@@ -90,19 +63,18 @@ def read_tables(
     stats_total_file: str,
     stats_train_file: str,
     stats_val_file: str,
-    dir: str,
 ):
-    table_A = pd.read_csv(dir + table_A_file)
-    table_B = pd.read_csv(dir + table_B_file)
-    stats_total = pd.read_csv(dir + stats_total_file)
-    stats_train = pd.read_csv(dir + stats_train_file)
-    stats_val = pd.read_csv(dir + stats_val_file)
+    table_A = pd.read_csv(table_A_file)
+    table_B = pd.read_csv(table_B_file)
+    stats_total = pd.read_csv(stats_total_file)
+    stats_train = pd.read_csv(stats_train_file)
+    stats_val = pd.read_csv(stats_val_file)
 
     return table_A, table_B, stats_total, stats_train, stats_val
 
 
 def get_last_iteration(df: pd.DataFrame):
-    last_row = df.iloc[-1].to_dict()
+    return df.iloc[-1].to_dict()
 
 
 def get_autocorrelation_order(ts, nlags=5):
@@ -126,7 +98,7 @@ def get_autocorrelation_order(ts, nlags=5):
 def get_methods_list(ts, freq):
     holdout = Holdout(ts, freq, validation_size=0.7)
     rep_hold = Repeated_Holdout(
-        ts, freq, iterations=5, splitting_interval=[0.7, 0.8], seed=0
+        ts, freq, iterations=4, splitting_interval=[0.7, 0.8], seed=0
     )
     rol_origin_update = Rolling_Origin_Update(ts, freq, origin=0.7)
     rol_origin_cal = Rolling_Origin_Recalibration(ts, freq, origin=0.7)
@@ -239,9 +211,10 @@ def update_stats_tables(
     assert set(df2.columns) == set(stats_train.columns), "Columns do not match"
     assert set(df3.columns) == set(stats_test.columns), "Columns do not match"
 
-    stats_total = pd.concat([stats_total, df1])
-    stats_train = pd.concat([stats_train, df2])
-    stats_test = pd.concat([stats_test, df3])
+    if not stats_total.empty:
+        stats_total = pd.concat([stats_total, df1])
+        stats_train = pd.concat([stats_train, df2])
+        stats_test = pd.concat([stats_test, df3])
 
     return stats_total, stats_train, stats_test
 

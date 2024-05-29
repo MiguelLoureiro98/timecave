@@ -5,84 +5,30 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from statsmodels.tsa.arima.model import ARIMA
 from experiment_utils import get_X_y
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Input
+from tensorflow.keras.layers import LSTM, Dense, Input, GRU, SimpleRNN
 from timecave.validation_methods._base import base_splitter
+import tensorflow as tf
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.ar_model import AutoReg
+import time
 
 
-def lstm_model(lags: int):
+def rnn_model(lags: int):
     """
     Defines the LSTM architecture to be used.
     """
     model = Sequential()
     model.add(Input(shape=(lags, 1)))
-    model.add(LSTM(50, activation="relu"))
+    model.add(GRU(50))
     model.add(Dense(1))
     return model
 
 
-def recursive_forecast(model, forecast_origin, pred_window: int, lags: int):
-    """
-    Performs recursive forecasting using a trained LSTM model,
-    predicting 'pred_window' future timesteps based on single-step predictions.
-    """
-    # Make predictions
-    forecast = []
-    x_input = forecast_origin.reshape(
-        (1, forecast_origin.shape[0], forecast_origin.shape[1])
-    )
-    for _ in range(pred_window):
-        yhat = model.predict(x_input, verbose=0)
-        pred = yhat[0][0]
-        forecast.append(pred)
-        x_input = np.append(x_input[:, -lags + 1 :, :], [[[pred]]], axis=1)
-
-    return forecast
-
-
-def predict_lstm(
-    train_series: pd.Series or pd.DataFrame,
-    test_series: pd.Series or pd.DataFrame,
-    lags: int = 3,
-    epochs: int = 200,
-    verbose: int = 0,
-) -> np.array:
-    """
-    Predict future values using Long Short-Term Memory (LSTM).
-    """
-
-    X_test, y_test = get_X_y(test_series, lags)
-    X_train, y_train = get_X_y(train_series, lags)
-
-    # Reshape input to be [samples, time steps, features]
-    n_features = 1  # univariate time series
-    X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], n_features))
-    X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], n_features))
-
-    # LSTM model
-    model = lstm_model(lags)
-    model.compile(optimizer="adam", loss="mse")
-
-    # Fit the model
-    model.fit(X_train, y_train, epochs=epochs, verbose=verbose)
-
-    forecast_origin = X_test[0]
-    pred_window = len(y_test)
-
-    forecast = recursive_forecast(model, forecast_origin, pred_window, lags)
-    mse = mean_squared_error(y_test, forecast)
-    mae = mean_absolute_error(y_test, forecast)
-
-    return {
-        "prediction": np.array(forecast),
-        "trained_model": model,
-        "mse": mse,
-        "rmse": np.sqrt(mse),
-        "mae": mae,
-    }
-
-
-def recursive_forecast_tree(
-    ts_val: np.ndarray, pred_window: int, model: DecisionTreeRegressor
+def recursive_forecast(
+    ts_val: np.ndarray,
+    pred_window: int,
+    model: DecisionTreeRegressor,
+    args: dict = {},
 ) -> np.ndarray:
     """
     Recursive forecasting for decision trees.
@@ -93,13 +39,58 @@ def recursive_forecast_tree(
 
     for ind in range(pred_window):
 
-        forecasts[ind] = model.predict(input.reshape(1, -1)).item()
+        forecasts[ind] = model.predict(input.reshape(1, -1), **args).item()
         input = np.hstack((input[1:], forecasts[ind]))
 
     return forecasts
 
 
-def predict_tree(ts_train: pd.Series, ts_val: pd.Series) -> dict:
+def predict_lstm(
+    train_series: pd.Series or pd.DataFrame,
+    val_series: pd.Series or pd.DataFrame,
+    lags: int = 5,
+    epochs: int = 200,
+    verbose: int = 0,
+    one_step_head_eval: bool = True,
+) -> np.array:
+    """
+    Predict future values using Long Short-Term Memory (LSTM).
+    """
+
+    X_val, y_val = get_X_y(val_series, lags)
+    X_train, y_train = get_X_y(train_series, lags)
+
+    # LSTM model
+    model = rnn_model(lags)
+    model.compile(optimizer="adam", loss="mean_squared_error")
+
+    # Fit the model
+    model.fit(X_train, y_train, epochs=epochs, verbose=verbose)
+
+    pred_window = len(y_val)
+
+    # Forecast
+    if not one_step_head_eval:
+        forecast = recursive_forecast(
+            X_val, pred_window, model, args={"verbose": verbose}
+        )
+    else:
+        forecast = model.predict(X_val, verbose=0)
+    mse = mean_squared_error(y_val, forecast)
+    mae = mean_absolute_error(y_val, forecast)
+
+    return {
+        "prediction": np.array(forecast),
+        "model": model,
+        "mse": mse,
+        "rmse": np.sqrt(mse),
+        "mae": mae,
+    }
+
+
+def predict_tree(
+    ts_train: pd.Series, ts_val: pd.Series, one_step_head_eval: bool = True
+) -> dict:
     """
     Train and test a decision tree model.
     """
@@ -113,7 +104,45 @@ def predict_tree(ts_train: pd.Series, ts_val: pd.Series) -> dict:
 
     model.fit(X_train, y_train)
 
-    y_pred = recursive_forecast_tree(X_val, y_val.shape[0], model)
+    if not one_step_head_eval:
+        y_pred = recursive_forecast(X_val, y_val.shape[0], model)
+    else:
+        y_pred = model.predict(X_val)
+    mse = mean_squared_error(y_true=y_val, y_pred=y_pred)
+    rmse = np.sqrt(mse)
+    mae = mean_absolute_error(y_true=y_val, y_pred=y_pred)
+
+    return {"prediction": y_pred, "model": model, "mse": mse, "rmse": rmse, "mae": mae}
+
+
+def next_pred(obs, model_params, kwargs):
+    fake_model = SARIMAX(obs, **kwargs)
+    res = fake_model.filter(model_params)
+    return res.forecast(1).item()
+
+
+def predict_ARMA_osh(
+    ts_train: pd.Series | np.ndarray,
+    ts_val: pd.Series | np.ndarray,
+    n_lags: int = 5,
+    one_step_head_eval: bool = True,
+) -> dict:
+
+    X_val, y_val = get_X_y(ts_val)
+
+    # Define SARIMAX model parameters
+    kwargs = {"order": (n_lags, 0, n_lags)}
+    # kwargs = {"lags": n_lags}
+
+    # Initialize SARIMAX model with initial data
+    model = SARIMAX(ts_train, **kwargs)
+    res_fit = model.fit()
+    params = res_fit.params
+
+    y_pred = np.apply_along_axis(
+        lambda obs: next_pred(obs, params, kwargs), axis=1, arr=X_val
+    )
+
     mse = mean_squared_error(y_true=y_val, y_pred=y_pred)
     rmse = np.sqrt(mse)
     mae = mean_absolute_error(y_true=y_val, y_pred=y_pred)
@@ -132,6 +161,7 @@ def predict_ARMA(
     res = model.fit()
 
     y_pred = res.forecast(ts_val.shape[0])
+
     mse = mean_squared_error(y_true=ts_val, y_pred=y_pred)
     rmse = np.sqrt(mse)
     mae = mean_absolute_error(y_true=ts_val, y_pred=y_pred)
@@ -148,6 +178,9 @@ def predict_models(
     method: base_splitter = None,
     it: int = None,
 ):
+    """
+    Runs all models and saves results to the given table.
+    """
 
     tree_results = predict_tree(train, val)
     row = pd.Series(
@@ -164,22 +197,8 @@ def predict_models(
     )
     table.loc[len(table.index)] = row[table.columns]
 
-    lstm_results = predict_lstm(train, val, lags=5, epochs=5, verbose=0)
-    row = pd.Series(
-        {
-            "filename": filename,
-            "column_index": col_idx,
-            "method": method,
-            "iteration": it,
-            "model": "LSTM",
-            "mse": lstm_results["mse"],
-            "mae": lstm_results["mae"],
-            "rmse": lstm_results["rmse"],
-        }
-    )
-    table.loc[len(table.index)] = row[table.columns]
-
     ARMA_results = predict_ARMA(train, val, n_lags=5)
+
     row = pd.Series(
         {
             "filename": filename,
@@ -190,6 +209,21 @@ def predict_models(
             "mse": ARMA_results["mse"],
             "mae": ARMA_results["mae"],
             "rmse": ARMA_results["rmse"],
+        }
+    )
+    table.loc[len(table.index)] = row[table.columns]
+
+    lstm_results = predict_lstm(train, val, lags=5, epochs=50, verbose=0)
+    row = pd.Series(
+        {
+            "filename": filename,
+            "column_index": col_idx,
+            "method": method,
+            "iteration": it,
+            "model": "LSTM",
+            "mse": lstm_results["mse"],
+            "mae": lstm_results["mae"],
+            "rmse": lstm_results["rmse"],
         }
     )
     table.loc[len(table.index)] = row[table.columns]
@@ -205,8 +239,25 @@ if __name__ == "__main__":
     a = np.append(np.arange(100), np.arange(100, 120))
     b = np.arange(100, 110, 1)
 
-    a = np.arange(100)
-    b = np.arange(100, 120)
+    a = np.arange(1000)
+    b = np.arange(1000, 1200)
+
+    a = pd.Series(a)
+    b = pd.Series(b)
+
+    # --------------------- TIME -------------------- #
+    start_time = time.time()
+    # --------------------- TIME -------------------- #
+    ARMA_results = predict_ARMA_osh(a, b)
+
+    # --------------------- TIME -------------------- #
+    end_time = time.time()
+    runtime_seconds = end_time - start_time
+
+    minutes = int(runtime_seconds // 60)
+    seconds = int(runtime_seconds % 60)
+    print(f"ARIMA: {minutes} minutes {seconds} seconds")
+    # --------------------- TIME -------------------- #
 
     ARMA_results = predict_ARMA(a, b)
 
