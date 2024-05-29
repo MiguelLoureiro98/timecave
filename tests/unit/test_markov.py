@@ -26,7 +26,7 @@ def _checks_union_train_val(method: MarkovCV):
 
     all_training_patterns = []
     all_validation_patterns = []
-    for training, validation in method.split():
+    for training, validation, _ in method.split():
         all_training_patterns = np.concatenate((all_training_patterns, training))
         all_validation_patterns = np.concatenate((all_validation_patterns, validation))
     return np.sort(all_training_patterns), np.sort(all_validation_patterns)

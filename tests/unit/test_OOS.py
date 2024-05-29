@@ -205,9 +205,9 @@ class TestOOS(unittest.TestCase):
         holdout1_split = self.Holdout1.split()
         holdout2_split = self.Holdout2.split()
         holdout3_split = self.Holdout3.split()
-        train1, val1 = next(holdout1_split)
-        train2, val2 = next(holdout2_split)
-        train3, val3 = next(holdout3_split)
+        train1, val1, _ = next(holdout1_split)
+        train2, val2, _ = next(holdout2_split)
+        train3, val3, _ = next(holdout3_split)
 
         self.assertEqual(train1.tolist(), holdout1_train)
         self.assertEqual(val1.tolist(), holdout1_val)
@@ -224,17 +224,17 @@ class TestOOS(unittest.TestCase):
         holdout3_lower = int(np.round(0.5 * 1000))
         holdout3_upper = int(np.round(0.6 * 1000))
 
-        for _, val in self.Repeated_Holdout1.split():
+        for _, val, _ in self.Repeated_Holdout1.split():
 
             self.assertGreaterEqual(val[0], holdout1_lower)
             self.assertLessEqual(val[0], holdout1_upper)
 
-        for _, val in self.Repeated_Holdout2.split():
+        for _, val, _ in self.Repeated_Holdout2.split():
 
             self.assertGreaterEqual(val[0], holdout2_lower)
             self.assertLessEqual(val[0], holdout2_upper)
 
-        for _, val in self.Repeated_Holdout3.split():
+        for _, val, _ in self.Repeated_Holdout3.split():
 
             self.assertGreaterEqual(val[0], holdout3_lower)
             self.assertLessEqual(val[0], holdout3_upper)
@@ -255,17 +255,17 @@ class TestOOS(unittest.TestCase):
         update2_train = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         update3_train = holdout3_train
 
-        for ind, (train, val) in enumerate(self.Update1.split()):
+        for ind, (train, val, _) in enumerate(self.Update1.split()):
 
             self.assertListEqual(train.tolist(), update1_train)
             self.assertListEqual(val.tolist(), rolling1_val[ind])
 
-        for ind, (train, val) in enumerate(self.Update2.split()):
+        for ind, (train, val, _) in enumerate(self.Update2.split()):
 
             self.assertListEqual(train.tolist(), update2_train)
             self.assertListEqual(val.tolist(), rolling2_val[ind])
 
-        for ind, (train, val) in enumerate(self.Update3.split()):
+        for ind, (train, val, _) in enumerate(self.Update3.split()):
 
             self.assertListEqual(train.tolist(), update3_train)
             self.assertListEqual(val.tolist(), rolling3_val[ind])
@@ -285,17 +285,17 @@ class TestOOS(unittest.TestCase):
         ]
         rec3_train = [indices[: 500 + ind] for ind in range(500)]
 
-        for ind, (train, val) in enumerate(self.Recalibration1.split()):
+        for ind, (train, val, _) in enumerate(self.Recalibration1.split()):
 
             self.assertListEqual(train.tolist(), rec1_train[ind])
             self.assertListEqual(val.tolist(), rolling1_val[ind])
 
-        for ind, (train, val) in enumerate(self.Recalibration2.split()):
+        for ind, (train, val, _) in enumerate(self.Recalibration2.split()):
 
             self.assertListEqual(train.tolist(), rec2_train[ind])
             self.assertListEqual(val.tolist(), rolling2_val[ind])
 
-        for ind, (train, val) in enumerate(self.Recalibration3.split()):
+        for ind, (train, val, _) in enumerate(self.Recalibration3.split()):
 
             self.assertListEqual(train.tolist(), rec3_train[ind])
             self.assertListEqual(val.tolist(), rolling3_val[ind])
@@ -315,17 +315,17 @@ class TestOOS(unittest.TestCase):
         ]
         window3_train = [indices[ind : 500 + ind] for ind in range(500)]
 
-        for ind, (train, val) in enumerate(self.Window1.split()):
+        for ind, (train, val, _) in enumerate(self.Window1.split()):
 
             self.assertListEqual(train.tolist(), window1_train[ind])
             self.assertListEqual(val.tolist(), rolling1_val[ind])
 
-        for ind, (train, val) in enumerate(self.Window2.split()):
+        for ind, (train, val, _) in enumerate(self.Window2.split()):
 
             self.assertListEqual(train.tolist(), window2_train[ind])
             self.assertListEqual(val.tolist(), rolling2_val[ind])
 
-        for ind, (train, val) in enumerate(self.Window3.split()):
+        for ind, (train, val, _) in enumerate(self.Window3.split()):
 
             self.assertListEqual(train.tolist(), window3_train[ind])
             self.assertListEqual(val.tolist(), rolling3_val[ind])

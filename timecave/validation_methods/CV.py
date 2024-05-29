@@ -281,7 +281,7 @@ class hv_Block_CV(base_splitter):
             ]
             train = np.array([el for el in self._indices if el not in h_ind])
 
-            yield (train, validation)
+            yield (train, validation, 1.0)
 
     def info(self) -> None:
         """
@@ -344,7 +344,7 @@ class hv_Block_CV(base_splitter):
         training_stats = []
         validation_stats = []
 
-        for training, validation in self.split():
+        for training, validation, _ in self.split():
 
             if self._series[training].shape[0] >= 2:
 
@@ -397,7 +397,7 @@ class hv_Block_CV(base_splitter):
         fig.supylabel("Time Series")
         fig.suptitle("hv-Block CV method")
 
-        for it, (training, validation) in enumerate(self.split()):
+        for it, (training, validation, _) in enumerate(self.split()):
 
             axs[it].scatter(training, self._series[training], label="Training set")
             axs[it].scatter(

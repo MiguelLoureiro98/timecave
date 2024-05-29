@@ -115,7 +115,7 @@ class Holdout(base_splitter):
         train = self._indices[:split_ind]
         validation = self._indices[split_ind:]
 
-        yield (train, validation)
+        yield (train, validation, 1.0)
 
     def info(self) -> None:
         """
@@ -160,7 +160,7 @@ class Holdout(base_splitter):
             )
 
         split = self.split()
-        training, validation = next(split)
+        training, validation, _ = next(split)
 
         full_feat = get_features(self._series, self.sampling_freq)
 
@@ -194,7 +194,7 @@ class Holdout(base_splitter):
         """
 
         split = self.split()
-        training, validation = next(split)
+        training, validation, _ = next(split)
 
         fig = plt.figure(figsize=(height, width))
         ax = fig.add_subplot(1, 1, 1)
@@ -349,7 +349,7 @@ class Repeated_Holdout(base_splitter):
             training = self._indices[:ind]
             validation = self._indices[ind:]
 
-            yield (training, validation)
+            yield (training, validation, 1.0)
 
     def info(self) -> None:
         """
@@ -403,7 +403,7 @@ class Repeated_Holdout(base_splitter):
         #    training_stats.append(training_feat);
         #    validation_stats.append(validation_feat);
 
-        for training, validation in self.split():
+        for training, validation, _ in self.split():
 
             if self._series[training].shape[0] >= 2:
 
@@ -456,7 +456,7 @@ class Repeated_Holdout(base_splitter):
         fig.supylabel("Time Series")
         fig.suptitle("Repeated Holdout method")
 
-        for it, (training, validation) in enumerate(self.split()):
+        for it, (training, validation, _) in enumerate(self.split()):
 
             axs[it].scatter(training, self._series[training], label="Training set")
             axs[it].scatter(
@@ -554,7 +554,7 @@ class Rolling_Origin_Update(base_splitter):
             training = self._indices[: self._origin + 1]
             validation = self._indices[ind:]
 
-            yield (training, validation)
+            yield (training, validation, 1.0)
 
     def info(self) -> None:
         """
@@ -613,7 +613,7 @@ class Rolling_Origin_Update(base_splitter):
             "Training set features are only computed if the time series is composed of two or more samples."
         )
 
-        for training, validation in self.split():
+        for training, validation, _ in self.split():
 
             if it_1 is True and self._series[training].shape[0] >= 2:
 
@@ -661,7 +661,7 @@ class Rolling_Origin_Update(base_splitter):
         fig.supylabel("Time Series")
         fig.suptitle("Rolling Origin Update method")
 
-        for it, (training, validation) in enumerate(self.split()):
+        for it, (training, validation, _) in enumerate(self.split()):
 
             axs[it].scatter(training, self._series[training], label="Training set")
             axs[it].scatter(
@@ -759,7 +759,7 @@ class Rolling_Origin_Recalibration(base_splitter):
             training = self._indices[:ind]
             validation = self._indices[ind:]
 
-            yield (training, validation)
+            yield (training, validation, 1.0)
 
     def info(self) -> None:
         """
@@ -823,7 +823,7 @@ class Rolling_Origin_Recalibration(base_splitter):
         training_stats = []
         validation_stats = []
 
-        for training, validation in self.split():
+        for training, validation, _ in self.split():
 
             if self._series[training].shape[0] >= 2:
 
@@ -876,7 +876,7 @@ class Rolling_Origin_Recalibration(base_splitter):
         fig.supylabel("Time Series")
         fig.suptitle("Rolling Origin Recalibration method")
 
-        for it, (training, validation) in enumerate(self.split()):
+        for it, (training, validation, _) in enumerate(self.split()):
 
             axs[it].scatter(training, self._series[training], label="Training set")
             axs[it].scatter(
@@ -975,7 +975,7 @@ class Fixed_Size_Rolling_Window(base_splitter):
             training = self._indices[start_ind:end_ind]
             validation = self._indices[end_ind:]
 
-            yield (training, validation)
+            yield (training, validation, 1.0)
 
     def info(self) -> None:
         """
@@ -1030,7 +1030,7 @@ class Fixed_Size_Rolling_Window(base_splitter):
         training_stats = []
         validation_stats = []
 
-        for training, validation in self.split():
+        for training, validation, _ in self.split():
 
             if self._series[training].shape[0] >= 2:
 
@@ -1083,7 +1083,7 @@ class Fixed_Size_Rolling_Window(base_splitter):
         fig.supylabel("Time Series")
         fig.suptitle("Fixed-size Rolling Window method")
 
-        for it, (training, validation) in enumerate(self.split()):
+        for it, (training, validation, _) in enumerate(self.split()):
 
             axs[it].scatter(training, self._series[training], label="Training set")
             axs[it].scatter(

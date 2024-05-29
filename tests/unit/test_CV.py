@@ -272,22 +272,22 @@ class TestCV(unittest.TestCase):
             self.assertEqual(w, exponential_w[ind]);
         
         # Tests - hv Block CV
-        for ind, (train, val) in enumerate(self.hvBlock1.split()):
+        for ind, (train, val, _) in enumerate(self.hvBlock1.split()):
 
             self.assertListEqual(train.tolist(), hv_block1[ind]);
             self.assertListEqual(val.tolist(), hv_block_val1[ind]);
         
-        for ind, (train, val) in enumerate(self.hvBlock2.split()):
+        for ind, (train, val, _) in enumerate(self.hvBlock2.split()):
 
             self.assertListEqual(train.tolist(), hv_block2[ind]);
             self.assertListEqual(val.tolist(), hv_block_val2[ind]);
         
-        for ind, (train, val) in enumerate(self.hvBlock3.split()):
+        for ind, (train, val, _) in enumerate(self.hvBlock3.split()):
 
             self.assertListEqual(train.tolist(), hv_block3[ind]);
             self.assertListEqual(val.tolist(), hv_block_val3[ind]);
         
-        for ind, (train, val) in enumerate(self.hvBlock_limit.split()):
+        for ind, (train, val, _) in enumerate(self.hvBlock_limit.split()):
 
             self.assertListEqual(train.tolist(), hv_block_limit[ind]);
             self.assertListEqual(val.tolist(), hv_block_val_limit[ind]);

@@ -140,7 +140,7 @@ class MarkovCV(base_splitter):
             train, validation = self._suo[i], self._sue[i]
             yield (train, validation)
             train, validation = self._sue[i], self._suo[i]
-            yield (train, validation)  # two-fold cross validation
+            yield (train, validation, 1.0)  # two-fold cross validation
 
     def info(self) -> None:
         self._markov_partitions()
@@ -181,7 +181,7 @@ class MarkovCV(base_splitter):
         training_stats = []
         validation_stats = []
 
-        for training, validation in self.split():
+        for training, validation, _ in self.split():
 
             training_feat = get_features(self._series[training], self._fs)
             training_stats.append(training_feat[columns])
@@ -203,7 +203,7 @@ class MarkovCV(base_splitter):
         fig.supylabel("Time Series")
         fig.suptitle("Markov CV method")
 
-        for it, (training, validation) in enumerate(self.split()):
+        for it, (training, validation, _) in enumerate(self.split()):
 
             axs[it].scatter(training, self._series[training], label="Training set")
             axs[it].scatter(
