@@ -138,7 +138,7 @@ class MarkovCV(base_splitter):
         self._markov_partitions()
         for i in range(1, len(self._suo.items()) + 1):
             train, validation = self._suo[i], self._sue[i]
-            yield (train, validation)
+            yield (train, validation, 1.0)
             train, validation = self._sue[i], self._suo[i]
             yield (train, validation, 1.0)  # two-fold cross validation
 
