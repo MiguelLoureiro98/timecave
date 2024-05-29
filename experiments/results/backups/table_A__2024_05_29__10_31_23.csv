@@ -1,0 +1,4 @@
+filename,column_index,method,iteration,model,mse,mae,rmse
+datasets\processed_data\metro_nyc_17052024.csv,0,<timecave.validation_methods.OOS.Holdout object at 0x000001EA08951850>,0,Tree,303424.7796064283,351.57261472310773,550.8400671759711
+datasets\processed_data\metro_nyc_17052024.csv,0,<timecave.validation_methods.OOS.Holdout object at 0x000001EA08951850>,0,ARMA,3831526.1372038517,1715.0351090874626,1957.4284500854308
+datasets\processed_data\metro_nyc_17052024.csv,0,<timecave.validation_methods.OOS.Holdout object at 0x000001EA08951850>,0,LSTM,11866610.257982621,2856.9244493957763,3444.794661221859

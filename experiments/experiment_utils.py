@@ -131,6 +131,21 @@ def get_methods_list(ts, freq):
     ]
 
 
+def get_files(resume_files, backup_dir):
+    if len(resume_files) == 0:
+        ta_dir = get_latest_files(backup_dir, "table_A_")
+        tb_dir = get_latest_files(backup_dir, "table_B_")
+        s1_dir = get_latest_files(backup_dir, "stats_total_")
+        s2_dir = get_latest_files(backup_dir, "stats_train_")
+        s3_dir = get_latest_files(backup_dir, "stats_val_")
+    else:
+        ta_dir, tb_dir, s1_dir, s2_dir, s3_dir = tuple(resume_files)
+    dirs = (ta_dir, tb_dir, s1_dir, s2_dir, s3_dir)
+    print(f"Directories found: \n{ta_dir}, {tb_dir}, {s1_dir}, {s2_dir}, {s3_dir}")
+
+    return read_tables(*dirs)
+
+
 def initialize_tables():
     colname_A = [
         "filename",
@@ -216,6 +231,11 @@ def update_stats_tables(
         stats_train = pd.concat([stats_train, df2])
         stats_test = pd.concat([stats_test, df3])
 
+    else:
+        stats_total = df1
+        stats_train = df2
+        stats_test = df3
+
     return stats_total, stats_train, stats_test
 
 
@@ -223,6 +243,7 @@ def get_freq(df: pd.DataFrame, date_column: str):
     """
     Gets frequency given the date column of a pandas dataframe.
     """
+    df = df.copy()
     if not pdt.is_datetime64_any_dtype(df[date_column]):
         return 1
     df["diff"] = df[date_column].diff()

@@ -1,4 +1,0 @@
-filename,column_index,method,iteration,model,mse,mae,rmse
-,0,<timecave.validation_methods.OOS.Holdout object at 0x0000017951BFD2B0>,0,Tree,303424.7796064283,351.57261472310773,550.8400671759711
-,0,<timecave.validation_methods.OOS.Holdout object at 0x0000017951BFD2B0>,0,ARMA,3831526.1372038517,1715.0351090874626,1957.4284500854308
-,0,<timecave.validation_methods.OOS.Holdout object at 0x0000017951BFD2B0>,0,LSTM,11865653.37632399,2856.8158421466574,3444.6557703671915
