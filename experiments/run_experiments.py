@@ -9,9 +9,8 @@ from experiment_utils import (
     initialize_tables,
     get_methods_list,
     save_tables,
-    read_tables,
+    get_files,
     get_last_iteration,
-    get_latest_files,
 )
 from models import predict_models
 import os
@@ -23,60 +22,58 @@ def run(
     filenames: list[str],
     backup_dir: str,
     results_dir: str,
-    save_freq: int,
+    save_freq: int = 1,
     resume_run: bool = False,
+    resume_files: list[str] = [],
     from_ts: range = None,
     until_ts: range = None,
 ):
+    # Get tables
     if not resume_run:
         table_A, table_B, stats_total, stats_train, stats_val = initialize_tables()
         col_id1 = -1
 
     else:
-        ta_dir = get_latest_files(backup_dir, "table_A_")
-        tb_dir = get_latest_files(backup_dir, "table_B_")
-        s1_dir = get_latest_files(backup_dir, "stats_total_")
-        s2_dir = get_latest_files(backup_dir, "stats_train_")
-        s3_dir = get_latest_files(backup_dir, "stats_val_")
-        print(f"Directories found: \n{ta_dir}, {tb_dir}, {s1_dir}, {s2_dir}, {s3_dir}")
-        table_A, table_B, stats_total, stats_train, stats_val = read_tables(
-            ta_dir,
-            tb_dir,
-            s1_dir,
-            s2_dir,
-            s3_dir,
+        table_A, table_B, stats_total, stats_train, stats_val = get_files(
+            resume_files, backup_dir
         )
         lastit = get_last_iteration(table_A)
         file1, col_id1 = lastit["filename"], lastit["column_index"]
         filenames = filenames[filenames.index(file1) :]
 
     nb_ts = 0
+    # Iterate per filename
     for file in filenames:
         df = pd.read_csv(file, parse_dates=[0])
+        freq = get_freq(df, df.columns[0])
+        ts_list = get_univariate_series(df)
+
         if from_ts is not None:
             df = df.iloc[:, [0] + list(range(from_ts, df.shape[1]))]
         if until_ts is not None:
             df = df.iloc[:, list(range(0, until_ts))]
-        first_col = df.columns[0]
-        freq = get_freq(df, first_col)
-        ts_list = get_univariate_series(df)
-        ts_list = ts_list[col_id1 + 1 :][:1]
 
+        ts_list = ts_list[col_id1 + 1 :]  # TODO remove [:1]
+
+        # Iterate per time series
         for idx, ts in enumerate(ts_list):
             train_val, test = split_series(ts, test_set_proportion=0.2)
 
-            # Validation Methods
-            methods = get_methods_list(train_val, freq)[:1]  # TODO
-
+            methods = get_methods_list(train_val, freq)  # TODO remove [:1]
+            # Iterate per validation method
             for method in methods:
                 print(f"Method: {method}")
                 for it, (t_idx, v_idx) in enumerate(method.split()):
-                    print(f"Iteration: {it}")
+                    print(f"Method: {method}, Iteration: {it}")
 
+                    # Modelling
                     # --------------------- TIME -------------------- #
                     start_time = time.time()
                     # --------------------- TIME -------------------- #
-                    predict_models(
+                    print("-" * 100)
+                    print("model1", "model2", "model3")
+                    print("-" * 100)
+                    """predict_models(
                         train_val[t_idx],
                         train_val[v_idx],
                         file,
@@ -84,7 +81,7 @@ def run(
                         table_A,
                         method,
                         it,
-                    )
+                    )"""
                     # --------------------- TIME -------------------- #
                     end_time = time.time()
                     runtime_seconds = end_time - start_time
@@ -109,7 +106,10 @@ def run(
                 )
 
             # "True" results
-            predict_models(train_val, test, file, idx, table_B)
+            """predict_models(train_val, test, file, idx, table_B)"""
+            print("-" * 100)
+            print("True results", "model1", "model2", "model3")
+            print("-" * 100)
 
             # save backups
             nb_ts = +1
@@ -173,5 +173,30 @@ if __name__ == "__main__":
 
     files = transportes
 
-    run(files, backup_dir, results_dir, save_freq=1, resume_run=False)
+    resume_files = [
+        "results\\backups\\table_A__2024_05_29__10_31_23.csv",
+        "results\\backups\\table_B__2024_05_29__10_31_23.csv",
+        "results\\backups\\stats_total__2024_05_29__10_31_23.csv",
+        "results\\backups\\stats_train__2024_05_29__10_31_23.csv",
+        "results\\backups\\stats_val__2024_05_29__10_31_23.csv",
+    ]
+
+    run(files, backup_dir, results_dir, resume_run=False)
+
+    """run(
+        files,
+        backup_dir,
+        results_dir,
+        resume_run=True,
+        resume_files=resume_files,
+    )
+
+    run(
+        syn_data_filenames,
+        backup_dir,
+        results_dir,
+        resume_run=False,
+        from_ts=0,
+        until_ts=50,
+    )"""
     print("!!")

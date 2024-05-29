@@ -60,8 +60,8 @@ class TestMarkovCV(unittest.TestCase):
             MarkovCV(self.ts1, 1, 1).sampling_freq
 
         # Attribute values
-        self.assert_(not bool(self.m0._suo))
-        self.assert_(not bool(self.m0._suo))
+        assert not bool(self.m0._suo)
+        assert not bool(self.m0._suo)
         self.assertEqual(self.m0._seed, 1)
         self.assertEqual(self.m0._p, 0)
         self.assertEqual(self.m0._m, 1)
@@ -101,17 +101,17 @@ class TestMarkovCV(unittest.TestCase):
         """
 
         self.m0._markov_partitions()
-        self.assert_(bool(self.m0._suo))
-        self.assert_(bool(self.m0._sue))
+        assert bool(self.m0._suo)
+        assert bool(self.m0._sue)
         self.m1._markov_partitions()
-        self.assert_(bool(self.m1._suo))
-        self.assert_(bool(self.m1._sue))
+        assert bool(self.m1._suo)
+        assert bool(self.m1._sue)
         self.m2._markov_partitions()
-        self.assert_(bool(self.m2._suo))
-        self.assert_(bool(self.m2._sue))
+        assert bool(self.m2._suo)
+        assert bool(self.m2._sue)
         self.m3._markov_partitions()
-        self.assert_(bool(self.m3._suo))
-        self.assert_(bool(self.m3._sue))
+        assert bool(self.m3._suo)
+        assert bool(self.m3._sue)
 
         self.assertEqual(len(self.m0._suo.items()), self.m0._m)
         self.assertEqual(len(self.m1._suo.items()), self.m1._m)
@@ -121,19 +121,19 @@ class TestMarkovCV(unittest.TestCase):
         # check if sets are disjoints
         su0 = list(self.m0._suo.values())
         su0.extend(list(self.m0._sue.values()))
-        self.assert_(_are_disjoint_arrays(su0))
+        assert _are_disjoint_arrays(su0)
 
         su1 = list(self.m1._suo.values())
         su1.extend(list(self.m1._sue.values()))
-        self.assert_(_are_disjoint_arrays(su1))
+        assert _are_disjoint_arrays(su1)
 
         su2 = list(self.m2._suo.values())
         su2.extend(list(self.m2._sue.values()))
-        self.assert_(_are_disjoint_arrays(su2))
+        assert _are_disjoint_arrays(su2)
 
         su3 = list(self.m3._suo.values())
         su3.extend(list(self.m3._sue.values()))
-        self.assert_(_are_disjoint_arrays(su3))
+        assert _are_disjoint_arrays(su3)
 
     def test_split(self) -> None:
         """
