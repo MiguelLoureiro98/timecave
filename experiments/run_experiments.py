@@ -1,5 +1,4 @@
 import pandas as pd
-import timecave as tcv
 from experiment_utils import (
     get_csv_filenames,
     get_univariate_series,
@@ -14,8 +13,6 @@ from experiment_utils import (
 )
 from models import predict_models
 import os
-from timecave.validation_methods.OOS import Rolling_Origin_Update
-import time
 
 
 def run(
@@ -25,8 +22,9 @@ def run(
     save_freq: int = 1,
     resume_run: bool = False,
     resume_files: list[str] = [],
-    from_ts: range = None,
-    until_ts: range = None,
+    from_ts: int = None,
+    until_ts: int = None,
+    model_func: callable = predict_models,
 ):
     # Get tables
     if not resume_run:
@@ -42,38 +40,35 @@ def run(
         filenames = filenames[filenames.index(file1) :]
 
     nb_ts = 0
+
     # Iterate per filename
     for file in filenames:
         df = pd.read_csv(file, parse_dates=[0])
         freq = get_freq(df, df.columns[0])
-        ts_list = get_univariate_series(df)
 
         if from_ts is not None:
             df = df.iloc[:, [0] + list(range(from_ts, df.shape[1]))]
         if until_ts is not None:
             df = df.iloc[:, list(range(0, until_ts))]
+        ts_list = get_univariate_series(df)
 
-        ts_list = ts_list[col_id1 + 1 :]  # TODO remove [:1]
+        ts_list = ts_list[col_id1 + 1 :]
 
         # Iterate per time series
         for idx, ts in enumerate(ts_list):
             train_val, test = split_series(ts, test_set_proportion=0.2)
 
-            methods = get_methods_list(train_val, freq)  # TODO remove [:1]
-            # Iterate per validation method
+            methods = get_methods_list(train_val, freq)
+
+            # Results with Validation (Table_A)
             for method in methods:
                 print(f"Method: {method}")
-                for it, (t_idx, v_idx) in enumerate(method.split()):
+                for it, (t_idx, v_idx, _) in enumerate(method.split()):
+
                     print(f"Method: {method}, Iteration: {it}")
 
                     # Modelling
-                    # --------------------- TIME -------------------- #
-                    start_time = time.time()
-                    # --------------------- TIME -------------------- #
-                    print("-" * 100)
-                    print("model1", "model2", "model3")
-                    print("-" * 100)
-                    """predict_models(
+                    model_func(
                         train_val[t_idx],
                         train_val[v_idx],
                         file,
@@ -81,20 +76,9 @@ def run(
                         table_A,
                         method,
                         it,
-                    )"""
-                    # --------------------- TIME -------------------- #
-                    end_time = time.time()
-                    runtime_seconds = end_time - start_time
+                    )
 
-                    minutes = int(runtime_seconds // 60)
-                    seconds = int(runtime_seconds % 60)
-                    # --------------------- TIME -------------------- #
-
-                    print(f"Runtime: {minutes} minutes {seconds} seconds")
-
-                    if isinstance(method, Rolling_Origin_Update):
-                        print()
-
+                # Statistics per iteration
                 stats_total, stats_train, stats_val = update_stats_tables(
                     stats_total,
                     stats_train,
@@ -105,11 +89,8 @@ def run(
                     freq=freq,
                 )
 
-            # "True" results
-            """predict_models(train_val, test, file, idx, table_B)"""
-            print("-" * 100)
-            print("True results", "model1", "model2", "model3")
-            print("-" * 100)
+            # Results without Validation (Table_B)
+            model_func(train_val, test, file, idx, table_B)
 
             # save backups
             nb_ts = +1
@@ -182,21 +163,4 @@ if __name__ == "__main__":
     ]
 
     run(files, backup_dir, results_dir, resume_run=False)
-
-    """run(
-        files,
-        backup_dir,
-        results_dir,
-        resume_run=True,
-        resume_files=resume_files,
-    )
-
-    run(
-        syn_data_filenames,
-        backup_dir,
-        results_dir,
-        resume_run=False,
-        from_ts=0,
-        until_ts=50,
-    )"""
     print("!!")

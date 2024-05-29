@@ -107,7 +107,7 @@ def get_methods_list(ts, freq):
     gap_grow_window = Growing_Window(5, ts, freq, gap=1)
     # weighted_grow_window = Growing_Window(5,ts,freq,gap=3, weight_function=exponential_weights,params={"base": 2})
     roll_window = Rolling_Window(5, ts, freq, gap=0)
-    gap_roll_window = Rolling_Window(5, ts, freq, gap=1)
+    # gap_roll_window = Rolling_Window(splits=5, ts=ts, fs=freq, gap=1)
     # weighted_roll_window = Rolling_Window(5,ts,freq,gap=3,weight_function=exponential_weights,params={"base": 2},)
     block_cv = Block_CV(5, ts, freq)
     # weight_block_cv = Block_CV( 5, ts, freq, weight_function=exponential_weights, params={"base": 2})
@@ -124,7 +124,7 @@ def get_methods_list(ts, freq):
         grow_window,
         gap_grow_window,
         roll_window,
-        gap_roll_window,
+        # gap_roll_window,
         block_cv,
         hv_block,
         markov,
@@ -222,9 +222,14 @@ def update_stats_tables(
         freq,
     )
 
-    assert set(df1.columns) == set(stats_total.columns), "Columns do not match"
-    assert set(df2.columns) == set(stats_train.columns), "Columns do not match"
-    assert set(df3.columns) == set(stats_test.columns), "Columns do not match"
+    assert set(df1.columns) <= set(stats_total.columns), "Columns do not match"
+    assert set(df2.columns) <= set(stats_train.columns), "Columns do not match"
+    assert set(df3.columns) <= set(stats_test.columns), "Columns do not match"
+
+    if set(df1.columns) != set(stats_total.columns):
+        df1 = df1.reindex(columns=stats_total.columns)
+        df2 = df2.reindex(columns=stats_total.columns)
+        df3 = df3.reindex(columns=stats_total.columns)
 
     if not stats_total.empty:
         stats_total = pd.concat([stats_total, df1])

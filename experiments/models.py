@@ -5,7 +5,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from statsmodels.tsa.arima.model import ARIMA
 from experiment_utils import get_X_y
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Input, GRU, SimpleRNN
+from tensorflow.keras.layers import Dense, Input, GRU, SimpleRNN, LSTM
 from timecave.validation_methods._base import base_splitter
 import tensorflow as tf
 from statsmodels.tsa.statespace.sarimax import SARIMAX
