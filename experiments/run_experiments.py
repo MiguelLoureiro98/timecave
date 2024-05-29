@@ -22,8 +22,8 @@ def run(
     save_freq: int = 1,
     resume_run: bool = False,
     resume_files: list[str] = [],
-    from_ts: range = None,
-    until_ts: range = None,
+    from_ts: int = None,
+    until_ts: int = None,
     model_func: callable = predict_models,
 ):
     # Get tables
@@ -45,12 +45,12 @@ def run(
     for file in filenames:
         df = pd.read_csv(file, parse_dates=[0])
         freq = get_freq(df, df.columns[0])
-        ts_list = get_univariate_series(df)
 
         if from_ts is not None:
             df = df.iloc[:, [0] + list(range(from_ts, df.shape[1]))]
         if until_ts is not None:
             df = df.iloc[:, list(range(0, until_ts))]
+        ts_list = get_univariate_series(df)
 
         ts_list = ts_list[col_id1 + 1 :]
 
@@ -62,7 +62,8 @@ def run(
 
             # Results with Validation (Table_A)
             for method in methods:
-                for it, (t_idx, v_idx) in enumerate(method.split()):
+                print(f"Method: {method}")
+                for it, (t_idx, v_idx, _) in enumerate(method.split()):
 
                     print(f"Method: {method}, Iteration: {it}")
 
@@ -90,9 +91,6 @@ def run(
 
             # Results without Validation (Table_B)
             model_func(train_val, test, file, idx, table_B)
-            print("-" * 100)
-            print("True results", "model1", "model2", "model3")
-            print("-" * 100)
 
             # save backups
             nb_ts = +1
