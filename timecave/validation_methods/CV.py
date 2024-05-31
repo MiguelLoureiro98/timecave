@@ -61,6 +61,10 @@ class Block_CV(base_splitter):
 
             split_ind = np.append(split_ind, self._n_samples);
 
+        if(split_ind.shape[0] > self.n_splits + 1):
+
+            split_ind = split_ind[:self.n_splits+1];
+
         #split_ind[:remainder] += 1
 
         #if remainder != 0:

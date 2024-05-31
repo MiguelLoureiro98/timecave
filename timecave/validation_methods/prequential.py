@@ -101,6 +101,10 @@ class Growing_Window(base_splitter):
         else:
 
             split_ind = np.append(split_ind, self._n_samples);
+        
+        if(split_ind.shape[0] > self.n_splits):
+
+            split_ind = split_ind[:self.n_splits];
 
         #print(split_ind)
 
@@ -313,7 +317,7 @@ class Rolling_Window(base_splitter):
 
         remainder = int(self._n_samples % self.n_splits)
         split_size = int(np.floor(self._n_samples / self.n_splits))
-        split_ind = np.arange(0, self._n_samples + split_size, split_size)
+        split_ind = np.arange(0, self._n_samples, split_size)
         #split_ind[:remainder] += 1
 
         #if remainder != 0:
@@ -336,6 +340,10 @@ class Rolling_Window(base_splitter):
             split_ind = np.append(split_ind, self._n_samples);
 
         #print(split_ind)
+
+        if(split_ind.shape[0] > self.n_splits + 1):
+
+            split_ind = split_ind[:self.n_splits+1];
 
         return split_ind
 
@@ -362,7 +370,7 @@ class Rolling_Window(base_splitter):
             train = self._indices[start_training_ind:ind]
             validation = self._indices[gap_ind:gap_end_ind]
 
-            print("Bollocks");
+            #print("Bollocks");
             #print(train)
             #print(validation)
 
