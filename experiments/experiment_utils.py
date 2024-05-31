@@ -168,6 +168,8 @@ def initialize_tables():
     ]
     table_B = pd.DataFrame(columns=colname_B)
     colname_stats = [
+        "method",
+        "iteration",
         "filename",
         "column_index",
         "Frequency",
@@ -185,7 +187,7 @@ def initialize_tables():
         "Mean_crossing_rate",
         "Median_crossing_rate",
     ]
-    stats_total = pd.DataFrame(columns=colname_stats)
+    stats_total = pd.DataFrame(columns=colname_stats[2:])
     stats_train = pd.DataFrame(columns=colname_stats)
     stats_val = pd.DataFrame(columns=colname_stats)
     return table_A, table_B, stats_total, stats_train, stats_val
@@ -204,10 +206,18 @@ def update_stats_tables(
     Updates the statistics dataframes.
     """
     df1, df2, df3 = method.statistics()
+    df2, df3 = (
+        df2.reset_index(names="iteration"),
+        df3.reset_index(names="iteration"),
+    )
     df1["filename"], df2["filename"], df3["filename"] = (
         filename,
         filename,
         filename,
+    )
+    df2["method"], df3["method"] = (
+        method,
+        method,
     )
 
     df1["column_index"], df2["column_index"], df3["column_index"] = (
