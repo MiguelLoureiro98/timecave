@@ -1,4 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/test_data/t1.csv,0,Mock Model,0,0,0
-datasets/test_data/t2.csv,0,Mock Model,0,0,0
-datasets/test_data/t2.csv,0,Mock Model,0,0,0

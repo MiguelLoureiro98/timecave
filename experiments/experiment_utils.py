@@ -100,44 +100,44 @@ def get_methods_list(ts, freq):
     rep_hold = Repeated_Holdout(
         ts, freq, iterations=4, splitting_interval=[0.7, 0.8], seed=0
     )
-    rol_origin_update = Rolling_Origin_Update(ts, freq, origin=0.7)
-    rol_origin_cal = Rolling_Origin_Recalibration(ts, freq, origin=0.7)
-    fix_size_roll_wind = Fixed_Size_Rolling_Window(ts, freq, origin=0.7)
+    # rol_origin_update = Rolling_Origin_Update(ts, freq, origin=0.7)
+    # rol_origin_cal = Rolling_Origin_Recalibration(ts, freq, origin=0.7)
+    # fix_size_roll_wind = Fixed_Size_Rolling_Window(ts, freq, origin=0.7)
     grow_window = Growing_Window(5, ts, freq, gap=0)
     gap_grow_window = Growing_Window(5, ts, freq, gap=1)
     # weighted_grow_window = Growing_Window(5,ts,freq,gap=3, weight_function=exponential_weights,params={"base": 2})
     roll_window = Rolling_Window(5, ts, freq, gap=0)
-    # gap_roll_window = Rolling_Window(splits=5, ts=ts, fs=freq, gap=1)
+    gap_roll_window = Rolling_Window(splits=5, ts=ts, fs=freq, gap=1)
     # weighted_roll_window = Rolling_Window(5,ts,freq,gap=3,weight_function=exponential_weights,params={"base": 2},)
     block_cv = Block_CV(5, ts, freq)
     # weight_block_cv = Block_CV( 5, ts, freq, weight_function=exponential_weights, params={"base": 2})
-    hv_block = hv_Block_CV(ts, freq, h=5, v=5)
+    # hv_block = hv_Block_CV(ts, freq, h=5, v=5)
     p = get_autocorrelation_order(ts)
     markov = MarkovCV(ts, p, seed=1)
 
     return [
         holdout,
         rep_hold,
-        rol_origin_update,
-        rol_origin_cal,
-        fix_size_roll_wind,
+        # rol_origin_update,
+        # rol_origin_cal,
+        # fix_size_roll_wind,
         grow_window,
         gap_grow_window,
         roll_window,
-        # gap_roll_window,
+        gap_roll_window,
         block_cv,
-        hv_block,
+        # hv_block,
         markov,
     ]
 
 
-def get_files(resume_files, backup_dir):
+def get_files(resume_files, backup_dir, add_name=""):
     if len(resume_files) == 0:
-        ta_dir = get_latest_files(backup_dir, "table_A_")
-        tb_dir = get_latest_files(backup_dir, "table_B_")
-        s1_dir = get_latest_files(backup_dir, "stats_total_")
-        s2_dir = get_latest_files(backup_dir, "stats_train_")
-        s3_dir = get_latest_files(backup_dir, "stats_val_")
+        ta_dir = get_latest_files(backup_dir, f"table_A_{add_name}")
+        tb_dir = get_latest_files(backup_dir, f"table_B_{add_name}")
+        s1_dir = get_latest_files(backup_dir, f"stats_total_{add_name}")
+        s2_dir = get_latest_files(backup_dir, f"stats_train_{add_name}")
+        s3_dir = get_latest_files(backup_dir, f"stats_val_{add_name}")
     else:
         ta_dir, tb_dir, s1_dir, s2_dir, s3_dir = tuple(resume_files)
     dirs = (ta_dir, tb_dir, s1_dir, s2_dir, s3_dir)

@@ -24,6 +24,7 @@ def run(
     resume_files: list[str] = [],
     from_ts: int = None,
     until_ts: int = None,
+    add_name: str = "", 
     model_func: callable = predict_models,
 ):
     # Get tables
@@ -96,7 +97,7 @@ def run(
             nb_ts = +1
             if nb_ts % save_freq == 0:
                 save_tables(
-                    table_A, table_B, stats_total, stats_train, stats_val, backup_dir
+                    table_A, table_B, stats_total, stats_train, stats_val, backup_dir, add_name,
                 )
 
             print()
