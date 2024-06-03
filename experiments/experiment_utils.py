@@ -127,6 +127,7 @@ def get_methods_list(ts, freq):
         roll_window,
         gap_roll_window,
         block_cv,
+        adp_hv,
         # hv_block,
         markov,
     ]
