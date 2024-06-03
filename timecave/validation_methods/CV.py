@@ -515,11 +515,11 @@ class AdaptedhvBlockCV(base_splitter):
 
             validation = self._indices[ind:next_ind]
             h_ind = self._indices[
-                np.fmax(i - self._v - self._h, 0) : np.fmin(
-                    i + self._v + self._h + 1, self._n_samples
+                np.fmax(i - self._h, 0) : np.fmin(
+                    i + self._h + 1, self._n_samples
                 )
             ]
-            train = np.array([el for el in self._indices if el not in validation])
+            train = np.array([el for el in self._indices if el not in h_ind])
 
             yield (train, validation, weight)
 
@@ -530,8 +530,8 @@ class AdaptedhvBlockCV(base_splitter):
         _extended_summary_
         """
 
-        min_fold_size = int(np.floor(self._n_samples / self.n_splits))
-        max_fold_size = min_fold_size
+        min_fold_size = int(np.floor(self._n_samples / self.n_splits)) - self._h
+        max_fold_size = int(np.floor(self._n_samples / self.n_splits))
 
         remainder = self._n_samples % self.n_splits
 
