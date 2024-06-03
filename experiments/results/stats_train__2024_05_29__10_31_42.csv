@@ -1,2 +1,0 @@
-Mean,Median,Min,Max,Variance,P2P_amplitude,Trend_slope,Spectral_centroid,Spectral_rolloff,Spectral_entropy,Strength_of_trend,Mean_crossing_rate,Median_crossing_rate,filename,column_index,Frequency
-3318.9152688915788,3505.0,0.0,7260.0,3971620.525416178,7260.0,-0.03630180084593249,3.882384785545313e-05,0.00012200511076526985,0.2899558724681368,2.205727910922044,0.08855067450709098,0.08664821860947769,datasets\processed_data\metro_nyc_17052024.csv,0,0.0002777777777777778
