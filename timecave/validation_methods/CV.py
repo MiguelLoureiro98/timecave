@@ -512,8 +512,8 @@ class AdaptedhvBlockCV(base_splitter):
 
             validation = self._indices[ind:next_ind]
             h_ind = self._indices[
-                np.fmax(i - self._h, 0) : np.fmin(
-                    i + self._h + 1, self._n_samples
+                np.fmax(ind - self._h, 0) : np.fmin(
+                    next_ind + self._h, self._n_samples
                 )
             ]
             train = np.array([el for el in self._indices if el not in h_ind])
@@ -539,14 +539,13 @@ class AdaptedhvBlockCV(base_splitter):
         min_fold_size_pct = np.round(min_fold_size / self._n_samples * 100, 2)
         max_fold_size_pct = np.round(max_fold_size / self._n_samples * 100, 2)
 
-        print("Block CV method")
+        print("Adapted hv Block CV method")
         print("---------------")
         print(f"Time series size: {self._n_samples} samples")
         print(f"Number of splits: {self.n_splits}")
         print(
             f"Fold size: {min_fold_size} to {max_fold_size} samples ({min_fold_size_pct} to {max_fold_size_pct} %)"
         )
-        print(f"Weights: {self._weights}")
 
         return
 
@@ -619,7 +618,7 @@ class AdaptedhvBlockCV(base_splitter):
         fig.set_figwidth(width)
         fig.supxlabel("Samples")
         fig.supylabel("Time Series")
-        fig.suptitle("Block CV method")
+        fig.suptitle("Adapted hv Block CV method")
 
         for it, (training, validation, w) in enumerate(self.split()):
 
