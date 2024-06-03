@@ -26,6 +26,7 @@ def run(
     to_ts: int = None,
     add_name: str = "",
     model_func: callable = predict_models,
+    save_stats: bool = True,
 ):
     assert not resume_run or (from_ts == 0 and to_ts is None)
 
@@ -80,15 +81,16 @@ def run(
                     )
 
                 # Statistics per iteration
-                stats_total, stats_train, stats_val = update_stats_tables(
-                    stats_total,
-                    stats_train,
-                    stats_val,
-                    method,
-                    file,
-                    col_idx,
-                    freq=freq,
-                )
+                if save_stats:
+                    stats_total, stats_train, stats_val = update_stats_tables(
+                        stats_total,
+                        stats_train,
+                        stats_val,
+                        method,
+                        file,
+                        col_idx,
+                        freq=freq,
+                    )
 
             # Results without Validation (Table_B)
             model_func(train_val, test, file, col_idx, table_B)
