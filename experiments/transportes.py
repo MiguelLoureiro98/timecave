@@ -1,7 +1,5 @@
 from run_experiments import run
-import os
 
-os.chdir("experiments")
 backup_dir = "results/backups"
 results_dir = "results"
 transportes = [
