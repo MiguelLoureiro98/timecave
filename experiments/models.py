@@ -19,7 +19,7 @@ def rnn_model(lags: int):
     """
     model = Sequential()
     model.add(Input(shape=(lags, 1)))
-    model.add(GRU(50))
+    model.add(SimpleRNN(50))
     model.add(Dense(1))
     return model
 
