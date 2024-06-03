@@ -415,3 +415,226 @@ class hv_Block_CV(base_splitter):
         plt.show()
 
         return
+
+class AdaptedhvBlockCV(base_splitter):
+    """
+    _summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    base_splitter : _type_
+        _description_
+    """
+
+    def __init__(
+        self,
+        splits: int,
+        ts: np.ndarray | pd.Series,
+        fs: float | int,
+        h: int,
+        weight_function: callable = constant_weights,
+        params: dict = None,
+    ) -> None:
+
+        super().__init__(splits, ts, fs)
+        self._check_h(h);
+        self._h = h;
+        self._splitting_ind = self._split_ind()
+        self._weights = weight_function(self.n_splits, params=params)
+
+    def _check_h(self, h: int) -> None:
+        """
+        Perform type and value checks on both h and v.
+        """
+
+        if (isinstance(h, int)) is False:
+
+            raise TypeError("'h' must be an integer.")
+
+        if h < 0:
+
+            raise ValueError("'h' must be non-negative.")
+
+        if h >= int(np.floor(self._n_samples / self.n_splits)):
+
+            raise ValueError(
+                "h should be smaller than the number of samples in a fold."
+            )
+
+        return
+
+    def _split_ind(self) -> np.ndarray:
+        """
+        Compute the splitting indices.
+        """
+
+        remainder = int(self._n_samples % self.n_splits)
+        split_size = int(np.floor(self._n_samples / self.n_splits))
+        split_ind = np.arange(0, self._n_samples, split_size)
+
+        if(remainder != 0):
+            
+            split_ind[1:remainder+1] += np.array([i for i in range(1, remainder+1)]);
+            split_ind[remainder+1:] += remainder;
+
+        else:
+
+            split_ind = np.append(split_ind, self._n_samples);
+
+        if(split_ind.shape[0] > self.n_splits + 1):
+
+            split_ind = split_ind[:self.n_splits+1];
+
+        #split_ind[:remainder] += 1
+
+        #if remainder != 0:
+
+        #    split_ind[remainder:] += remainder
+
+        #split_ind = np.append(split_ind, self._n_samples)
+
+        return split_ind
+
+    def split(self) -> Generator[tuple, None, None]:
+        """
+        _summary_
+
+        _extended_summary_
+
+        Yields
+        ------
+        Generator[tuple, None, None]
+            _description_
+        """
+
+        for i, (ind, weight) in enumerate(zip(self._splitting_ind[:-1], self._weights)):
+
+            next_ind = self._splitting_ind[i + 1]
+
+            validation = self._indices[ind:next_ind]
+            h_ind = self._indices[
+                np.fmax(i - self._v - self._h, 0) : np.fmin(
+                    i + self._v + self._h + 1, self._n_samples
+                )
+            ]
+            train = np.array([el for el in self._indices if el not in validation])
+
+            yield (train, validation, weight)
+
+    def info(self) -> None:
+        """
+        _summary_
+
+        _extended_summary_
+        """
+
+        min_fold_size = int(np.floor(self._n_samples / self.n_splits))
+        max_fold_size = min_fold_size
+
+        remainder = self._n_samples % self.n_splits
+
+        if remainder != 0:
+
+            max_fold_size += 1
+
+        min_fold_size_pct = np.round(min_fold_size / self._n_samples * 100, 2)
+        max_fold_size_pct = np.round(max_fold_size / self._n_samples * 100, 2)
+
+        print("Block CV method")
+        print("---------------")
+        print(f"Time series size: {self._n_samples} samples")
+        print(f"Number of splits: {self.n_splits}")
+        print(
+            f"Fold size: {min_fold_size} to {max_fold_size} samples ({min_fold_size_pct} to {max_fold_size_pct} %)"
+        )
+        print(f"Weights: {self._weights}")
+
+        return
+
+    def statistics(self) -> tuple[pd.DataFrame]:
+        """
+        _summary_
+
+        _extended_summary_
+
+        Returns
+        -------
+        tuple[pd.DataFrame]
+            _description_
+
+        Raises
+        ------
+        ValueError
+            _description_
+
+        ValueError
+            _description_
+        """
+
+        if self._n_samples <= 2:
+
+            raise ValueError(
+                "Basic statistics can only be computed if the time series comprises more than two samples."
+            )
+
+        if int(np.round(self._n_samples / self.n_splits)) < 2:
+
+            raise ValueError(
+                "The folds are too small to compute most meaningful features."
+            )
+
+        full_features = get_features(self._series, self.sampling_freq)
+        training_stats = []
+        validation_stats = []
+
+        for (training, validation, _) in self.split():
+
+            training_feat = get_features(self._series[training], self.sampling_freq)
+            training_stats.append(training_feat)
+
+            validation_feat = get_features(self._series[validation], self.sampling_freq)
+            validation_stats.append(validation_feat)
+
+        training_features = pd.concat(training_stats)
+        validation_features = pd.concat(validation_stats)
+
+        return (full_features, training_features, validation_features)
+
+    def plot(self, height: int, width: int) -> None:
+        """
+        _summary_
+
+        _extended_summary_
+
+        Parameters
+        ----------
+        height : int
+            The figure's height.
+
+        width : int
+            The figure's width.
+        """
+
+        fig, axs = plt.subplots(self.n_splits, 1, sharex=True)
+        fig.set_figheight(height)
+        fig.set_figwidth(width)
+        fig.supxlabel("Samples")
+        fig.supylabel("Time Series")
+        fig.suptitle("Block CV method")
+
+        for it, (training, validation, w) in enumerate(self.split()):
+
+            axs[it].scatter(training, self._series[training], label="Training set")
+            axs[it].scatter(
+                validation, self._series[validation], label="Validation set"
+            )
+            axs[it].set_title("Fold: {} Weight: {}".format(it + 1, w))
+            axs[it].set_ylim([self._series.min() - 1, self._series.max() + 1])
+            axs[it].set_xlim([- 1, self._n_samples + 1])
+            axs[it].legend()
+
+        plt.show()
+
+        return
