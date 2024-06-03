@@ -3,7 +3,7 @@ This file contains unit tests targetting the 'CV' module.
 """
 
 import unittest
-from timecave.validation_methods.CV import Block_CV, hv_Block_CV
+from timecave.validation_methods.CV import Block_CV, hv_Block_CV, AdaptedhvBlockCV
 from timecave.validation_methods.weights import linear_weights, exponential_weights
 import numpy as np
 
@@ -43,6 +43,10 @@ class TestCV(unittest.TestCase):
         cls.hvBlock3 = hv_Block_CV(cls.test_array_high_freq, cls.high_freq, cls.h_large, cls.v_large);
         cls.hvBlock_limit = hv_Block_CV(cls.test_array_simple, cls.simple_freq, 2, 2);
 
+        cls.adapted1 = AdaptedhvBlockCV(cls.n_splits, cls.test_array_simple, cls.simple_freq, cls.h_simple);
+        cls.adapted2 = AdaptedhvBlockCV(cls.n_splits, cls.test_array_simple_odd, cls.simple_freq, cls.h_simple);
+        cls.adapted3 = AdaptedhvBlockCV(cls.n_splits, cls.test_array_high_freq, cls.high_freq, cls.h_large);
+
         return;
 
     @classmethod
@@ -71,6 +75,9 @@ class TestCV(unittest.TestCase):
         del cls.hvBlock2;
         del cls.hvBlock3;
         del cls.hvBlock_limit;
+        del cls.adapted1;
+        del cls.adapted2;
+        del cls.adapted3;
 
         return;
 
@@ -87,6 +94,9 @@ class TestCV(unittest.TestCase):
         self.assertRaises(ValueError, hv_Block_CV, self.test_array_simple, self.simple_freq, 1, -1);
         self.assertRaises(ValueError, hv_Block_CV, self.test_array_simple, self.simple_freq, 3, 2);
         self.assertRaises(ValueError, hv_Block_CV, self.test_array_simple_odd, self.simple_freq, 3, 4);
+        self.assertRaises(TypeError, AdaptedhvBlockCV, 5, self.test_array_simple, self.simple_freq, 0.5);
+        self.assertRaises(ValueError, AdaptedhvBlockCV, 5, self.test_array_simple, self.simple_freq, -1);
+        self.assertRaises(ValueError, AdaptedhvBlockCV, 5, self.test_array_simple, self.simple_freq, 10);
 
         # Functionality
         self.assertEqual(self.Block1.n_splits, self.n_splits);
@@ -102,6 +112,9 @@ class TestCV(unittest.TestCase):
         self.assertEqual(self.hvBlock2.n_splits, self.test_array_simple_odd.shape[0]);
         self.assertEqual(self.hvBlock3.n_splits, self.test_array_high_freq.shape[0]);
         self.assertEqual(self.hvBlock_limit.n_splits, self.test_array_simple.shape[0]);
+        self.assertEqual(self.adapted1.n_splits, self.n_splits);
+        self.assertEqual(self.adapted2.n_splits, self.n_splits);
+        self.assertEqual(self.adapted3.n_splits, self.n_splits);
 
         self.assertEqual(self.Block1.sampling_freq, self.simple_freq);
         self.assertEqual(self.Block2.sampling_freq, self.simple_freq);
@@ -116,6 +129,9 @@ class TestCV(unittest.TestCase):
         self.assertEqual(self.hvBlock2.sampling_freq, self.simple_freq);
         self.assertEqual(self.hvBlock3.sampling_freq, self.high_freq);
         self.assertEqual(self.hvBlock_limit.sampling_freq, self.simple_freq);
+        self.assertEqual(self.adapted1.sampling_freq, self.simple_freq);
+        self.assertEqual(self.adapted2.sampling_freq, self.simple_freq);
+        self.assertEqual(self.adapted3.sampling_freq, self.high_freq);
 
         return;
 
@@ -203,6 +219,26 @@ class TestCV(unittest.TestCase):
         hv_block2 = [[ind for ind in indices2 if ind not in h_list2[i]] for i in range(len(h_list2))];
         hv_block3 = [[ind for ind in indices3 if ind not in h_list3[i]] for i in range(len(h_list3))];
         hv_block_limit = [[ind for ind in indices1 if ind not in h_list4[i]] for i in range(len(h_list4))];
+
+        adapted_val1 = [indices1[ind:ind+2] for ind in indices1 if ind % 2 == 0];
+        adapted_val2 = [[0, 1, 2],
+                          [3, 4, 5],
+                          [6, 7, 8],
+                          [9, 10],
+                          [11, 12]];
+        adapted_val3 = [indices3[ind:ind+200] for ind in indices3 if ind % 200 == 0];
+
+        adapted_hlist1 = [indices1[np.fmax(ind-self.h_simple, 0) : np.fmin(ind+2+self.h_simple, len(indices1))] for ind in indices1 if ind % 2 == 0];
+        adapted_hlist2 = [[0, 1, 2, 3],
+                          [2, 3, 4, 5, 6],
+                          [5, 6, 7, 8, 9],
+                          [8, 9, 10, 11],
+                          [10, 11, 12]];
+        adapted_hlist3 = [indices3[np.fmax(ind-self.h_large, 0) : np.fmin(ind+200+self.h_large, len(indices3))] for ind in indices3 if ind % 200 == 0];
+
+        adapted1 = [[ind for ind in indices1 if ind not in adapted_hlist1[i]] for i in range(len(adapted_hlist1))];
+        adapted2 = [[ind for ind in indices2 if ind not in adapted_hlist2[i]] for i in range(len(adapted_hlist2))];
+        adapted3 = [[ind for ind in indices3 if ind not in adapted_hlist3[i]] for i in range(len(adapted_hlist3))];
         
         # Tests - Block CV
         for ind, (train, val, w) in enumerate(self.Block1.split()):
@@ -292,6 +328,22 @@ class TestCV(unittest.TestCase):
             self.assertListEqual(train.tolist(), hv_block_limit[ind]);
             self.assertListEqual(val.tolist(), hv_block_val_limit[ind]);
 
+        # Tests - Adapted hv Block CV
+        for ind, (train, val, _) in enumerate(self.adapted1.split()):
+
+            self.assertListEqual(train.tolist(), adapted1[ind]);
+            self.assertListEqual(val.tolist(), adapted_val1[ind]);
+        
+        for ind, (train, val, _) in enumerate(self.adapted2.split()):
+
+            self.assertListEqual(train.tolist(), adapted2[ind]);
+            self.assertListEqual(val.tolist(), adapted_val2[ind]);
+        
+        for ind, (train, val, _) in enumerate(self.adapted3.split()):
+
+            self.assertListEqual(train.tolist(), adapted3[ind]);
+            self.assertListEqual(val.tolist(), adapted_val3[ind]);
+
         return;
 
     def test_info(self):
@@ -318,6 +370,10 @@ class TestCV(unittest.TestCase):
         self.hvBlock2.info();
         self.hvBlock3.info();
         self.hvBlock_limit.info();
+
+        self.adapted1.info();
+        self.adapted2.info();
+        self.adapted3.info();
 
         return;
 
@@ -361,6 +417,8 @@ class TestCV(unittest.TestCase):
         block2_full_stats, block2_train_stats, block2_val_stats = self.Block2.statistics();
         hv_block1_full_stats, hv_block1_train_stats, hv_block1_val_stats = self.hvBlock1.statistics();
         hv_block2_full_stats, hv_block2_train_stats, hv_block2_val_stats = self.hvBlock2.statistics();
+        adapted1_full_stats, adapted1_train_stats, adapted1_val_stats = self.adapted1.statistics();
+        adapted2_full_stats, adapted2_train_stats, adapted2_val_stats = self.adapted2.statistics();
         
         self.assertEqual(block1_full_stats.shape[1], columns);
         self.assertListEqual(block1_full_stats.columns.tolist(), column_list);
@@ -378,6 +436,13 @@ class TestCV(unittest.TestCase):
         self.assertEqual(hv_block2_full_stats.shape[0], 1);
         self.assertEqual(hv_block2_train_stats.shape[0], self.test_array_simple_odd.shape[0]);
         self.assertEqual(hv_block2_val_stats.shape[0], self.test_array_simple_odd.shape[0]);
+
+        self.assertEqual(adapted1_full_stats.shape[0], 1);
+        self.assertEqual(adapted1_train_stats.shape[0], 5);
+        self.assertEqual(adapted1_val_stats.shape[0], 5);
+        self.assertEqual(adapted2_full_stats.shape[0], 1);
+        self.assertEqual(adapted2_train_stats.shape[0], 5);
+        self.assertEqual(adapted2_val_stats.shape[0], 5);
 
         return;
 
@@ -407,6 +472,10 @@ class TestCV(unittest.TestCase):
         self.hvBlock1.plot(height, width);
         self.hvBlock2.plot(height, width);
         self.hvBlock_limit.plot(height, width);
+
+        self.adapted1.plot(height, width);
+        self.adapted2.plot(height, width);
+        self.adapted3.plot(height, width);
 
         return;
 
