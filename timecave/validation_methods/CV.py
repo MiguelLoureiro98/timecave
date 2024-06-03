@@ -434,19 +434,16 @@ class AdaptedhvBlockCV(base_splitter):
         ts: np.ndarray | pd.Series,
         fs: float | int,
         h: int,
-        weight_function: callable = constant_weights,
-        params: dict = None,
     ) -> None:
 
         super().__init__(splits, ts, fs)
         self._check_h(h);
         self._h = h;
         self._splitting_ind = self._split_ind()
-        self._weights = weight_function(self.n_splits, params=params)
 
     def _check_h(self, h: int) -> None:
         """
-        Perform type and value checks on both h and v.
+        Perform type and value checks on h.
         """
 
         if (isinstance(h, int)) is False:
@@ -509,7 +506,7 @@ class AdaptedhvBlockCV(base_splitter):
             _description_
         """
 
-        for i, (ind, weight) in enumerate(zip(self._splitting_ind[:-1], self._weights)):
+        for i, (ind) in enumerate(self._splitting_ind[:-1]):
 
             next_ind = self._splitting_ind[i + 1]
 
@@ -521,7 +518,7 @@ class AdaptedhvBlockCV(base_splitter):
             ]
             train = np.array([el for el in self._indices if el not in h_ind])
 
-            yield (train, validation, weight)
+            yield (train, validation, 1.0)
 
     def info(self) -> None:
         """

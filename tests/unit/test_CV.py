@@ -3,7 +3,7 @@ This file contains unit tests targetting the 'CV' module.
 """
 
 import unittest
-from timecave.validation_methods.CV import Block_CV, hv_Block_CV
+from timecave.validation_methods.CV import Block_CV, hv_Block_CV, AdaptedhvBlockCV
 from timecave.validation_methods.weights import linear_weights, exponential_weights
 import numpy as np
 
@@ -42,6 +42,8 @@ class TestCV(unittest.TestCase):
         cls.hvBlock2 = hv_Block_CV(cls.test_array_simple_odd, cls.simple_freq, cls.h_simple, cls.v_simple);
         cls.hvBlock3 = hv_Block_CV(cls.test_array_high_freq, cls.high_freq, cls.h_large, cls.v_large);
         cls.hvBlock_limit = hv_Block_CV(cls.test_array_simple, cls.simple_freq, 2, 2);
+
+        cls.adapted1 = AdaptedhvBlockCV(cls.n_splits, cls.test_array_simple, cls.simple_freq, cls.h_simple);
 
         return;
 
