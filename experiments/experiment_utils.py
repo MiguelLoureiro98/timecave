@@ -13,7 +13,7 @@ from timecave.validation_methods.OOS import (
 )
 from timecave.validation_methods.markov import MarkovCV
 from timecave.validation_methods.prequential import Growing_Window, Rolling_Window
-from timecave.validation_methods.CV import Block_CV, hv_Block_CV
+from timecave.validation_methods.CV import Block_CV, hv_Block_CV, AdaptedhvBlockCV
 from timecave.validation_methods.weights import (
     constant_weights,
     linear_weights,
@@ -112,6 +112,7 @@ def get_methods_list(ts, freq):
     block_cv = Block_CV(5, ts, freq)
     # weight_block_cv = Block_CV( 5, ts, freq, weight_function=exponential_weights, params={"base": 2})
     # hv_block = hv_Block_CV(ts, freq, h=5, v=5)
+    adp_hv = AdaptedhvBlockCV(5, ts, freq, h=5)
     p = get_autocorrelation_order(ts)
     markov = MarkovCV(ts, p, seed=1)
 
