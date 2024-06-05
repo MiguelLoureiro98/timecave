@@ -177,58 +177,61 @@ def predict_models(
     table: pd.DataFrame,
     method: base_splitter = None,
     it: int = None,
+    models: list[str] = ["ARMA", "LSTM", "Tree"],
 ):
     """
     Runs all models and saves results to the given table.
     """
+    if "tree" in models:
+        tree_results = predict_tree(train, val)
+        row = pd.Series(
+            {
+                "filename": filename,
+                "column_index": col_idx,
+                "method": method,
+                "iteration": it,
+                "model": "Tree",
+                "mse": tree_results["mse"],
+                "mae": tree_results["mae"],
+                "rmse": tree_results["rmse"],
+            }
+        )
+        table.loc[len(table.index)] = row[table.columns]
 
-    tree_results = predict_tree(train, val)
-    row = pd.Series(
-        {
-            "filename": filename,
-            "column_index": col_idx,
-            "method": method,
-            "iteration": it,
-            "model": "Tree",
-            "mse": tree_results["mse"],
-            "mae": tree_results["mae"],
-            "rmse": tree_results["rmse"],
-        }
-    )
-    table.loc[len(table.index)] = row[table.columns]
+    if "ARMA" in models:
+        ARMA_results = predict_ARMA(train, val, n_lags=5)
 
-    ARMA_results = predict_ARMA(train, val, n_lags=5)
+        row = pd.Series(
+            {
+                "filename": filename,
+                "column_index": col_idx,
+                "method": method,
+                "iteration": it,
+                "model": "ARMA",
+                "mse": ARMA_results["mse"],
+                "mae": ARMA_results["mae"],
+                "rmse": ARMA_results["rmse"],
+            }
+        )
+        table.loc[len(table.index)] = row[table.columns]
 
-    row = pd.Series(
-        {
-            "filename": filename,
-            "column_index": col_idx,
-            "method": method,
-            "iteration": it,
-            "model": "ARMA",
-            "mse": ARMA_results["mse"],
-            "mae": ARMA_results["mae"],
-            "rmse": ARMA_results["rmse"],
-        }
-    )
-    table.loc[len(table.index)] = row[table.columns]
+    if "LSTM" in models:
+        lstm_results = predict_lstm(train, val, lags=5, epochs=50, verbose=0)
+        row = pd.Series(
+            {
+                "filename": filename,
+                "column_index": col_idx,
+                "method": method,
+                "iteration": it,
+                "model": "LSTM",
+                "mse": lstm_results["mse"],
+                "mae": lstm_results["mae"],
+                "rmse": lstm_results["rmse"],
+            }
+        )
+        table.loc[len(table.index)] = row[table.columns]
 
-    lstm_results = predict_lstm(train, val, lags=5, epochs=50, verbose=0)
-    row = pd.Series(
-        {
-            "filename": filename,
-            "column_index": col_idx,
-            "method": method,
-            "iteration": it,
-            "model": "LSTM",
-            "mse": lstm_results["mse"],
-            "mae": lstm_results["mae"],
-            "rmse": lstm_results["rmse"],
-        }
-    )
-    table.loc[len(table.index)] = row[table.columns]
-
-    return tree_results["model"], lstm_results["model"], ARMA_results["model"]
+    return
 
 
 if __name__ == "__main__":

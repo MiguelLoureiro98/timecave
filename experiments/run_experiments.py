@@ -27,6 +27,7 @@ def run(
     add_name: str = "",
     model_func: callable = predict_models,
     save_stats: bool = True,
+    models: list[str] = ["ARMA", "LSTM", "Tree"],
 ):
     assert not resume_run or (from_ts == 0 and to_ts is None)
 
@@ -78,6 +79,7 @@ def run(
                         table_A,
                         method,
                         it,
+                        models=models,
                     )
 
                 # Statistics per iteration
@@ -93,7 +95,7 @@ def run(
                     )
 
             # Results without Validation (Table_B)
-            model_func(train_val, test, file, col_idx, table_B)
+            model_func(train_val, test, file, col_idx, table_B, models=models)
 
             # save backups
             nb_ts = +1
@@ -173,5 +175,11 @@ if __name__ == "__main__":
         "results\\backups\\stats_val__2024_05_29__10_31_23.csv",
     ]
 
-    run(files, backup_dir, results_dir, resume_run=False)
+    run(
+        files,
+        backup_dir,
+        results_dir,
+        resume_run=False,
+        models=["ARMA", "Tree"],
+    )
     print("!!")
