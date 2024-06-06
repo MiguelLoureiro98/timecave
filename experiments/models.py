@@ -157,7 +157,7 @@ def predict_ARMA(
     Train and test an ARMA model.
     """
 
-    model = ARIMA(ts_train, order=(n_lags, 0, n_lags))
+    model = ARIMA(ts_train, order=(n_lags, 0, 0))
     res = model.fit()
 
     y_pred = res.forecast(ts_val.shape[0])
@@ -200,7 +200,6 @@ def predict_models(
 
     if "ARMA" in models:
         ARMA_results = predict_ARMA(train, val, n_lags=5)
-
         row = pd.Series(
             {
                 "filename": filename,
