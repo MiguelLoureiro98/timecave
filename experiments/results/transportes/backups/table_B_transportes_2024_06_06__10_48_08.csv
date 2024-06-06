@@ -1,0 +1,3 @@
+filename,column_index,model,mse,mae,rmse
+datasets/processed_data/metro_nyc_17052024.csv,0,Tree,179744.7735770669,266.57041960947237,423.96317478888056
+datasets/processed_data/metro_nyc_17052024.csv,0,ARMA,3949959.1133013596,1740.7037158140786,1987.4504052431998
