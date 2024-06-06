@@ -1,3 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/processed_data/covid19_17052024.csv,0,Tree,17.31625166355706,2.493516961031679,4.16128005108489
-datasets/processed_data/covid19_17052024.csv,0,ARMA,35.11313447233787,5.037636792085064,5.925633676860043
