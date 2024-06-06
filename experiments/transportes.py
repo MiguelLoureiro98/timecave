@@ -16,6 +16,6 @@ run(
     results_dir,
     resume_run=False,
     add_name="transportes",
-    models=["ARMA", "Tree"],
+    models=["ARMA", "tree"],
     save_stats=False,
 )
