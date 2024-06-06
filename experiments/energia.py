@@ -5,11 +5,11 @@ os.chdir("experiments")
 backup_dir = "results/energia/backups"
 results_dir = "results/energia"
 energia = [
-    "datasets/processed_data/covid19_17052024.csv",
-    "datasets/processed_data/ecg_alcohol_17052024.csv",
-    "datasets/processed_data/non_invasive_fetal_ecg_15052024.csv",
-    "datasets/processed_data/pharma_sales_17052024.csv",
+    "datasets/processed_data/power_consumption_data.csv",
+    "datasets/processed_data/US_energy_generation_data.csv",
+    "datasets/processed_data/power_comsumption_india_14052024.csv",
 ]
+
 
 run(
     energia,

@@ -5,10 +5,9 @@ os.chdir("experiments")
 backup_dir = "results/ambiente/backups"
 results_dir = "results/ambiente"
 ambiente = [
-    "datasets/processed_data/covid19_17052024.csv",
-    "datasets/processed_data/ecg_alcohol_17052024.csv",
-    "datasets/processed_data/non_invasive_fetal_ecg_15052024.csv",
-    "datasets/processed_data/pharma_sales_17052024.csv",
+    "datasets/processed_data/aire_discharge_environment_data.csv",
+    "datasets/processed_data/air_quality_Rajamahendravaram_13052024.csv",
+    "datasets/processed_data/forest_fires_Rio_Janeiro.csv",
 ]
 
 run(

@@ -5,10 +5,10 @@ os.chdir("experiments")
 backup_dir = "results/meteorologia/backups"
 results_dir = "results/meteorologia"
 meteorologia = [
-    "datasets/processed_data/covid19_17052024.csv",
-    "datasets/processed_data/ecg_alcohol_17052024.csv",
-    "datasets/processed_data/non_invasive_fetal_ecg_15052024.csv",
-    "datasets/processed_data/pharma_sales_17052024.csv",
+    "datasets/processed_data/aire_discharge_weather_data.csv",
+    "datasets/processed_data/DailyDelhiClimate_12052024.csv",
+    "datasets/processed_data/jena_climate_data.csv",
+    "datasets/processed_data/MLTempDataset_13052024.csv",
 ]
 
 run(

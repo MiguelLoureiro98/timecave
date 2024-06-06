@@ -5,10 +5,9 @@ os.chdir("experiments")
 backup_dir = "results/eng_ciencias/backups"
 results_dir = "results/eng_ciencias"
 eng_ciencias = [
-    "datasets/processed_data/covid19_17052024.csv",
-    "datasets/processed_data/ecg_alcohol_17052024.csv",
-    "datasets/processed_data/non_invasive_fetal_ecg_15052024.csv",
-    "datasets/processed_data/pharma_sales_17052024.csv",
+    "datasets/processed_data/mechanical_gear_vibration_data.csv",
+    "datasets/processed_data/room_occupancy_data.csv",
+    "datasets/processed_data/torque_characteristics_15052024.csv",
 ]
 
 run(
