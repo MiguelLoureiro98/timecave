@@ -22,10 +22,15 @@ def run(
     save_freq: int = 1,
     resume_run: bool = False,
     resume_files: list[str] = [],
-    from_ts: int = None,
-    until_ts: int = None,
+    from_ts: int = 0,
+    to_ts: int = None,
+    add_name: str = "",
     model_func: callable = predict_models,
+    save_stats: bool = True,
+    models: list[str] = ["ARMA", "LSTM", "Tree"],
 ):
+    assert not resume_run or (from_ts == 0 and to_ts is None)
+
     # Get tables
     if not resume_run:
         table_A, table_B, stats_total, stats_train, stats_val = initialize_tables()
@@ -45,17 +50,15 @@ def run(
     for file in filenames:
         df = pd.read_csv(file, parse_dates=[0])
         freq = get_freq(df, df.columns[0])
-
-        if from_ts is not None:
-            df = df.iloc[:, [0] + list(range(from_ts, df.shape[1]))]
-        if until_ts is not None:
-            df = df.iloc[:, list(range(0, until_ts))]
         ts_list = get_univariate_series(df)
 
-        ts_list = ts_list[col_id1 + 1 :]
+        if to_ts is not None:
+            ts_list = ts_list[:to_ts]
+        ts_list = ts_list[col_id1 + from_ts + 1 :]
 
         # Iterate per time series
         for idx, ts in enumerate(ts_list):
+            col_idx = idx + col_id1 + from_ts + 1
             train_val, test = split_series(ts, test_set_proportion=0.2)
 
             methods = get_methods_list(train_val, freq)
@@ -72,37 +75,47 @@ def run(
                         train_val[t_idx],
                         train_val[v_idx],
                         file,
-                        idx,
+                        col_idx,
                         table_A,
                         method,
                         it,
+                        models=models,
                     )
 
                 # Statistics per iteration
-                stats_total, stats_train, stats_val = update_stats_tables(
-                    stats_total,
-                    stats_train,
-                    stats_val,
-                    method,
-                    file,
-                    idx,
-                    freq=freq,
-                )
+                if save_stats:
+                    stats_total, stats_train, stats_val = update_stats_tables(
+                        stats_total,
+                        stats_train,
+                        stats_val,
+                        method,
+                        file,
+                        col_idx,
+                        freq=freq,
+                    )
 
             # Results without Validation (Table_B)
-            model_func(train_val, test, file, idx, table_B)
+            model_func(train_val, test, file, col_idx, table_B, models=models)
 
             # save backups
             nb_ts = +1
             if nb_ts % save_freq == 0:
                 save_tables(
-                    table_A, table_B, stats_total, stats_train, stats_val, backup_dir
+                    table_A,
+                    table_B,
+                    stats_total,
+                    stats_train,
+                    stats_val,
+                    backup_dir,
+                    add_name,
                 )
 
             print()
 
     # Final save
-    save_tables(table_A, table_B, stats_total, stats_train, stats_val, results_dir)
+    save_tables(
+        table_A, table_B, stats_total, stats_train, stats_val, results_dir, add_name
+    )
     print()
 
 
@@ -162,5 +175,11 @@ if __name__ == "__main__":
         "results\\backups\\stats_val__2024_05_29__10_31_23.csv",
     ]
 
-    run(files, backup_dir, results_dir, resume_run=False)
+    run(
+        files,
+        backup_dir,
+        results_dir,
+        resume_run=False,
+        models=["ARMA", "Tree"],
+    )
     print("!!")

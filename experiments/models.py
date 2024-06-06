@@ -19,7 +19,7 @@ def rnn_model(lags: int):
     """
     model = Sequential()
     model.add(Input(shape=(lags, 1)))
-    model.add(GRU(50))
+    model.add(SimpleRNN(50))
     model.add(Dense(1))
     return model
 
@@ -45,14 +45,59 @@ def recursive_forecast(
     return forecasts
 
 
-def predict_lstm(
+def predict_rnn_sktime(
     train_series: pd.Series or pd.DataFrame,
     val_series: pd.Series or pd.DataFrame,
     lags: int = 5,
     epochs: int = 200,
     verbose: int = 0,
     one_step_head_eval: bool = True,
-) -> np.array:
+) -> dict:
+    """
+    Predict future values using Long Short-Term Memory (LSTM).
+    """
+    from sktime.regression.deep_learning.rnn import SimpleRNNRegressor
+
+    X_val, y_val = get_X_y(val_series, lags)
+    X_train, y_train = get_X_y(train_series, lags)
+
+    # LSTM model
+    model = SimpleRNNRegressor(n_epochs=epochs, batch_size=50, verbose=verbose)
+
+    # Fit the model
+    model.fit(X_train, y_train)
+
+    pred_window = len(y_val)
+
+    # Forecast
+    if not one_step_head_eval:
+        forecast = recursive_forecast(
+            X_val, pred_window, model, args={"verbose": verbose}
+        )
+    else:
+        forecast = model.predict(X_val)
+
+    forecast = np.array(forecast)
+    mse = mean_squared_error(y_val, forecast)
+    mae = mean_absolute_error(y_val, forecast)
+
+    return {
+        "prediction": np.array(forecast),
+        "model": model,
+        "mse": mse,
+        "rmse": np.sqrt(mse),
+        "mae": mae,
+    }
+
+
+def predict_rnn(
+    train_series: pd.Series or pd.DataFrame,
+    val_series: pd.Series or pd.DataFrame,
+    lags: int = 5,
+    epochs: int = 200,
+    verbose: int = 0,
+    one_step_head_eval: bool = True,
+) -> dict:
     """
     Predict future values using Long Short-Term Memory (LSTM).
     """
@@ -65,7 +110,7 @@ def predict_lstm(
     model.compile(optimizer="adam", loss="mean_squared_error")
 
     # Fit the model
-    model.fit(X_train, y_train, epochs=epochs, verbose=verbose)
+    model.fit(X_train, y_train, batch_size=50, epochs=epochs, verbose=verbose)
 
     pred_window = len(y_val)
 
@@ -157,7 +202,7 @@ def predict_ARMA(
     Train and test an ARMA model.
     """
 
-    model = ARIMA(ts_train, order=(n_lags, 0, n_lags))
+    model = ARIMA(ts_train, order=(n_lags, 0, 0))
     res = model.fit()
 
     y_pred = res.forecast(ts_val.shape[0])
@@ -177,63 +222,65 @@ def predict_models(
     table: pd.DataFrame,
     method: base_splitter = None,
     it: int = None,
+    models: list[str] = ["ARMA", "LSTM", "Tree"],
 ):
     """
     Runs all models and saves results to the given table.
     """
+    if "tree" in models:
+        tree_results = predict_tree(train, val)
+        row = pd.Series(
+            {
+                "filename": filename,
+                "column_index": col_idx,
+                "method": method,
+                "iteration": it,
+                "model": "Tree",
+                "mse": tree_results["mse"],
+                "mae": tree_results["mae"],
+                "rmse": tree_results["rmse"],
+            }
+        )
+        table.loc[len(table.index)] = row[table.columns]
 
-    tree_results = predict_tree(train, val)
-    row = pd.Series(
-        {
-            "filename": filename,
-            "column_index": col_idx,
-            "method": method,
-            "iteration": it,
-            "model": "Tree",
-            "mse": tree_results["mse"],
-            "mae": tree_results["mae"],
-            "rmse": tree_results["rmse"],
-        }
-    )
-    table.loc[len(table.index)] = row[table.columns]
+    if "ARMA" in models:
+        ARMA_results = predict_ARMA(train, val, n_lags=5)
+        row = pd.Series(
+            {
+                "filename": filename,
+                "column_index": col_idx,
+                "method": method,
+                "iteration": it,
+                "model": "ARMA",
+                "mse": ARMA_results["mse"],
+                "mae": ARMA_results["mae"],
+                "rmse": ARMA_results["rmse"],
+            }
+        )
+        table.loc[len(table.index)] = row[table.columns]
 
-    ARMA_results = predict_ARMA(train, val, n_lags=5)
+    if "LSTM" in models:
+        lstm_results = predict_rnn(train, val, lags=5, epochs=50, verbose=0)
+        row = pd.Series(
+            {
+                "filename": filename,
+                "column_index": col_idx,
+                "method": method,
+                "iteration": it,
+                "model": "LSTM",
+                "mse": lstm_results["mse"],
+                "mae": lstm_results["mae"],
+                "rmse": lstm_results["rmse"],
+            }
+        )
+        table.loc[len(table.index)] = row[table.columns]
 
-    row = pd.Series(
-        {
-            "filename": filename,
-            "column_index": col_idx,
-            "method": method,
-            "iteration": it,
-            "model": "ARMA",
-            "mse": ARMA_results["mse"],
-            "mae": ARMA_results["mae"],
-            "rmse": ARMA_results["rmse"],
-        }
-    )
-    table.loc[len(table.index)] = row[table.columns]
-
-    lstm_results = predict_lstm(train, val, lags=5, epochs=50, verbose=0)
-    row = pd.Series(
-        {
-            "filename": filename,
-            "column_index": col_idx,
-            "method": method,
-            "iteration": it,
-            "model": "LSTM",
-            "mse": lstm_results["mse"],
-            "mae": lstm_results["mae"],
-            "rmse": lstm_results["rmse"],
-        }
-    )
-    table.loc[len(table.index)] = row[table.columns]
-
-    return tree_results["model"], lstm_results["model"], ARMA_results["model"]
+    return
 
 
 if __name__ == "__main__":
 
-    a = np.ones(100)
+    """a = np.ones(100)
     b = np.ones(10)
 
     a = np.append(np.arange(100), np.arange(100, 120))
@@ -268,9 +315,38 @@ if __name__ == "__main__":
 
     DT_res = predict_tree(a, b)
 
-    print(DT_res)
+    print(DT_res)"""
 
-    results = predict_lstm(
+    a, b = pd.Series(np.arange(80)), pd.Series(np.arange(80, 100 + 1))
+    # --------------------- TIME -------------------- #
+    start_time = time.time()
+    # --------------------- TIME -------------------- #
+    results = predict_rnn(a, b, epochs=200)
+
+    # --------------------- TIME -------------------- #
+    end_time = time.time()
+    runtime_seconds = end_time - start_time
+
+    minutes = int(runtime_seconds // 60)
+    seconds = int(runtime_seconds % 60)
+    print(f"ARIMA: {minutes} minutes {seconds} seconds")
+    # --------------------- TIME -------------------- #
+
+    # --------------------- TIME -------------------- #
+    start_time = time.time()
+    # --------------------- TIME -------------------- #
+    results = predict_rnn_sktime(a, b, epochs=200)
+
+    # --------------------- TIME -------------------- #
+    end_time = time.time()
+    runtime_seconds = end_time - start_time
+
+    minutes = int(runtime_seconds // 60)
+    seconds = int(runtime_seconds % 60)
+    print(f"ARIMA: {minutes} minutes {seconds} seconds")
+    # --------------------- TIME -------------------- #
+
+    results = predict_rnn(
         pd.Series(np.arange(80)), pd.Series(np.arange(80, 100 + 1)), epochs=200
     )
     print(results)
