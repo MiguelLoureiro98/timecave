@@ -97,7 +97,7 @@ def get_autocorrelation_order(ts, nlags=5):
 
 
 def get_methods_list(ts, freq):
-    holdout = Holdout(ts, freq, validation_size=0.7)
+    holdout = Holdout(ts, freq, validation_size=0.3)
     rep_hold = Repeated_Holdout(
         ts, freq, iterations=4, splitting_interval=[0.7, 0.8], seed=0
     )
