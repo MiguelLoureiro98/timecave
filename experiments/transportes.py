@@ -10,4 +10,12 @@ transportes = [
     "datasets/processed_data/traffic_17052024.csv",
 ]
 
-run(transportes, backup_dir, results_dir, resume_run=False, add_name="transportes")
+run(
+    transportes,
+    backup_dir,
+    results_dir,
+    resume_run=False,
+    add_name="transportes",
+    models=["ARMA", "Tree"],
+    save_stats=False,
+)
