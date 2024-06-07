@@ -12,7 +12,7 @@ run(
     backup_dir,
     results_dir,
     resume_run=False,
-    add_name="s2_200_1000",
+    add_name="s2_200_1001",
     models=["ARMA", "tree"],
     save_stats=False,
     from_ts=200,
