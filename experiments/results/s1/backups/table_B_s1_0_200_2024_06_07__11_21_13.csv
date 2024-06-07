@@ -1,0 +1,3 @@
+filename,column_index,model,mse,mae,rmse
+datasets/synthetic_data/s1.csv,0,Tree,2.2399004938925375,1.2161840504704375,1.496629711683066
+datasets/synthetic_data/s1.csv,0,ARMA,2.7262342323289688,1.342447772585146,1.6511311977940968
