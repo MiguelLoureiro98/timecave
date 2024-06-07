@@ -1,0 +1,7 @@
+filename,column_index,model,mse,mae,rmse
+datasets/processed_data/power_consumption_data.csv,0,Tree,0.07606257606413437,0.18726092765795,0.2757944453105145
+datasets/processed_data/power_consumption_data.csv,0,ARMA,30.46539589630683,4.3222736862658815,5.519546711126452
+datasets/processed_data/power_consumption_data.csv,1,Tree,2.4299180038599397,0.9737710759050711,1.5588194263159347
+datasets/processed_data/power_consumption_data.csv,1,ARMA,175.45561892110035,11.026091540271644,13.2459661377002
+datasets/processed_data/power_consumption_data.csv,2,Tree,0.07014716812045345,0.02481413437678946,0.2648531066845421
+datasets/processed_data/power_consumption_data.csv,2,ARMA,5.43198755869763,2.2778733351519764,2.3306624720661784

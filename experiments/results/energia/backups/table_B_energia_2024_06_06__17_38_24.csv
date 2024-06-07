@@ -1,0 +1,3 @@
+filename,column_index,model,mse,mae,rmse
+datasets/processed_data/power_consumption_data.csv,0,Tree,0.07606257606413437,0.18726092765795,0.2757944453105145
+datasets/processed_data/power_consumption_data.csv,0,ARMA,30.46539589630683,4.3222736862658815,5.519546711126452
