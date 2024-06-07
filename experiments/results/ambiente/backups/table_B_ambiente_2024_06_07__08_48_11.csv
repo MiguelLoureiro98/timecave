@@ -1,0 +1,3 @@
+filename,column_index,model,mse,mae,rmse
+datasets/processed_data/aire_discharge_environment_data.csv,0,Tree,63.43338189664943,4.757115102951613,7.964507636800246
+datasets/processed_data/aire_discharge_environment_data.csv,0,ARMA,40.241196051077765,3.949141938634449,6.3435948839027985
