@@ -12,9 +12,7 @@ run(
     backup_dir,
     results_dir,
     resume_run=False,
-    add_name="s3_0_200",
+    add_name="s3",
     models=["ARMA", "tree"],
     save_stats=False,
-    from_ts=0,
-    to_ts=200,
 )
