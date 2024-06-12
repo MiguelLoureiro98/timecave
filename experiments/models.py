@@ -203,7 +203,12 @@ def predict_ARMA(
     """
 
     model = ARIMA(ts_train, order=(n_lags, 0, 0))
-    res = model.fit()
+
+    try:
+        res = model.fit()
+    except:
+        model.initialize_approximate_diffuse()
+        res = model.fit()
 
     y_pred = res.forecast(ts_val.shape[0])
 
