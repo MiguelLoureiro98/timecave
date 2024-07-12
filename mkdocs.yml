@@ -1,0 +1,71 @@
+site_name: TimeCave
+site_url: http://timecave.com
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - navigation.footer
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+      primary: teal
+      accent: purple
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+      primary: teal
+      accent: lime
+
+extra:
+  social:
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/miguel-santos-loureiro/
+      name: Miguel Loureiro's LinkedIn page
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/beatriz-pereira-lourenço/
+      name: Beatriz Lourenço's LinkedIn page
+
+nav:
+  - Home: index.md
+  - Getting Started: starters.md
+  - API reference:
+    - Overview: API_ref/index.md
+    - Data characteristics: API_ref/data_characteristics.md
+    - Metrics: API_ref/metrics.md
+    - Utilities: API_ref/utils.md
+    - New utilities:
+      - Overview 2: API_ref/new_utils/index.md
+      - Nyquist: API_ref/new_utils/nyquist.md
+      - Heuristic: API_ref/new_utils/heuristic.md
+      - Indices: API_ref/new_utils/indices.md
+  - About: about.md
+
+not_in_nav: |
+  /data_characteristcs.md
+  /metrics.md
+  /utils.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: numpy
+            show_submodules: true
