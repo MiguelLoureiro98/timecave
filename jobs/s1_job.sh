@@ -1,14 +1,14 @@
 #!/bin/bash
 
 #SBATCH --job-name=Try
-#SBATCH --time=0:01:00
+#SBATCH --time=168:00:00
 #SBATCH --partition=hpc
 #SBATCH --error=err.job.%j
 #SBATCH --output=out.job.%j
 #SBATCH -D .
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=10
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
