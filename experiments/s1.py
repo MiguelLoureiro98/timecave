@@ -12,9 +12,9 @@ run(
     backup_dir,
     results_dir,
     resume_run=False,
-    add_name="s1_200_1000_LSTM",
+    add_name="s1_414_1000_LSTM",
     models=["LSTM"],
     save_stats=False,
-    from_ts=200,
+    from_ts=414,
     to_ts=1001,
 )
