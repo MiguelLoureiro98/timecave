@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=WeatherLSTM
+#SBATCH --job-name=test_job
 #SBATCH --time=0:10:00
 #SBATCH --partition=hpc
 #SBATCH --error=err.job.%j
