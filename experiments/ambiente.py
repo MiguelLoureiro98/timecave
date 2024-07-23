@@ -15,7 +15,7 @@ run(
     backup_dir,
     results_dir,
     resume_run=False,
-    add_name="ambiente",
-    models=["ARMA", "tree"],
+    add_name="ambiente_LSTM",
+    models=["LSTM"],
     save_stats=False,
 )

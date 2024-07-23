@@ -15,7 +15,7 @@ run(
     backup_dir,
     results_dir,
     resume_run=False,
-    add_name="transportes",
-    models=["ARMA", "tree"],
+    add_name="transportes_LSTM",
+    models=["LSTM"],
     save_stats=False,
 )
