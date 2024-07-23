@@ -3,7 +3,7 @@
 This is the API reference for the TimeCave library.
 
 ## Links:
-- [Data characteristics](data_characteristics.md)
-- [Metrics](metrics.md)
-- [Utilities](utils.md)
-- [New utilities](new_utils/index.md)
+- [Data characteristics](data_characteristics/index.md)
+- [Metrics](metrics/index.md)
+- [Utilities](utils/index.md)
+- [Validation methods](validation_methods/index.md)

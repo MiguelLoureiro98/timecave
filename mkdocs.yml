@@ -46,18 +46,31 @@ nav:
   - Getting Started: starters.md
   - API reference:
     - Overview: API_ref/index.md
-    - Data characteristics: API_ref/data_characteristics.md
-    - Metrics: API_ref/metrics.md
-    - Utilities: API_ref/utils.md
-    - New utilities:
-      - Overview 2: API_ref/new_utils/index.md
-      - Nyquist: API_ref/new_utils/nyquist.md
-      - Heuristic: API_ref/new_utils/heuristic.md
-      - Indices: API_ref/new_utils/indices.md
+    - Data characteristics:
+      - Overview: API_ref/data_characteristics/index.md
+      - get_features: API_ref/data_characteristics/get_features.md
+      - strength_of_trend: API_ref/data_characteristics/sot.md
+      - mean_crossing_rate: API_ref/data_characteristics/mean_cr.md
+      - median_crossing_rate: API_ref/data_characteristics/med_cr.md
+    - Metrics: 
+      - Overview: API_ref/metrics/index.md
+      - PAE: API_ref/metrics/pae.md
+      - APAE: API_ref/metrics/apae.md
+      - RPAE: API_ref/metrics/rpae.md
+      - RAPAE: API_ref/metrics/rapae.md
+      - MC_metric: API_ref/metrics/MC_metric.md
+      - under_over_estimation: API_ref/metrics/under_over.md
+    - Utilities:
+      - Overview: API_ref/utils/index.md
+      - Nyquist_min_samples: API_ref/utils/nyquist.md
+      - heuristic_min_samples: API_ref/utils/heuristic.md
+      - true_test_indices: API_ref/utils/indices.md
+    - Validation methods:
+      - Overview: API_ref/validation_methods/index.md
   - About: about.md
 
 not_in_nav: |
-  /data_characteristcs.md
+  /data_characteristics.md
   /metrics.md
   /utils.md
 
