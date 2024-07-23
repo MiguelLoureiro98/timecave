@@ -22,7 +22,7 @@ python experiments/test_hpc.py
 git pull origin Colab_Beatriz
 git config --global user.email "beatriz.plourenco99@gmail.com"
 git config --global user.name "Beatriz - Colab"
-git add experiments/results/test
+git add experiments/results/tests
 git commit -m "test results from hpc."
 git push origin Colab_Beatriz
 
