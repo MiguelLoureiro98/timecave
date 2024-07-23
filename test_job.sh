@@ -6,8 +6,8 @@
 #SBATCH --error=err.job.%j
 #SBATCH -D
 #SBATCH --nodes=1
-#SBATCH --ntask-per-node=1
-#SBATCH -cpus-per-task=12
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=12
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
