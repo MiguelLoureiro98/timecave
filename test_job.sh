@@ -18,9 +18,9 @@ module load tensorflow/2.14-0
 git pull origin main
 git checkout Colab_Beatriz
 git merge main
+git commit -m "get from main"
+git push origin Colab_Beatriz
 python experiments/test_hpc.py
-git config --global user.email "beatriz.plourenco99@gmail.com"
-git config --global user.name "Beatriz - Colab"
 git add experiments/results/tests
 git commit -m "test results from hpc."
 git push origin Colab_Beatriz
