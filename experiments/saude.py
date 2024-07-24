@@ -16,7 +16,7 @@ run(
     backup_dir,
     results_dir,
     resume_run=False,
-    add_name="saude",
-    models=["ARMA", "tree"],
+    add_name="saude_LSTM",
+    models=["LSTM"],
     save_stats=False,
 )
