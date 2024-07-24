@@ -6,14 +6,14 @@ import pandas.api.types as pdt
 from timecave.validation_methods._base import base_splitter
 from timecave.validation_methods.OOS import (
     Holdout,
-    Repeated_Holdout,
-    Rolling_Origin_Update,
-    Rolling_Origin_Recalibration,
-    Fixed_Size_Rolling_Window,
+    RepeatedHoldout,
+    RollingOriginUpdate,
+    RollingOriginRecalibration,
+    FixedSizeRollingWindow,
 )
 from timecave.validation_methods.markov import MarkovCV
-from timecave.validation_methods.prequential import Growing_Window, Rolling_Window
-from timecave.validation_methods.CV import Block_CV, hv_Block_CV, AdaptedhvBlockCV
+from timecave.validation_methods.prequential import GrowingWindow, RollingWindow
+from timecave.validation_methods.CV import BlockCV, hvBlockCV, AdaptedhvBlockCV
 from timecave.validation_methods.weights import (
     constant_weights,
     linear_weights,
