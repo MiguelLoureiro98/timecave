@@ -105,7 +105,14 @@ def strength_of_trend(ts: np.ndarray | pd.Series) -> float:
 
     ts_std = ts.std();
     diff_std = diff_ts.std();
-    SOT = ts_std / diff_std;
+
+    if(diff_std == 0):
+
+        SOT = np.inf;
+    
+    else:
+        
+        SOT = ts_std / diff_std;
 
     return SOT;
 
