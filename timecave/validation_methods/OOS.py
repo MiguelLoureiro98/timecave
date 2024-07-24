@@ -21,15 +21,16 @@ Fixed_Size_Rolling_Window
 TODO: Add Tashman reference to the last 3/4 methods.
 """
 
-from ._base import base_splitter
+from .base import BaseSplitter
 from ..data_characteristics import get_features
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from typing import Generator
+from warnings import warn
 
 
-class Holdout(base_splitter):
+class Holdout(BaseSplitter):
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, validation_size: float = 0.3
@@ -159,22 +160,30 @@ class Holdout(base_splitter):
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
 
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
+
         split = self.split()
         training, validation, _ = next(split)
 
         full_feat = get_features(self._series, self.sampling_freq)
 
-        print(
-            "Training and validation set statistics can only be computed if each of these comprise two or more samples."
-        )
-
         if self._series[training].shape[0] >= 2:
 
             training_feat = get_features(self._series[training], self.sampling_freq)
 
+        else:
+
+            training_feat = pd.DataFrame(columns=full_feat.columns)
+            warn("Training and validation set statistics can only be computed if each of these comprise two or more samples.")
+
         if self._series[validation].shape[0] >= 2:
 
             validation_feat = get_features(self._series[validation], self.sampling_freq)
+
+        else:
+
+            validation_feat = pd.DataFrame(columns=full_feat.columns)
+            warn("Training and validation set statistics can only be computed if each of these comprise two or more samples.")
 
         return (full_feat, training_feat, validation_feat)
 
@@ -209,7 +218,7 @@ class Holdout(base_splitter):
         return
 
 
-class Repeated_Holdout(base_splitter):
+class RepeatedHoldout(BaseSplitter):
 
     def __init__(
         self,
@@ -391,6 +400,8 @@ class Repeated_Holdout(base_splitter):
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
 
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
+
         full_features = get_features(self._series, self.sampling_freq)
 
         training_stats = []
@@ -412,7 +423,7 @@ class Repeated_Holdout(base_splitter):
 
             else:
 
-                print(
+                warn(
                     "The training set is too small to compute most meaningful features."
                 )
 
@@ -425,7 +436,7 @@ class Repeated_Holdout(base_splitter):
 
             else:
 
-                print(
+                warn(
                     "The validation set is too small to compute most meaningful features."
                 )
 
@@ -470,7 +481,7 @@ class Repeated_Holdout(base_splitter):
         return
 
 
-class Rolling_Origin_Update(base_splitter):
+class RollingOriginUpdate(BaseSplitter):
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
@@ -605,12 +616,14 @@ class Rolling_Origin_Update(base_splitter):
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
 
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
+
         full_features = get_features(self._series, self.sampling_freq)
         it_1 = True
         validation_stats = []
 
         print(
-            "Training set features are only computed if the time series is composed of two or more samples."
+            "Training and validation set features can only computed if each set is composed of two or more samples."
         )
 
         for training, validation, _ in self.split():
@@ -628,12 +641,6 @@ class Rolling_Origin_Update(base_splitter):
                     self._series[validation], self.sampling_freq
                 )
                 validation_stats.append(validation_feat)
-
-            else:
-
-                print(
-                    "The validation set is too small to compute most meaningful features."
-                )
 
         validation_features = pd.concat(validation_stats)
 
@@ -675,7 +682,7 @@ class Rolling_Origin_Update(base_splitter):
         return
 
 
-class Rolling_Origin_Recalibration(base_splitter):
+class RollingOriginRecalibration(BaseSplitter):
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
@@ -819,9 +826,15 @@ class Rolling_Origin_Recalibration(base_splitter):
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
 
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
+
         full_features = get_features(self._series, self.sampling_freq)
         training_stats = []
         validation_stats = []
+
+        print(
+            "Training and validation set features can only computed if each set is composed of two or more samples."
+        )
 
         for training, validation, _ in self.split():
 
@@ -830,24 +843,12 @@ class Rolling_Origin_Recalibration(base_splitter):
                 training_feat = get_features(self._series[training], self.sampling_freq)
                 training_stats.append(training_feat)
 
-            else:
-
-                print(
-                    "The training set is too small to compute most meaningful features."
-                )
-
             if self._series[validation].shape[0] >= 2:
 
                 validation_feat = get_features(
                     self._series[validation], self.sampling_freq
                 )
                 validation_stats.append(validation_feat)
-
-            else:
-
-                print(
-                    "The validation set is too small to compute most meaningful features."
-                )
 
         training_features = pd.concat(training_stats)
         validation_features = pd.concat(validation_stats)
@@ -890,7 +891,7 @@ class Rolling_Origin_Recalibration(base_splitter):
         return
 
 
-class Fixed_Size_Rolling_Window(base_splitter):
+class FixedSizeRollingWindow(BaseSplitter):
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
@@ -1026,9 +1027,15 @@ class Fixed_Size_Rolling_Window(base_splitter):
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
 
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
+
         full_features = get_features(self._series, self.sampling_freq)
         training_stats = []
         validation_stats = []
+
+        print(
+            "Training and validation set features can only computed if each set is composed of two or more samples."
+        )
 
         for training, validation, _ in self.split():
 
@@ -1037,24 +1044,12 @@ class Fixed_Size_Rolling_Window(base_splitter):
                 training_feat = get_features(self._series[training], self.sampling_freq)
                 training_stats.append(training_feat)
 
-            else:
-
-                print(
-                    "The training set is too small to compute most meaningful features."
-                )
-
             if self._series[validation].shape[0] >= 2:
 
                 validation_feat = get_features(
                     self._series[validation], self.sampling_freq
                 )
                 validation_stats.append(validation_feat)
-
-            else:
-
-                print(
-                    "The validation set is too small to compute most meaningful features."
-                )
 
         training_features = pd.concat(training_stats)
         validation_features = pd.concat(validation_stats)

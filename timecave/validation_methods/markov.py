@@ -7,8 +7,8 @@ MarkovCV
 
 """
 
-from timecave.validation_methods._base import base_splitter
-from timecave.data_characteristics import get_features
+from .base import BaseSplitter
+from ..data_characteristics import get_features
 import warnings
 import numpy as np
 import pandas as pd
@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import math
 
 
-class MarkovCV(base_splitter):
+class MarkovCV(BaseSplitter):
     def __init__(self, ts: np.ndarray | pd.Series, p: int, seed: int = 1) -> None:
         self._check_seed(seed)
         self._check_p(p)
@@ -176,6 +176,8 @@ class MarkovCV(base_splitter):
             raise ValueError(
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
+
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
 
         full_features = get_features(self._series, self._fs)[columns]
         training_stats = []

@@ -13,6 +13,6 @@ run(
     results_dir,
     resume_run=False,
     add_name="s3",
-    models=["ARMA", "tree"],
+    models=["LSTM"],
     save_stats=False,
 )

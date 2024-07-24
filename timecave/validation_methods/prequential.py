@@ -9,7 +9,7 @@ Rolling_Window
 
 """
 
-from ._base import base_splitter
+from .base import BaseSplitter
 from .weights import constant_weights
 from ..data_characteristics import get_features
 import numpy as np
@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from typing import Generator
 
 
-class Growing_Window(base_splitter):
+class GrowingWindow(BaseSplitter):
     """
     _summary_
 
@@ -26,7 +26,7 @@ class Growing_Window(base_splitter):
 
     Parameters
     ----------
-    base_splitter : _type_
+    BaseSplitter : _type_
         _description_
 
     Attributes
@@ -168,7 +168,7 @@ class Growing_Window(base_splitter):
         )
         print(f"Maximum training set size: {max_train} samples ({max_train_pct} %)")
         print(f"Gap: {self._gap}")
-        print(f"Weights: {self._weights}")
+        print(f"Weights: {np.round(self._weights, 3)}")
 
         return
 
@@ -200,6 +200,8 @@ class Growing_Window(base_splitter):
             raise ValueError(
                 "The folds are too small to compute most meaningful features."
             )
+
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
 
         full_features = get_features(self._series, self.sampling_freq)
         training_stats = []
@@ -248,7 +250,7 @@ class Growing_Window(base_splitter):
                 axs[it].scatter(
                     validation, self._series[validation], label="Validation set"
                 )
-                axs[it].set_title("Iteration: {} Weight: {}".format(it + 1, weight))
+                axs[it].set_title("Iteration: {} Weight: {}".format(it + 1, np.round(weight, 3)))
                 axs[it].set_ylim([self._series.min() - 1, self._series.max() + 1])
                 axs[it].set_xlim([- 1, self._n_samples + 1])
                 axs[it].legend()
@@ -261,7 +263,7 @@ class Growing_Window(base_splitter):
                 axs.scatter(
                     validation, self._series[validation], label="Validation set"
                 )
-                axs.set_title("Iteration: {} Weight: {}".format(1, weight))
+                axs.set_title("Iteration: {} Weight: {}".format(1, np.round(weight, 3)))
                 axs.legend()
 
         plt.show()
@@ -269,7 +271,7 @@ class Growing_Window(base_splitter):
         return
 
 
-class Rolling_Window(base_splitter):
+class RollingWindow(BaseSplitter):
 
     def __init__(
         self,
@@ -403,7 +405,7 @@ class Rolling_Window(base_splitter):
             f"Fold size: {min_fold_size} to {max_fold_size} samples ({min_fold_size_pct} to {max_fold_size_pct} %)"
         )
         print(f"Gap: {self._gap}")
-        print(f"Weights: {self._weights}")
+        print(f"Weights: {np.round(self._weights, 3)}")
 
         return
 
@@ -435,6 +437,8 @@ class Rolling_Window(base_splitter):
             raise ValueError(
                 "The folds are too small to compute most meaningful features."
             )
+
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
 
         full_features = get_features(self._series, self.sampling_freq)
         training_stats = []
@@ -483,7 +487,7 @@ class Rolling_Window(base_splitter):
                 axs[it].scatter(
                     validation, self._series[validation], label="Validation set"
                 )
-                axs[it].set_title("Iteration: {} Weight: {}".format(it + 1, weight))
+                axs[it].set_title("Iteration: {} Weight: {}".format(it + 1, np.round(weight, 3)))
                 axs[it].set_ylim([self._series.min() - 1, self._series.max() + 1])
                 axs[it].set_xlim([- 1, self._n_samples + 1])
                 axs[it].legend()
@@ -496,7 +500,7 @@ class Rolling_Window(base_splitter):
                 axs.scatter(
                     validation, self._series[validation], label="Validation set"
                 )
-                axs.set_title("Iteration: {} Weight: {}".format(1, weight))
+                axs.set_title("Iteration: {} Weight: {}".format(1, np.round(weight, 3)))
                 axs.legend()
 
         plt.show()

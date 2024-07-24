@@ -1,5 +1,5 @@
 """
-This module contains utility functions to help the user.
+This module contains utility functions to help the user ... .
 
 Functions
 ---------

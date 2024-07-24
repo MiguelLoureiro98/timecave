@@ -8,17 +8,19 @@ import matplotlib.pyplot as plt
 import timecave.validation_strategy_metrics as metrics
 from timecave.validation_methods.weights import exponential_weights
 
-def series_name(data: pd.DataFrame) -> pd.DataFrame:
+
+
+def series_name(data: pd.DataFrame, file_name = "filename", column_name="column_index") -> pd.DataFrame:
 
     """
     Merges file name and column name columns into a single series column.
     """
 
-    # ! Check the column names!!!
-
     new_data = data.copy();
-    new_data["series"] = new_data["file_name"] + "_" + new_data["column_name"];
-    new_data = new_data.drop(columns=["file_name", "column_name"]);
+    new_data["series"] = new_data[file_name] + "_" + new_data[column_name];
+    new_data = new_data.drop(columns=[file_name, column_name]);
+    cols = ["series"] + [col for col in new_data.columns if col != "series"]
+    new_data = new_data[cols]
 
     return new_data;
 
@@ -35,17 +37,20 @@ def add_weights(processed_data: pd.DataFrame, preq_methods: list[str], CV_method
     exp_weights_CV = exponential_weights(5);
     exp_weights_preq = exponential_weights(5, compensation=1);
 
-    paper_weights_df = pd.DataFrame({"iterations": [1, 2, 3, 4, 5], "weights": paper_weights.tolist()});
-    exp_weights_df = pd.DataFrame({"iterations": [1, 2, 3, 4, 5], "weights": exp_weights_CV.tolist()});
-    exp_weights_preq_df = pd.DataFrame({"iterations": [1, 2, 3, 4], "weights": exp_weights_preq.tolist()});
+    paper_weights_df = pd.DataFrame({"iteration": [1, 2, 3, 4, 5], "weights": paper_weights.tolist()});
+    exp_weights_df = pd.DataFrame({"iteration": [1, 2, 3, 4, 5], "weights": exp_weights_CV.tolist()});
+    exp_weights_preq_df = pd.DataFrame({"iteration": [1, 2, 3, 4], "weights": exp_weights_preq.tolist()});
 
     CV_weights_paper = data.loc[data["method"].isin(CV_methods)].copy();
     CV_weights = data.loc[data["method"].isin(CV_methods)].copy();
     preq_weights = data.loc[data["method"].isin(preq_methods)].copy();
 
-    CV_weights_paper_df = pd.merge(left=CV_weights_paper, right=paper_weights_df, on=["iterations"]);
-    CV_weights_df = pd.merge(left=CV_weights, right=exp_weights_df, on=["iterations"]);
-    preq_weights_df = pd.merge(left=preq_weights, right=exp_weights_preq_df, on=["iterations"]);
+    CV_weights_paper_df = pd.merge(left=CV_weights_paper, right=paper_weights_df, on=["iteration"]);
+    CV_weights_paper_df['method']  = CV_weights_paper_df['method'] + '_with_weights_paper'
+    CV_weights_df = pd.merge(left=CV_weights, right=exp_weights_df, on=["iteration"]);
+    CV_weights_df['method']  = CV_weights_df['method'] + '_with_weights'
+    preq_weights_df = pd.merge(left=preq_weights, right=exp_weights_preq_df, on=["iteration"]);
+    preq_weights_df['method']  = preq_weights_df['method'] + '_with_weights'
 
     CV_all_weighted_df = pd.concat([CV_weights_paper_df, CV_weights_df], axis=0).reset_index().drop(columns=["index"]);
     all_weighted_df = pd.concat([CV_all_weighted_df, preq_weights_df], axis=0).reset_index().drop(columns=["index"]);
