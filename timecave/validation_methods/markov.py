@@ -177,6 +177,8 @@ class MarkovCV(BaseSplitter):
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
 
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
+
         full_features = get_features(self._series, self._fs)[columns]
         training_stats = []
         validation_stats = []

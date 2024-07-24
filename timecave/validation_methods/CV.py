@@ -122,7 +122,7 @@ class BlockCV(BaseSplitter):
         print(
             f"Fold size: {min_fold_size} to {max_fold_size} samples ({min_fold_size_pct} to {max_fold_size_pct} %)"
         )
-        print(f"Weights: {self._weights}")
+        print(f"Weights: {np.round(self._weights, 3)}")
 
         return
 
@@ -157,6 +157,8 @@ class BlockCV(BaseSplitter):
             raise ValueError(
                 "The folds are too small to compute most meaningful features."
             )
+
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
 
         full_features = get_features(self._series, self.sampling_freq)
         training_stats = []
@@ -203,7 +205,7 @@ class BlockCV(BaseSplitter):
             axs[it].scatter(
                 validation, self._series[validation], label="Validation set"
             )
-            axs[it].set_title("Fold: {} Weight: {}".format(it + 1, w))
+            axs[it].set_title("Fold: {} Weight: {}".format(it + 1, np.round(w, 3)))
             axs[it].set_ylim([self._series.min() - 1, self._series.max() + 1])
             axs[it].set_xlim([- 1, self._n_samples + 1])
             axs[it].legend()
@@ -343,6 +345,8 @@ class hvBlockCV(BaseSplitter):
             raise ValueError(
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
+
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
 
         full_features = get_features(self._series, self.sampling_freq)
         training_stats = []
@@ -626,7 +630,7 @@ class AdaptedhvBlockCV(BaseSplitter):
             axs[it].scatter(
                 validation, self._series[validation], label="Validation set"
             )
-            axs[it].set_title("Fold: {} Weight: {}".format(it + 1, w))
+            axs[it].set_title("Fold: {}".format(it + 1))
             axs[it].set_ylim([self._series.min() - 1, self._series.max() + 1])
             axs[it].set_xlim([- 1, self._n_samples + 1])
             axs[it].legend()
