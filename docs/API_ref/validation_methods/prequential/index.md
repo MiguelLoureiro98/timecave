@@ -1,4 +1,4 @@
-# Forward validation methods
+# Prequential methods
 
 ::: timecave.validation_methods.prequential
     options:

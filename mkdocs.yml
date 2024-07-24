@@ -67,6 +67,12 @@ nav:
       - true_test_indices: API_ref/utils/indices.md
     - Validation methods:
       - Overview: API_ref/validation_methods/index.md
+      - Methods:
+        - Out-of-sample: API_ref/validation_methods/OOS/index.md
+        - Prequential: API_ref/validation_methods/prequential/index.md
+        - Cross-validation: API_ref/validation_methods/CV/index.md
+        - Markov: API_ref/validation_methods/markov/index.md
+        - Weighting functions: API_ref/validation_methods/weights/index.md
   - About: about.md
 
 not_in_nav: |
