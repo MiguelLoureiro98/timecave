@@ -68,7 +68,7 @@ class BaseSplitter(ABC):
     """
 
     def __init__(
-        self, splits: int, ts: np.ndarray | pd.Series, fs: float | int
+        self, splits: int, ts: np.ndarray | pd.Series, fs: float | int = 1
     ) -> None:
         """
         Class constructor.
