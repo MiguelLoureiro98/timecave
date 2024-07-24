@@ -7,7 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import timecave.validation_strategy_metrics as metrics
 from timecave.validation_methods.weights import exponential_weights
-
+import seaborn as sns
 
 
 def series_name(data: pd.DataFrame, file_name = "filename", column_name="column_index") -> pd.DataFrame:
@@ -290,11 +290,56 @@ def val_metrics_per_iteration(processed_data: pd.DataFrame, performance_metric: 
 
     return metrics_per_it;
 
-def boxplots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int) -> None:
+import pandas as pd
+import matplotlib.pyplot as plt
 
+def boxplots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int, shows_outliers: bool) -> None:
     """
-    ...
+    Function to generate box plots for the given model's validation metrics.
+
+    Parameters:
+    - processed_data: pd.DataFrame
+    - performance_metric: str
+    - model: str
+    - validation_metrics: list[str]
+    - height: int
+    - width: int
+    - shows_outliers: bool
     """
+    plt.rcParams.update({'font.size': 18})
+    model_data = processed_data.loc[processed_data["model"] == model].copy()
+    val_metrics = compute_metrics_per_row(model_data, performance_metric)
+
+    # Adjust y-axis limits if shows_outliers is False
+    if not shows_outliers:
+        # Calculate Q1 (25th percentile) and Q3 (75th percentile)
+        Q1 = val_metrics[validation_metrics].quantile(0.25)
+        Q3 = val_metrics[validation_metrics].quantile(0.75)
+        IQR = Q3 - Q1
+
+        # Define the limits for non-outliers
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+
+    boxplot = val_metrics.boxplot(column=validation_metrics, by="method", layout=(len(validation_metrics), 1), return_type="axes", figsize=(width, height), showfliers=shows_outliers)
+
+    for ax, metric in zip(boxplot, validation_metrics):
+        ax.axhline(0, c="r", linestyle="--")
+        if not shows_outliers:
+            ax.set_ylim(lower_bound[metric], upper_bound[metric])
+
+    fig = boxplot[0].get_figure() if isinstance(boxplot, pd.Series) else boxplot[0, 0].get_figure()
+    fig.suptitle(f"Validation method performance - {model} model")
+    plt.rcParams.update({'font.size': 18})
+
+    plt.show()
+
+    return
+
+
+"""def boxplots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int) -> None:
+
+
 
     model_data = processed_data.loc[processed_data["model"] == model].copy();
     val_metrics = compute_metrics_per_row(model_data, performance_metric);
@@ -310,7 +355,45 @@ def boxplots(processed_data: pd.DataFrame, performance_metric: str, model: str, 
     fig.suptitle(f"Validation method performance - {model} model");
     plt.show();
 
-    return;
+    return;"""
+
+
+
+def combined_box_violin_plots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int) -> None:
+    """
+    Generates combined box and violin plots for the specified performance metrics of a model.
+
+    Parameters:
+    processed_data (pd.DataFrame): The processed data containing performance metrics.
+    performance_metric (str): The name of the performance metric.
+    model (str): The name of the model.
+    validation_metrics (list[str]): A list of validation metrics to plot.
+    height (int): The height of the plot.
+    width (int): The width of the plot.
+    """
+
+    model_data = processed_data.loc[processed_data["model"] == model].copy()
+    val_metrics = compute_metrics_per_row(model_data, performance_metric)
+    
+    # Create a subplot for each validation metric
+    fig, axes = plt.subplots(len(validation_metrics), 1, figsize=(width, height))
+
+    if len(validation_metrics) == 1:
+        axes = [axes]
+
+    for ax, metric in zip(axes, validation_metrics):
+        sns.violinplot(x="method", y=metric, data=val_metrics, ax=ax, inner=None, color=".8")
+        sns.boxplot(x="method", y=metric, data=val_metrics, ax=ax, whis=1.5)
+        ax.axhline(0, c="r", linestyle="--")
+        ax.set_title(f'{metric} - {model}')
+    
+    fig.suptitle(f'Validation method performance - {model} model')
+    plt.tight_layout()
+    plt.show()
+
+    return
+
+
 
 def boxplots_per_iteration(processed_data: pd.DataFrame, performance_metric: str, model: str, method: str, validation_metrics: list[str], height: int, width: int) -> None:
 

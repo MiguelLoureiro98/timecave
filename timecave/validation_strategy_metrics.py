@@ -85,6 +85,41 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
 
     return (estimated_error - test_error) / test_error;
 
+def MPAE(estimated_error: float | int, test_error: float | int) -> float:
+    
+    """
+    Compute the Relative Predictive Accuracy Error (RPAE).
+
+    This function computes the RPAE metric. Both the estimated (i.e. validation) error
+    and the test error must be passed as parameters.
+
+    Parameters
+    ----------
+    estimated_error : float | int
+        The model's validation error.
+
+    test_error : float | int
+        The model's test error.
+
+    Returns
+    -------
+    float
+        Relative Predictive Accuracy Error.
+
+    Raises
+    ------
+    ValueError
+        If 'test_error' is zero.
+    """
+
+    if(test_error == 0):
+
+        raise ValueError("The test error is zero. RPAE is undefined.");
+
+    return 2*(estimated_error - test_error) / (abs(estimated_error) + abs(test_error));
+
+
+
 def RAPAE(estimated_error: float | int, test_error: float | int) -> float:
     
     """
