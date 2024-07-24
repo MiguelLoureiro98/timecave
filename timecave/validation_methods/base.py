@@ -17,7 +17,7 @@ import pandas as pd
 # For now, leave it as it is, as this approach will most likely work with said search algorithms and leads to fewer requirements.
 
 
-class base_splitter(ABC):
+class BaseSplitter(ABC):
     """
     Base class for all time series validation methods provided / supported by this package.
 

@@ -9,7 +9,7 @@ Rolling_Window
 
 """
 
-from .base import base_splitter
+from .base import BaseSplitter
 from .weights import constant_weights
 from ..data_characteristics import get_features
 import numpy as np
@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from typing import Generator
 
 
-class Growing_Window(base_splitter):
+class Growing_Window(BaseSplitter):
     """
     _summary_
 
@@ -26,7 +26,7 @@ class Growing_Window(base_splitter):
 
     Parameters
     ----------
-    base_splitter : _type_
+    BaseSplitter : _type_
         _description_
 
     Attributes
@@ -269,7 +269,7 @@ class Growing_Window(base_splitter):
         return
 
 
-class Rolling_Window(base_splitter):
+class Rolling_Window(BaseSplitter):
 
     def __init__(
         self,

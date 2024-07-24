@@ -21,7 +21,7 @@ Fixed_Size_Rolling_Window
 TODO: Add Tashman reference to the last 3/4 methods.
 """
 
-from .base import base_splitter
+from .base import BaseSplitter
 from ..data_characteristics import get_features
 import numpy as np
 import pandas as pd
@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt
 from typing import Generator
 
 
-class Holdout(base_splitter):
+class Holdout(BaseSplitter):
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, validation_size: float = 0.3
@@ -209,7 +209,7 @@ class Holdout(base_splitter):
         return
 
 
-class Repeated_Holdout(base_splitter):
+class Repeated_Holdout(BaseSplitter):
 
     def __init__(
         self,
@@ -470,7 +470,7 @@ class Repeated_Holdout(base_splitter):
         return
 
 
-class Rolling_Origin_Update(base_splitter):
+class Rolling_Origin_Update(BaseSplitter):
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
@@ -675,7 +675,7 @@ class Rolling_Origin_Update(base_splitter):
         return
 
 
-class Rolling_Origin_Recalibration(base_splitter):
+class Rolling_Origin_Recalibration(BaseSplitter):
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
@@ -890,7 +890,7 @@ class Rolling_Origin_Recalibration(base_splitter):
         return
 
 
-class Fixed_Size_Rolling_Window(base_splitter):
+class Fixed_Size_Rolling_Window(BaseSplitter):
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7

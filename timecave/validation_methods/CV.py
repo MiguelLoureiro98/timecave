@@ -9,7 +9,7 @@ hv_Block_CV
 
 """
 
-from .base import base_splitter
+from .base import BaseSplitter
 from .weights import constant_weights
 from ..data_characteristics import get_features
 import numpy as np
@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from typing import Generator
 
 
-class Block_CV(base_splitter):
+class Block_CV(BaseSplitter):
     """
     _summary_
 
@@ -213,7 +213,7 @@ class Block_CV(base_splitter):
         return
 
 
-class hv_Block_CV(base_splitter):
+class hv_Block_CV(BaseSplitter):
     """
     _summary_
 
@@ -416,7 +416,7 @@ class hv_Block_CV(base_splitter):
 
         return
 
-class AdaptedhvBlockCV(base_splitter):
+class AdaptedhvBlockCV(BaseSplitter):
     """
     _summary_
 

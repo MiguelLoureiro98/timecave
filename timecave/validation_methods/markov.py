@@ -7,7 +7,7 @@ MarkovCV
 
 """
 
-from .base import base_splitter
+from .base import BaseSplitter
 from ..data_characteristics import get_features
 import warnings
 import numpy as np
@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import math
 
 
-class MarkovCV(base_splitter):
+class MarkovCV(BaseSplitter):
     def __init__(self, ts: np.ndarray | pd.Series, p: int, seed: int = 1) -> None:
         self._check_seed(seed)
         self._check_p(p)
