@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from typing import Generator
 
 
-class Block_CV(BaseSplitter):
+class BlockCV(BaseSplitter):
     """
     _summary_
 
@@ -213,7 +213,7 @@ class Block_CV(BaseSplitter):
         return
 
 
-class hv_Block_CV(BaseSplitter):
+class hvBlockCV(BaseSplitter):
     """
     _summary_
 

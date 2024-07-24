@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from typing import Generator
 
 
-class Growing_Window(BaseSplitter):
+class GrowingWindow(BaseSplitter):
     """
     _summary_
 
@@ -269,7 +269,7 @@ class Growing_Window(BaseSplitter):
         return
 
 
-class Rolling_Window(BaseSplitter):
+class RollingWindow(BaseSplitter):
 
     def __init__(
         self,

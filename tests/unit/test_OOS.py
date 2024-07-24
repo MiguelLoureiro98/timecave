@@ -5,10 +5,10 @@ This file contains unit tests targetting the 'OOS' module.
 import unittest
 from timecave.validation_methods.OOS import (
     Holdout,
-    Repeated_Holdout,
-    Rolling_Origin_Update,
-    Rolling_Origin_Recalibration,
-    Fixed_Size_Rolling_Window,
+    RepeatedHoldout,
+    RollingOriginUpdate,
+    RollingOriginRecalibration,
+    FixedSizeRollingWindow,
 )
 import numpy as np
 
@@ -28,36 +28,36 @@ class TestOOS(unittest.TestCase):
         cls.Holdout3 = Holdout(
             cls.test_array_high_freq, cls.high_freq, validation_size=0.5
         )
-        cls.Repeated_Holdout1 = Repeated_Holdout(
+        cls.RepeatedHoldout1 = RepeatedHoldout(
             cls.test_array_simple, cls.simple_freq, 2
         )
-        cls.Repeated_Holdout2 = Repeated_Holdout(
+        cls.RepeatedHoldout2 = RepeatedHoldout(
             cls.test_array_simple_odd, cls.simple_freq, 5, [7, 10]
         )
-        cls.Repeated_Holdout3 = Repeated_Holdout(
+        cls.RepeatedHoldout3 = RepeatedHoldout(
             cls.test_array_high_freq, cls.high_freq, 10, [0.5, 0.6]
         )
-        cls.Update1 = Rolling_Origin_Update(cls.test_array_simple, cls.simple_freq)
-        cls.Update2 = Rolling_Origin_Update(
+        cls.Update1 = RollingOriginUpdate(cls.test_array_simple, cls.simple_freq)
+        cls.Update2 = RollingOriginUpdate(
             cls.test_array_simple_odd, cls.simple_freq, origin=9
         )
-        cls.Update3 = Rolling_Origin_Update(
+        cls.Update3 = RollingOriginUpdate(
             cls.test_array_high_freq, cls.high_freq, origin=0.5
         )
-        cls.Recalibration1 = Rolling_Origin_Recalibration(
+        cls.Recalibration1 = RollingOriginRecalibration(
             cls.test_array_simple, cls.simple_freq
         )
-        cls.Recalibration2 = Rolling_Origin_Recalibration(
+        cls.Recalibration2 = RollingOriginRecalibration(
             cls.test_array_simple_odd, cls.simple_freq, origin=9
         )
-        cls.Recalibration3 = Rolling_Origin_Recalibration(
+        cls.Recalibration3 = RollingOriginRecalibration(
             cls.test_array_high_freq, cls.high_freq, origin=0.5
         )
-        cls.Window1 = Fixed_Size_Rolling_Window(cls.test_array_simple, cls.simple_freq)
-        cls.Window2 = Fixed_Size_Rolling_Window(
+        cls.Window1 = FixedSizeRollingWindow(cls.test_array_simple, cls.simple_freq)
+        cls.Window2 = FixedSizeRollingWindow(
             cls.test_array_simple_odd, cls.simple_freq, origin=9
         )
-        cls.Window3 = Fixed_Size_Rolling_Window(
+        cls.Window3 = FixedSizeRollingWindow(
             cls.test_array_high_freq, cls.high_freq, origin=0.5
         )
 
@@ -74,9 +74,9 @@ class TestOOS(unittest.TestCase):
         del cls.Holdout1
         del cls.Holdout2
         del cls.Holdout3
-        del cls.Repeated_Holdout1
-        del cls.Repeated_Holdout2
-        del cls.Repeated_Holdout3
+        del cls.RepeatedHoldout1
+        del cls.RepeatedHoldout2
+        del cls.RepeatedHoldout3
         del cls.Update1
         del cls.Update2
         del cls.Update3
@@ -105,75 +105,75 @@ class TestOOS(unittest.TestCase):
         self.assertRaises(ValueError, Holdout, self.test_array_simple, 1, -0.5)
         self.assertRaises(ValueError, Holdout, self.test_array_simple, 1, 1.2)
 
-        self.assertRaises(TypeError, Repeated_Holdout, self.test_array_simple, 1, 0.5)
-        self.assertRaises(ValueError, Repeated_Holdout, self.test_array_simple, 1, -2)
-        self.assertRaises(TypeError, Repeated_Holdout, self.test_array_simple, 1, 2, 2)
+        self.assertRaises(TypeError, RepeatedHoldout, self.test_array_simple, 1, 0.5)
+        self.assertRaises(ValueError, RepeatedHoldout, self.test_array_simple, 1, -2)
+        self.assertRaises(TypeError, RepeatedHoldout, self.test_array_simple, 1, 2, 2)
         self.assertRaises(
-            ValueError, Repeated_Holdout, self.test_array_simple, 1, 2, [0.1, 0.2, 0.3]
+            ValueError, RepeatedHoldout, self.test_array_simple, 1, 2, [0.1, 0.2, 0.3]
         )
         self.assertRaises(
-            TypeError, Repeated_Holdout, self.test_array_simple, 1, 2, ["a", 0.5]
+            TypeError, RepeatedHoldout, self.test_array_simple, 1, 2, ["a", 0.5]
         )
         self.assertRaises(
-            ValueError, Repeated_Holdout, self.test_array_simple, 1, 2, [0.9, 0.5]
+            ValueError, RepeatedHoldout, self.test_array_simple, 1, 2, [0.9, 0.5]
         )
         self.assertRaises(
-            TypeError, Repeated_Holdout, self.test_array_simple, 1, 2, [0.1, 0.2], 0.1
-        )
-
-        self.assertRaises(
-            TypeError, Rolling_Origin_Update, self.test_array_simple, 1, "a"
-        )
-        self.assertRaises(
-            ValueError, Rolling_Origin_Update, self.test_array_simple, 1, -0.1
-        )
-        self.assertRaises(
-            ValueError, Rolling_Origin_Update, self.test_array_simple, 1, 1.1
-        )
-        self.assertRaises(
-            ValueError, Rolling_Origin_Update, self.test_array_simple, 1, 0
-        )
-        self.assertRaises(
-            ValueError, Rolling_Origin_Update, self.test_array_simple, 1, 20
+            TypeError, RepeatedHoldout, self.test_array_simple, 1, 2, [0.1, 0.2], 0.1
         )
 
         self.assertRaises(
-            TypeError, Rolling_Origin_Recalibration, self.test_array_simple, 1, "a"
+            TypeError, RollingOriginUpdate, self.test_array_simple, 1, "a"
         )
         self.assertRaises(
-            ValueError, Rolling_Origin_Recalibration, self.test_array_simple, 1, -0.1
+            ValueError, RollingOriginUpdate, self.test_array_simple, 1, -0.1
         )
         self.assertRaises(
-            ValueError, Rolling_Origin_Recalibration, self.test_array_simple, 1, 1.1
+            ValueError, RollingOriginUpdate, self.test_array_simple, 1, 1.1
         )
         self.assertRaises(
-            ValueError, Rolling_Origin_Recalibration, self.test_array_simple, 1, 0
+            ValueError, RollingOriginUpdate, self.test_array_simple, 1, 0
         )
         self.assertRaises(
-            ValueError, Rolling_Origin_Recalibration, self.test_array_simple, 1, 20
+            ValueError, RollingOriginUpdate, self.test_array_simple, 1, 20
         )
 
         self.assertRaises(
-            TypeError, Fixed_Size_Rolling_Window, self.test_array_simple, 1, "a"
+            TypeError, RollingOriginRecalibration, self.test_array_simple, 1, "a"
         )
         self.assertRaises(
-            ValueError, Fixed_Size_Rolling_Window, self.test_array_simple, 1, -0.1
+            ValueError, RollingOriginRecalibration, self.test_array_simple, 1, -0.1
         )
         self.assertRaises(
-            ValueError, Fixed_Size_Rolling_Window, self.test_array_simple, 1, 1.1
+            ValueError, RollingOriginRecalibration, self.test_array_simple, 1, 1.1
         )
         self.assertRaises(
-            ValueError, Fixed_Size_Rolling_Window, self.test_array_simple, 1, 0
+            ValueError, RollingOriginRecalibration, self.test_array_simple, 1, 0
         )
         self.assertRaises(
-            ValueError, Fixed_Size_Rolling_Window, self.test_array_simple, 1, 20
+            ValueError, RollingOriginRecalibration, self.test_array_simple, 1, 20
+        )
+
+        self.assertRaises(
+            TypeError, FixedSizeRollingWindow, self.test_array_simple, 1, "a"
+        )
+        self.assertRaises(
+            ValueError, FixedSizeRollingWindow, self.test_array_simple, 1, -0.1
+        )
+        self.assertRaises(
+            ValueError, FixedSizeRollingWindow, self.test_array_simple, 1, 1.1
+        )
+        self.assertRaises(
+            ValueError, FixedSizeRollingWindow, self.test_array_simple, 1, 0
+        )
+        self.assertRaises(
+            ValueError, FixedSizeRollingWindow, self.test_array_simple, 1, 20
         )
 
         # Attribute correctness
         self.assertEqual(self.Holdout1.n_splits, 2)
         self.assertEqual(self.Holdout1.sampling_freq, self.simple_freq)
-        self.assertEqual(self.Repeated_Holdout2.n_splits, 5)
-        self.assertEqual(self.Repeated_Holdout1.sampling_freq, self.simple_freq)
+        self.assertEqual(self.RepeatedHoldout2.n_splits, 5)
+        self.assertEqual(self.RepeatedHoldout1.sampling_freq, self.simple_freq)
         self.assertEqual(self.Update1.n_splits, 3)
         self.assertEqual(self.Update2.n_splits, 5)
         self.assertEqual(self.Update3.n_splits, 500)
@@ -224,17 +224,17 @@ class TestOOS(unittest.TestCase):
         holdout3_lower = int(np.round(0.5 * 1000))
         holdout3_upper = int(np.round(0.6 * 1000))
 
-        for _, val, _ in self.Repeated_Holdout1.split():
+        for _, val, _ in self.RepeatedHoldout1.split():
 
             self.assertGreaterEqual(val[0], holdout1_lower)
             self.assertLessEqual(val[0], holdout1_upper)
 
-        for _, val, _ in self.Repeated_Holdout2.split():
+        for _, val, _ in self.RepeatedHoldout2.split():
 
             self.assertGreaterEqual(val[0], holdout2_lower)
             self.assertLessEqual(val[0], holdout2_upper)
 
-        for _, val, _ in self.Repeated_Holdout3.split():
+        for _, val, _ in self.RepeatedHoldout3.split():
 
             self.assertGreaterEqual(val[0], holdout3_lower)
             self.assertLessEqual(val[0], holdout3_upper)
@@ -338,19 +338,19 @@ class TestOOS(unittest.TestCase):
         """
 
         self.Holdout1.info()
-        self.Repeated_Holdout1.info()
+        self.RepeatedHoldout1.info()
         self.Update1.info()
         self.Recalibration1.info()
         self.Window1.info()
 
         self.Holdout2.info()
-        self.Repeated_Holdout2.info()
+        self.RepeatedHoldout2.info()
         self.Update2.info()
         self.Recalibration2.info()
         self.Window2.info()
 
         self.Holdout3.info()
-        self.Repeated_Holdout3.info()
+        self.RepeatedHoldout3.info()
         self.Update3.info()
         self.Recalibration3.info()
         self.Window3.info()
@@ -365,13 +365,13 @@ class TestOOS(unittest.TestCase):
         # Exceptions
         two_sample_series = np.zeros(shape=(2,))
         holdout_2sample = Holdout(two_sample_series, 1)
-        repeated_holdout_2sample = Repeated_Holdout(two_sample_series, 1, 2)
-        update_2sample = Rolling_Origin_Update(two_sample_series, 1)
-        rec_2sample = Rolling_Origin_Recalibration(two_sample_series, 1)
-        window_2sample = Fixed_Size_Rolling_Window(two_sample_series, 1)
+        RepeatedHoldout_2sample = RepeatedHoldout(two_sample_series, 1, 2)
+        update_2sample = RollingOriginUpdate(two_sample_series, 1)
+        rec_2sample = RollingOriginRecalibration(two_sample_series, 1)
+        window_2sample = FixedSizeRollingWindow(two_sample_series, 1)
 
         self.assertRaises(ValueError, holdout_2sample.statistics)
-        self.assertRaises(ValueError, repeated_holdout_2sample.statistics)
+        self.assertRaises(ValueError, RepeatedHoldout_2sample.statistics)
         self.assertRaises(ValueError, update_2sample.statistics)
         self.assertRaises(ValueError, rec_2sample.statistics)
         self.assertRaises(ValueError, window_2sample.statistics)
@@ -420,30 +420,30 @@ class TestOOS(unittest.TestCase):
 
         # Repeated Holdout
         (
-            repeated_holdout1_full_stats,
-            repeated_holdout1_training_stats,
-            repeated_holdout1_validation_stats,
-        ) = self.Repeated_Holdout1.statistics()
+            RepeatedHoldout1_full_stats,
+            RepeatedHoldout1_training_stats,
+            RepeatedHoldout1_validation_stats,
+        ) = self.RepeatedHoldout1.statistics()
         (
-            repeated_holdout2_full_stats,
-            repeated_holdout2_training_stats,
-            repeated_holdout2_validation_stats,
-        ) = self.Repeated_Holdout2.statistics()
+            RepeatedHoldout2_full_stats,
+            RepeatedHoldout2_training_stats,
+            RepeatedHoldout2_validation_stats,
+        ) = self.RepeatedHoldout2.statistics()
         (
-            repeated_holdout3_full_stats,
-            repeated_holdout3_training_stats,
-            repeated_holdout3_validation_stats,
-        ) = self.Repeated_Holdout3.statistics()
+            RepeatedHoldout3_full_stats,
+            RepeatedHoldout3_training_stats,
+            RepeatedHoldout3_validation_stats,
+        ) = self.RepeatedHoldout3.statistics()
 
-        self.assertEqual(repeated_holdout1_full_stats.shape[0], 1)
-        self.assertEqual(repeated_holdout1_training_stats.shape[0], 2)
-        self.assertEqual(repeated_holdout1_validation_stats.shape[0], 2)
-        self.assertEqual(repeated_holdout2_full_stats.shape[0], 1)
-        self.assertEqual(repeated_holdout2_training_stats.shape[0], 5)
-        self.assertEqual(repeated_holdout2_validation_stats.shape[0], 5)
-        self.assertEqual(repeated_holdout3_full_stats.shape[0], 1)
-        self.assertEqual(repeated_holdout3_training_stats.shape[0], 10)
-        self.assertEqual(repeated_holdout3_validation_stats.shape[0], 10)
+        self.assertEqual(RepeatedHoldout1_full_stats.shape[0], 1)
+        self.assertEqual(RepeatedHoldout1_training_stats.shape[0], 2)
+        self.assertEqual(RepeatedHoldout1_validation_stats.shape[0], 2)
+        self.assertEqual(RepeatedHoldout2_full_stats.shape[0], 1)
+        self.assertEqual(RepeatedHoldout2_training_stats.shape[0], 5)
+        self.assertEqual(RepeatedHoldout2_validation_stats.shape[0], 5)
+        self.assertEqual(RepeatedHoldout3_full_stats.shape[0], 1)
+        self.assertEqual(RepeatedHoldout3_training_stats.shape[0], 10)
+        self.assertEqual(RepeatedHoldout3_validation_stats.shape[0], 10)
 
         # Rolling Origin Update
         update1_full_stats, update1_training_stats, update1_validation_stats = (
@@ -523,9 +523,9 @@ class TestOOS(unittest.TestCase):
         self.Holdout1.plot(height, width)
         self.Holdout2.plot(height, width)
         self.Holdout3.plot(height, width)
-        self.Repeated_Holdout1.plot(height, width)
-        self.Repeated_Holdout2.plot(height, width)
-        self.Repeated_Holdout3.plot(height + 10, width + 10)
+        self.RepeatedHoldout1.plot(height, width)
+        self.RepeatedHoldout2.plot(height, width)
+        self.RepeatedHoldout3.plot(height + 10, width + 10)
         self.Update1.plot(height, width)
         self.Update2.plot(height, width)
         self.Recalibration1.plot(height, width)

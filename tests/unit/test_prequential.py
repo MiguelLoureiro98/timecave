@@ -3,7 +3,7 @@ This file contains unit tests targetting the 'Prequential' module.
 """
 
 import unittest
-from timecave.validation_methods.prequential import Growing_Window, Rolling_Window
+from timecave.validation_methods.prequential import GrowingWindow, RollingWindow
 from timecave.validation_methods.weights import linear_weights, exponential_weights
 import numpy as np
 
@@ -22,66 +22,66 @@ class TestPrequential(unittest.TestCase):
         cls.high_freq = 100
         cls.n_splits = 5
 
-        cls.Growing1 = Growing_Window(
+        cls.Growing1 = GrowingWindow(
             cls.n_splits, cls.test_array_simple, cls.simple_freq
         )
-        cls.Growing2 = Growing_Window(
+        cls.Growing2 = GrowingWindow(
             cls.n_splits, cls.test_array_simple_odd, cls.simple_freq
         )
-        cls.Growing3 = Growing_Window(
+        cls.Growing3 = GrowingWindow(
             cls.n_splits, cls.test_array_high_freq, cls.high_freq
         )
-        cls.Growing4 = Growing_Window(
+        cls.Growing4 = GrowingWindow(
             cls.n_splits, cls.specific_array_1, cls.simple_freq
         )
-        cls.Growing5 = Growing_Window(
+        cls.Growing5 = GrowingWindow(
             cls.n_splits, cls.specific_array_2, cls.simple_freq
         )
-        cls.Growing1_gap = Growing_Window(
+        cls.Growing1_gap = GrowingWindow(
             cls.n_splits, cls.test_array_simple, cls.simple_freq, gap=1
         )
-        cls.Growing2_gap = Growing_Window(
+        cls.Growing2_gap = GrowingWindow(
             cls.n_splits, cls.test_array_simple_odd, cls.simple_freq, gap=2
         )
-        cls.Growing3_gap = Growing_Window(
+        cls.Growing3_gap = GrowingWindow(
             cls.n_splits, cls.test_array_high_freq, cls.high_freq, gap=3
         )
-        cls.Growing1_linear = Growing_Window(
+        cls.Growing1_linear = GrowingWindow(
             cls.n_splits,
             cls.test_array_simple,
             cls.simple_freq,
             weight_function=linear_weights,
             params={"slope": 2},
         )
-        cls.Growing2_linear = Growing_Window(
+        cls.Growing2_linear = GrowingWindow(
             cls.n_splits,
             cls.test_array_simple_odd,
             cls.simple_freq,
             weight_function=linear_weights,
             params={"slope": 2},
         )
-        cls.Growing3_linear = Growing_Window(
+        cls.Growing3_linear = GrowingWindow(
             cls.n_splits,
             cls.test_array_high_freq,
             cls.high_freq,
             weight_function=linear_weights,
             params={"slope": 2},
         )
-        cls.Growing1_exponential = Growing_Window(
+        cls.Growing1_exponential = GrowingWindow(
             cls.n_splits,
             cls.test_array_simple,
             cls.simple_freq,
             weight_function=exponential_weights,
             params={"base": 2},
         )
-        cls.Growing2_exponential = Growing_Window(
+        cls.Growing2_exponential = GrowingWindow(
             cls.n_splits,
             cls.test_array_simple_odd,
             cls.simple_freq,
             weight_function=exponential_weights,
             params={"base": 2},
         )
-        cls.Growing3_exponential = Growing_Window(
+        cls.Growing3_exponential = GrowingWindow(
             cls.n_splits,
             cls.test_array_high_freq,
             cls.high_freq,
@@ -89,66 +89,66 @@ class TestPrequential(unittest.TestCase):
             params={"base": 2},
         )
 
-        cls.Rolling1 = Rolling_Window(
+        cls.Rolling1 = RollingWindow(
             cls.n_splits, cls.test_array_simple, cls.simple_freq
         )
-        cls.Rolling2 = Rolling_Window(
+        cls.Rolling2 = RollingWindow(
             cls.n_splits, cls.test_array_simple_odd, cls.simple_freq
         )
-        cls.Rolling3 = Rolling_Window(
+        cls.Rolling3 = RollingWindow(
             cls.n_splits, cls.test_array_high_freq, cls.high_freq
         )
-        cls.Rolling4 = Rolling_Window(
+        cls.Rolling4 = RollingWindow(
             cls.n_splits, cls.specific_array_1, cls.simple_freq
         )
-        cls.Rolling5 = Rolling_Window(
+        cls.Rolling5 = RollingWindow(
             cls.n_splits, cls.specific_array_2, cls.simple_freq
         )
-        cls.Rolling1_gap = Rolling_Window(
+        cls.Rolling1_gap = RollingWindow(
             cls.n_splits, cls.test_array_simple, cls.simple_freq, gap=1
         )
-        cls.Rolling2_gap = Rolling_Window(
+        cls.Rolling2_gap = RollingWindow(
             cls.n_splits, cls.test_array_simple_odd, cls.simple_freq, gap=2
         )
-        cls.Rolling3_gap = Rolling_Window(
+        cls.Rolling3_gap = RollingWindow(
             cls.n_splits, cls.test_array_high_freq, cls.high_freq, gap=3
         )
-        cls.Rolling1_linear = Rolling_Window(
+        cls.Rolling1_linear = RollingWindow(
             cls.n_splits,
             cls.test_array_simple,
             cls.simple_freq,
             weight_function=linear_weights,
             params={"slope": 2},
         )
-        cls.Rolling2_linear = Rolling_Window(
+        cls.Rolling2_linear = RollingWindow(
             cls.n_splits,
             cls.test_array_simple_odd,
             cls.simple_freq,
             weight_function=linear_weights,
             params={"slope": 2},
         )
-        cls.Rolling3_linear = Rolling_Window(
+        cls.Rolling3_linear = RollingWindow(
             cls.n_splits,
             cls.test_array_high_freq,
             cls.high_freq,
             weight_function=linear_weights,
             params={"slope": 2},
         )
-        cls.Rolling1_exponential = Rolling_Window(
+        cls.Rolling1_exponential = RollingWindow(
             cls.n_splits,
             cls.test_array_simple,
             cls.simple_freq,
             weight_function=exponential_weights,
             params={"base": 2},
         )
-        cls.Rolling2_exponential = Rolling_Window(
+        cls.Rolling2_exponential = RollingWindow(
             cls.n_splits,
             cls.test_array_simple_odd,
             cls.simple_freq,
             weight_function=exponential_weights,
             params={"base": 2},
         )
-        cls.Rolling3_exponential = Rolling_Window(
+        cls.Rolling3_exponential = RollingWindow(
             cls.n_splits,
             cls.test_array_high_freq,
             cls.high_freq,
@@ -208,7 +208,7 @@ class TestPrequential(unittest.TestCase):
         # Exceptions
         self.assertRaises(
             TypeError,
-            Growing_Window,
+            GrowingWindow,
             self.n_splits,
             self.test_array_simple,
             self.simple_freq,
@@ -216,7 +216,7 @@ class TestPrequential(unittest.TestCase):
         )
         self.assertRaises(
             ValueError,
-            Growing_Window,
+            GrowingWindow,
             self.n_splits,
             self.test_array_simple,
             self.simple_freq,
@@ -224,7 +224,7 @@ class TestPrequential(unittest.TestCase):
         )
         self.assertRaises(
             ValueError,
-            Growing_Window,
+            GrowingWindow,
             self.n_splits,
             self.test_array_simple,
             self.simple_freq,
@@ -233,7 +233,7 @@ class TestPrequential(unittest.TestCase):
 
         self.assertRaises(
             TypeError,
-            Rolling_Window,
+            RollingWindow,
             self.n_splits,
             self.test_array_simple,
             self.simple_freq,
@@ -241,7 +241,7 @@ class TestPrequential(unittest.TestCase):
         )
         self.assertRaises(
             ValueError,
-            Rolling_Window,
+            RollingWindow,
             self.n_splits,
             self.test_array_simple,
             self.simple_freq,
@@ -249,7 +249,7 @@ class TestPrequential(unittest.TestCase):
         )
         self.assertRaises(
             ValueError,
-            Rolling_Window,
+            RollingWindow,
             self.n_splits,
             self.test_array_simple,
             self.simple_freq,
@@ -320,7 +320,7 @@ class TestPrequential(unittest.TestCase):
         indices1 = np.arange(0, 10).tolist()
         # indices2 = np.arange(0, 11)#.tolist(); # add new arrays for 12 and 11!
         indices3 = np.arange(0, 1000).tolist()
-        # exp = Growing_Window(5, indices2, self.simple_freq);
+        # exp = GrowingWindow(5, indices2, self.simple_freq);
         # print(exp._splitting_ind);
         # for (t, v, _) in exp.split():
 
@@ -630,12 +630,12 @@ class TestPrequential(unittest.TestCase):
 
         # Exceptions
         two_sample_series = np.zeros(shape=(2,))
-        growing2samp = Growing_Window(2, two_sample_series, 1)
-        rolling2samp = Rolling_Window(2, two_sample_series, 1)
+        growing2samp = GrowingWindow(2, two_sample_series, 1)
+        rolling2samp = RollingWindow(2, two_sample_series, 1)
 
         small_series = np.zeros(shape=(5,))
-        growing5samp = Growing_Window(5, small_series, 1)
-        rolling5samp = Rolling_Window(5, small_series, 1)
+        growing5samp = GrowingWindow(5, small_series, 1)
+        rolling5samp = RollingWindow(5, small_series, 1)
 
         self.assertRaises(ValueError, growing2samp.statistics)
         self.assertRaises(ValueError, rolling2samp.statistics)

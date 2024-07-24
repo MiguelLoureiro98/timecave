@@ -209,7 +209,7 @@ class Holdout(BaseSplitter):
         return
 
 
-class Repeated_Holdout(BaseSplitter):
+class RepeatedHoldout(BaseSplitter):
 
     def __init__(
         self,
@@ -470,7 +470,7 @@ class Repeated_Holdout(BaseSplitter):
         return
 
 
-class Rolling_Origin_Update(BaseSplitter):
+class RollingOriginUpdate(BaseSplitter):
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
@@ -675,7 +675,7 @@ class Rolling_Origin_Update(BaseSplitter):
         return
 
 
-class Rolling_Origin_Recalibration(BaseSplitter):
+class RollingOriginRecalibration(BaseSplitter):
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
@@ -890,7 +890,7 @@ class Rolling_Origin_Recalibration(BaseSplitter):
         return
 
 
-class Fixed_Size_Rolling_Window(BaseSplitter):
+class FixedSizeRollingWindow(BaseSplitter):
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
