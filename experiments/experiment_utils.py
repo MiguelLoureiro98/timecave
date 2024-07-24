@@ -200,7 +200,7 @@ def update_stats_tables(
     stats_total: pd.DataFrame,
     stats_train: pd.DataFrame,
     stats_test: pd.DataFrame,
-    method: base_splitter,
+    method: BaseSplitter,
     filename: str,
     col_idx: int,
     freq,

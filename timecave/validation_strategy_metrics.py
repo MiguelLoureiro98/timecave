@@ -85,7 +85,7 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
 
     return (estimated_error - test_error) / test_error;
 
-def MPAE(estimated_error: float | int, test_error: float | int) -> float:
+def sMPAE(estimated_error: float | int, test_error: float | int) -> float:
     
     """
     Compute the Relative Predictive Accuracy Error (RPAE).
@@ -112,9 +112,9 @@ def MPAE(estimated_error: float | int, test_error: float | int) -> float:
         If 'test_error' is zero.
     """
 
-    if(test_error == 0):
+    if((abs(estimated_error) + abs(test_error)) == 0):
 
-        raise ValueError("The test error is zero. RPAE is undefined.");
+        raise ValueError("sMPAE is undefined.");
 
     return 2*(estimated_error - test_error) / (abs(estimated_error) + abs(test_error));
 
@@ -274,3 +274,7 @@ def under_over_estimation(estimated_error_list: list[float | int], test_error_li
         print("No errors were overestimated. Overestimation data dictionary empty.");
 
     return (under_estimation_stats, over_estimation_stats);
+
+if __name__=='__main__':
+    sMPAE(-5, 2)
+    print('dfs')
