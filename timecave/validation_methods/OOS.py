@@ -21,7 +21,7 @@ Fixed_Size_Rolling_Window
 TODO: Add Tashman reference to the last 3/4 methods.
 """
 
-from ._base import base_splitter
+from .base import base_splitter
 from ..data_characteristics import get_features
 import numpy as np
 import pandas as pd

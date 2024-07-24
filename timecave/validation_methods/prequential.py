@@ -9,7 +9,7 @@ Rolling_Window
 
 """
 
-from ._base import base_splitter
+from .base import base_splitter
 from .weights import constant_weights
 from ..data_characteristics import get_features
 import numpy as np
