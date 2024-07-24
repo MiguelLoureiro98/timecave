@@ -252,6 +252,16 @@ def RAPAE_row(row, metric: str):
 
     return metrics.RAPAE(row[f"{metric}_estimate"], row[f"{metric}_true"]);
 
+def MPAE_row(row, metric: str):
+
+    """
+    Computes the MPAE metric by row.
+    """
+
+    return metrics.MPAE(row[f"{metric}_estimate"], row[f"{metric}_true"]);
+
+
+
 def compute_metrics_per_row(aggregate_data: pd.DataFrame, performance_metric: str) -> pd.DataFrame:
 
     """
@@ -262,6 +272,7 @@ def compute_metrics_per_row(aggregate_data: pd.DataFrame, performance_metric: st
     aggregate_data["APAE"] = aggregate_data.apply(APAE_row, args=[performance_metric], axis=1);
     aggregate_data["RPAE"] = aggregate_data.apply(RPAE_row, args=[performance_metric], axis=1);
     aggregate_data["RAPAE"] = aggregate_data.apply(RAPAE_row, args=[performance_metric], axis=1);
+    aggregate_data["MPAE"] = aggregate_data.apply(RAPAE_row, args=[performance_metric], axis=1);
 
     return aggregate_data;
 
