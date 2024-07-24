@@ -1,6 +1,6 @@
-# Block CV
+# Linear weights
 
-::: timecave.validation_methods.CV.BlockCV
+::: timecave.validation_methods.weights.linear_weights
     options:
         show_root_heading: true
         show_signature: true

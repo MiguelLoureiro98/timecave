@@ -1,6 +1,6 @@
-# Block CV
+# Holdout method
 
-::: timecave.validation_methods.CV.BlockCV
+::: timecave.validation_methods.OOS.Holdout
     options:
         show_root_heading: true
         show_signature: true
