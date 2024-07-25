@@ -1,7 +1,11 @@
 site_name: TimeCave
 site_url: http://timecave.com
 
+repo_url: https://github.com/MiguelLoureiro98/timecave
+
 theme:
+  icon:
+    repo: fontawesome/brands/github
   name: material
   language: en
   features:
@@ -40,6 +44,12 @@ extra:
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/beatriz-pereira-lourenço/
       name: Beatriz Lourenço's LinkedIn page
+    - icon: fontawesome/brands/github
+      link: https://github.com/MiguelLoureiro98
+      name: Miguel Loureiro's GitHub page
+    - icon: fontawesome/brands/github
+      link: https://github.com/BeatrizPLourenco
+      name: Beatriz Lourenço's GitHub page
 
 copyright: Copyright &copy; 2024 -  Miguel Loureiro, Beatriz Lourenço
 
