@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Data characteristics module
 
 ::: timecave.data_characteristics

@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Time Series Functions
 
 ::: timecave.data_generation.time_series_functions

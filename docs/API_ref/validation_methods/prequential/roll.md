@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Rolling Window
 
 ::: timecave.validation_methods.prequential.RollingWindow

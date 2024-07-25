@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Constant weights
 
 ::: timecave.validation_methods.weights.constant_weights

@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Utilities module
 
 ::: timecave.utils

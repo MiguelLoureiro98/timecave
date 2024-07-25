@@ -12,7 +12,7 @@ theme:
     - navigation.path
     - navigation.top
     - navigation.footer
-    - toc.integrate
+    - toc.follow
     - search.suggest
     - search.highlight
     - content.tabs.link
@@ -24,7 +24,7 @@ theme:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
       primary: teal
-      accent: purple
+      accent: blue
     - scheme: slate
       toggle:
         icon: material/toggle-switch

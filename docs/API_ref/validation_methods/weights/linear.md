@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Linear weights
 
 ::: timecave.validation_methods.weights.linear_weights

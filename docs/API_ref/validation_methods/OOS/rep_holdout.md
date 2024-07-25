@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Repeated Holdout method
 
 ::: timecave.validation_methods.OOS.RepeatedHoldout

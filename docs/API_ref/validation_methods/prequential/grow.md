@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Growing Window
 
 ::: timecave.validation_methods.prequential.GrowingWindow

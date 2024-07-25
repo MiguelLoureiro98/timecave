@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Frequency modulation
 
 ::: timecave.data_generation.frequency_modulation

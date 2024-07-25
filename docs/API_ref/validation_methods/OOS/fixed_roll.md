@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Fixed Size Rolling Window method
 
 ::: timecave.validation_methods.OOS.FixedSizeRollingWindow

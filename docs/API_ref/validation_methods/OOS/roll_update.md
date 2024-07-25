@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Rolling Origin Update method
 
 ::: timecave.validation_methods.OOS.RollingOriginUpdate

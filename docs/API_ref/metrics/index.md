@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Validation strategy metrics module
 
 ::: timecave.validation_strategy_metrics

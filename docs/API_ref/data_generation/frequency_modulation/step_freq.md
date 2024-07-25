@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Step Frequency
 
 ::: timecave.data_generation.frequency_modulation.FrequencyModulationWithStep

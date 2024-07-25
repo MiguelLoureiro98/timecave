@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 ::: timecave.validation_strategy_metrics.RPAE
     options:
         show_root_heading: true

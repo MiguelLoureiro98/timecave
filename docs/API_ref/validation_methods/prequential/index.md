@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Prequential methods
 
 ::: timecave.validation_methods.prequential

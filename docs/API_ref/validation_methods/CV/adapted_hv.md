@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Adapted hv Block CV
 
 ::: timecave.validation_methods.CV.AdaptedhvBlockCV

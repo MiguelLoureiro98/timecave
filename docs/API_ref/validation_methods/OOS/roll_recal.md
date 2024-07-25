@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Rolling Origin Recalibration method
 
 ::: timecave.validation_methods.OOS.RollingOriginRecalibration

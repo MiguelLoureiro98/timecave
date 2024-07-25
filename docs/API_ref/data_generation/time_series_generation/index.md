@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Time Series Generation
 
 ::: timecave.data_generation.time_series_generation

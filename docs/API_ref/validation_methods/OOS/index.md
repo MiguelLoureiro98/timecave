@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Out-of-sample methods
 
 ::: timecave.validation_methods.OOS

@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Validation methods
 
 ## Links to modules

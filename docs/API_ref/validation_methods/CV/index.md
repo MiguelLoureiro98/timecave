@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # CV methods
 
 ::: timecave.validation_methods.CV

@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Exponential weights
 
 ::: timecave.validation_methods.weights.exponential_weights

@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # ARMA
 
 ::: timecave.data_generation.time_series_functions.arma_ts

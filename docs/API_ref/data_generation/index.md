@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Data generation
 
 ## Links to modules:

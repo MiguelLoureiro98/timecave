@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Indicator function
 
 ::: timecave.data_generation.time_series_functions.indicator_ts

@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 # Markov method
 
 ::: timecave.validation_methods.markov
