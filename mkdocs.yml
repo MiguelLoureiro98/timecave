@@ -41,6 +41,8 @@ extra:
       link: https://www.linkedin.com/in/beatriz-pereira-lourenço/
       name: Beatriz Lourenço's LinkedIn page
 
+copyright: Copyright &copy; 2024 -  Miguel Loureiro, Beatriz Lourenço
+
 nav:
   - Home: index.md
   - Getting Started: starters.md
