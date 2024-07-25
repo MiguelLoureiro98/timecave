@@ -71,6 +71,7 @@ nav:
     - 4 - Validation methods:
       - Overview: API_ref/validation_methods/index.md
       - Methods:
+        - Base class: API_ref/validation_methods/base/base.md
         - Out-of-sample: 
           - Overview: API_ref/validation_methods/OOS/index.md
           - OOS methods:
