@@ -31,34 +31,37 @@ from warnings import warn
 
 
 class Holdout(BaseSplitter):
+    """
+    Holdout(ts: np.ndarray | pd.Series, fs: float | int, validation_size: float = 0.3)
+    ----------------------------------------------------------------------------------
+    
+    Implements the classic Holdout method.
+
+    extended_summary
+
+    Parameters
+    ----------
+    ts : np.ndarray | pd.Series
+        Univariate time series.
+
+    fs : float | int
+        Sampling frequency (Hz).
+
+    validation_size : float, optional
+        Validation set size (relative to the time series size), by default 0.3.
+
+    Raises
+    ------
+    TypeError
+        If the validation size is not a float.
+
+    ValueError
+        If the validation size does not lie in the ]0, 1[ interval.
+    """
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, validation_size: float = 0.3
     ) -> None:
-        """
-        Class constructor.
-
-        This is the constructor of the Holdout class.
-
-        Parameters
-        ----------
-        ts : np.ndarray | pd.Series
-            Univariate time series.
-
-        fs : float | int
-            Sampling frequency (Hz).
-
-        validation_size : float, optional
-            Validation set size (relative to the time series size), by default 0.3.
-
-        Raises
-        ------
-        TypeError
-            If the validation size is not a float.
-
-        ValueError
-            If the validation size does not lie in the ]0, 1[ interval.
-        """
 
         super().__init__(2, ts, fs)
         self._check_validation_size(validation_size)
@@ -219,6 +222,31 @@ class Holdout(BaseSplitter):
 
 
 class RepeatedHoldout(BaseSplitter):
+    """
+    RepeatedHoldout(ts: np.ndarray | pd.Series, fs: float | int, iterations: int, splitting_interval: list[int | float] = [0.7, 0.8], seed: int = 0)
+    ------------------------------------------------------------------------------------------------------------------------------------------------
+
+    _summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    ts : np.ndarray | pd.Series
+        _description_
+
+    fs : float | int
+        _description_
+
+    iterations : int
+        _description_
+
+    splitting_interval : list[int | float], default=[0.7, 0.8]
+        _description_
+
+    seed : int, default=0
+        _description_
+    """
 
     def __init__(
         self,
@@ -228,28 +256,6 @@ class RepeatedHoldout(BaseSplitter):
         splitting_interval: list[int | float] = [0.7, 0.8],
         seed: int = 0,
     ) -> None:
-        """
-        _summary_
-
-        _extended_summary_
-
-        Parameters
-        ----------
-        ts : np.ndarray | pd.Series
-            _description_
-
-        fs : float | int
-            _description_
-
-        iterations : int
-            _description_
-
-        splitting_interval : list[int | float], optional
-            _description_, by default [0.7, 0.8]
-
-        seed : int, optional
-            _description_, by default 0
-        """
 
         self._check_iterations(iterations)
         self._check_splits(splitting_interval)
@@ -482,26 +488,29 @@ class RepeatedHoldout(BaseSplitter):
 
 
 class RollingOriginUpdate(BaseSplitter):
+    """
+    RollingOriginUpdate(ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7)
+    -------------------------------------------------------------------------------------------
+
+    _summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    ts : np.ndarray | pd.Series
+        _description_
+
+    fs : float | int
+        _description_
+
+    origin : int | float, default=0.7
+        _description_
+    """
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
     ) -> None:
-        """
-        _summary_
-
-        _extended_summary_
-
-        Parameters
-        ----------
-        ts : np.ndarray | pd.Series
-            _description_
-
-        fs : float | int
-            _description_
-
-        origin : int | float, optional
-            _description_, by default 0.7
-        """
 
         super().__init__(2, ts, fs)
         self._check_origin(origin)
@@ -683,26 +692,29 @@ class RollingOriginUpdate(BaseSplitter):
 
 
 class RollingOriginRecalibration(BaseSplitter):
+    """
+    RollingOriginRecalibration(ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7)
+    --------------------------------------------------------------------------------------------------
+
+    _summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    ts : np.ndarray | pd.Series
+        _description_
+
+    fs : float | int
+        _description_
+
+    origin : int | float, default=0.7
+        _description_
+    """
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
     ) -> None:
-        """
-        _summary_
-
-        _extended_summary_
-
-        Parameters
-        ----------
-        ts : np.ndarray | pd.Series
-            _description_
-
-        fs : float | int
-            _description_
-
-        origin : int | float, optional
-            _description_, by default 0.7
-        """
 
         super().__init__(2, ts, fs)
         self._check_origin(origin)
@@ -892,26 +904,29 @@ class RollingOriginRecalibration(BaseSplitter):
 
 
 class FixedSizeRollingWindow(BaseSplitter):
+    """
+    FixedSizeRollingWindow(ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7)
+    ----------------------------------------------------------------------------------------------
+
+    _summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    ts : np.ndarray | pd.Series
+        _description_
+
+    fs : float | int
+        _description_
+
+    origin : int | float, default=0.7
+        _description_
+    """
 
     def __init__(
         self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
     ) -> None:
-        """
-        _summary_
-
-        _extended_summary_
-
-        Parameters
-        ----------
-        ts : np.ndarray | pd.Series
-            Univariate time series.
-
-        fs : float | int
-            Sampling frequency (Hz).
-
-        origin : int | float, optional
-            _description_, by default 0.7
-        """
 
         super().__init__(2, ts, fs)
         self._check_origin(origin)

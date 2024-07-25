@@ -18,6 +18,26 @@ import math
 
 
 class MarkovCV(BaseSplitter):
+    """
+    MarkovCV(ts: np.ndarray | pd.Series, p: int, seed: int = 1)
+    -----------------------------------------------------------
+
+    _summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    ts : np.ndarray | pd.Series
+        Univariate time series.
+
+    p : int
+        _description_
+
+    seed : int, default=1
+        _description_
+    """
+
     def __init__(self, ts: np.ndarray | pd.Series, p: int, seed: int = 1) -> None:
         self._check_seed(seed)
         self._check_p(p)
@@ -135,6 +155,17 @@ class MarkovCV(BaseSplitter):
             self._sue[u] = Su[u * 2]
 
     def split(self) -> Generator[tuple, None, None]:
+        """
+        _summary_
+
+        _extended_summary_
+
+        Yields
+        ------
+        Generator[tuple, None, None]
+            _description_
+        """
+
         self._markov_partitions()
         for i in range(1, len(self._suo.items()) + 1):
             train, validation = self._suo[i], self._sue[i]
@@ -143,6 +174,12 @@ class MarkovCV(BaseSplitter):
             yield (train, validation, 1.0)  # two-fold cross validation
 
     def info(self) -> None:
+        """
+        _summary_
+
+        _extended_summary_
+        """
+
         self._markov_partitions()
 
         lengths = []
@@ -157,6 +194,21 @@ class MarkovCV(BaseSplitter):
         pass
 
     def statistics(self) -> tuple[pd.DataFrame]:
+        """
+        _summary_
+
+        _extended_summary_
+
+        Returns
+        -------
+        tuple[pd.DataFrame]
+            _description_
+
+        Raises
+        ------
+        ValueError
+            _description_
+        """
 
         columns = [
             "Mean",
@@ -197,6 +249,18 @@ class MarkovCV(BaseSplitter):
         return (full_features, training_features, validation_features)
 
     def plot(self, height: int, width: int) -> None:
+        """
+        _summary_
+
+        _extended_summary_
+
+        Parameters
+        ----------
+        height : int
+            _description_
+        width : int
+            _description_
+        """
 
         fig, axs = plt.subplots(self.n_splits, 1, sharex=True)
         fig.set_figheight(height)

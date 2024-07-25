@@ -20,6 +20,9 @@ from typing import Generator
 
 class GrowingWindow(BaseSplitter):
     """
+    GrowingWindow(splits: int, ts: np.ndarray | pd.Series, fs: float | int, gap: int = 0, weight_function: callable = constant_weights, params: dict = None)
+    --------------------------------------------------------------------------------------------------------------------------------------------------------
+
     _summary_
 
     _extended_summary_
@@ -272,6 +275,34 @@ class GrowingWindow(BaseSplitter):
 
 
 class RollingWindow(BaseSplitter):
+    """
+    RollingWindow(splits: int, ts: np.ndarray | pd.Series, fs: float | int, gap: int = 0, weight_function: callable = constant_weights, params: dict = None)
+    --------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    _summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    splits : int
+        Number of splits.
+
+    ts : np.ndarray | pd.Series
+        Univariate time series.
+
+    fs : float | int
+        Sampling frequency (Hz).
+
+    gap : int, default=0
+        __description__
+
+    weight_function : callable, default=constant_weights
+        __description__
+
+    params : dict, optional
+        __description__
+    """
 
     def __init__(
         self,

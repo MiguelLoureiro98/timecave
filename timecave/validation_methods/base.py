@@ -19,6 +19,9 @@ import pandas as pd
 
 class BaseSplitter(ABC):
     """
+    BaseSplitter(splits: int, ts: np.ndarray | pd.Series, fs: float | int = 1)
+    --------------------------------------------------------------------------
+
     Base class for all time series validation methods provided / supported by this package.
 
     This is simply an abstract class. As such, it should not be used directly.

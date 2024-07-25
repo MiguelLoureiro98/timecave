@@ -20,6 +20,9 @@ from typing import Generator
 
 class BlockCV(BaseSplitter):
     """
+    BlockCV(splits: int, ts: np.ndarray | pd.Series, fs: float | int, weight_function: callable = constant_weights, params: dict = None)
+    ------------------------------------------------------------------------------------------------------------------------------------
+
     _summary_
 
     _extended_summary_
@@ -217,6 +220,9 @@ class BlockCV(BaseSplitter):
 
 class hvBlockCV(BaseSplitter):
     """
+    hvBlockCV(ts: np.ndarray | pd.Series, fs: float | int, h: int = 0, v: int = 0)
+    ------------------------------------------------------------------------------
+
     _summary_
 
     _extended_summary_
@@ -422,6 +428,9 @@ class hvBlockCV(BaseSplitter):
 
 class AdaptedhvBlockCV(BaseSplitter):
     """
+    AdaptedhvBlockCV(splits: int, ts: np.ndarray | pd.Series, fs: float | int, h: int)
+    ----------------------------------------------------------------------------------
+
     _summary_
 
     _extended_summary_
