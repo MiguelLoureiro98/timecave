@@ -3,17 +3,17 @@ import pandas as pd
 from os import getcwd
 import glob
 import pandas.api.types as pdt
-from timecave.validation_methods._base import base_splitter
+from timecave.validation_methods.base import BaseSplitter
 from timecave.validation_methods.OOS import (
     Holdout,
-    Repeated_Holdout,
-    Rolling_Origin_Update,
-    Rolling_Origin_Recalibration,
-    Fixed_Size_Rolling_Window,
+    RepeatedHoldout,
+    RollingOriginUpdate,
+    RollingOriginRecalibration,
+    FixedSizeRollingWindow,
 )
 from timecave.validation_methods.markov import MarkovCV
-from timecave.validation_methods.prequential import Growing_Window, Rolling_Window
-from timecave.validation_methods.CV import Block_CV, hv_Block_CV, AdaptedhvBlockCV
+from timecave.validation_methods.prequential import GrowingWindow, RollingWindow
+from timecave.validation_methods.CV import BlockCV, hvBlockCV, AdaptedhvBlockCV
 from timecave.validation_methods.weights import (
     constant_weights,
     linear_weights,
@@ -98,19 +98,19 @@ def get_autocorrelation_order(ts, nlags=5):
 
 def get_methods_list(ts, freq):
     holdout = Holdout(ts, freq, validation_size=0.3)
-    rep_hold = Repeated_Holdout(
+    rep_hold = RepeatedHoldout(
         ts, freq, iterations=4, splitting_interval=[0.7, 0.8], seed=0
     )
     # rol_origin_update = Rolling_Origin_Update(ts, freq, origin=0.7)
     # rol_origin_cal = Rolling_Origin_Recalibration(ts, freq, origin=0.7)
     # fix_size_roll_wind = Fixed_Size_Rolling_Window(ts, freq, origin=0.7)
-    grow_window = Growing_Window(5, ts, freq, gap=0)
-    gap_grow_window = Growing_Window(5, ts, freq, gap=1)
+    grow_window = GrowingWindow(5, ts, freq, gap=0)
+    gap_grow_window = GrowingWindow(5, ts, freq, gap=1)
     # weighted_grow_window = Growing_Window(5,ts,freq,gap=3, weight_function=exponential_weights,params={"base": 2})
-    roll_window = Rolling_Window(5, ts, freq, gap=0)
-    gap_roll_window = Rolling_Window(splits=5, ts=ts, fs=freq, gap=1)
+    roll_window = RollingWindow(5, ts, freq, gap=0)
+    gap_roll_window = RollingWindow(splits=5, ts=ts, fs=freq, gap=1)
     # weighted_roll_window = Rolling_Window(5,ts,freq,gap=3,weight_function=exponential_weights,params={"base": 2},)
-    block_cv = Block_CV(5, ts, freq)
+    block_cv = BlockCV(5, ts, freq)
     # weight_block_cv = Block_CV( 5, ts, freq, weight_function=exponential_weights, params={"base": 2})
     # hv_block = hv_Block_CV(ts, freq, h=5, v=5)
     adp_hv = AdaptedhvBlockCV(5, ts, freq, h=1)
@@ -200,7 +200,7 @@ def update_stats_tables(
     stats_total: pd.DataFrame,
     stats_train: pd.DataFrame,
     stats_test: pd.DataFrame,
-    method: base_splitter,
+    method: BaseSplitter,
     filename: str,
     col_idx: int,
     freq,

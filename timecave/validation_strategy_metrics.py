@@ -85,6 +85,41 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
 
     return (estimated_error - test_error) / test_error;
 
+def sMPAE(estimated_error: float | int, test_error: float | int) -> float:
+    
+    """
+    Compute the Relative Predictive Accuracy Error (RPAE).
+
+    This function computes the RPAE metric. Both the estimated (i.e. validation) error
+    and the test error must be passed as parameters.
+
+    Parameters
+    ----------
+    estimated_error : float | int
+        The model's validation error.
+
+    test_error : float | int
+        The model's test error.
+
+    Returns
+    -------
+    float
+        Relative Predictive Accuracy Error.
+
+    Raises
+    ------
+    ValueError
+        If 'test_error' is zero.
+    """
+
+    if((abs(estimated_error) + abs(test_error)) == 0):
+
+        raise ValueError("sMPAE is undefined.");
+
+    return 2*(estimated_error - test_error) / (abs(estimated_error) + abs(test_error));
+
+
+
 def RAPAE(estimated_error: float | int, test_error: float | int) -> float:
     
     """
@@ -239,3 +274,7 @@ def under_over_estimation(estimated_error_list: list[float | int], test_error_li
         print("No errors were overestimated. Overestimation data dictionary empty.");
 
     return (under_estimation_stats, over_estimation_stats);
+
+if __name__=='__main__':
+    sMPAE(-5, 2)
+    print('dfs')
