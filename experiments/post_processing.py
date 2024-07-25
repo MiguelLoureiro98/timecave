@@ -334,7 +334,7 @@ def boxplots(processed_data: pd.DataFrame, performance_metric: str, model: str, 
     )
     for ax, metric in zip(boxplot, validation_metrics):
         ax.axhline(0, c="r", linestyle="--", linewidth=3)
-        ax.set_ylabel(metric)
+        ax.set_ylabel(metric, fontweight='bold')
 
         # Shade areas
         ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[0], color='lightblue', alpha=0.1, label='Underestimation' if metric == validation_metrics[0] else "")
