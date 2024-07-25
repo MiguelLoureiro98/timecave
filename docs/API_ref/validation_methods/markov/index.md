@@ -6,7 +6,4 @@
         show_root_full_path: true
         show_source: false
         show_signature: false
-        members: []
-
-## Links to classes
-- [Markov CV](markov.md)
+        members: [MarkovCV]

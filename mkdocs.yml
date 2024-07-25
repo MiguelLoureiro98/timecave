@@ -46,39 +46,89 @@ nav:
   - Getting Started: starters.md
   - API reference:
     - Overview: API_ref/index.md
-    - Data characteristics:
+    - 1 - Data characteristics:
       - Overview: API_ref/data_characteristics/index.md
-      - get_features: API_ref/data_characteristics/get_features.md
-      - strength_of_trend: API_ref/data_characteristics/sot.md
-      - mean_crossing_rate: API_ref/data_characteristics/mean_cr.md
-      - median_crossing_rate: API_ref/data_characteristics/med_cr.md
-    - Metrics: 
+      - Functions:
+        - get_features: API_ref/data_characteristics/get_features.md
+        - strength_of_trend: API_ref/data_characteristics/sot.md
+        - mean_crossing_rate: API_ref/data_characteristics/mean_cr.md
+        - median_crossing_rate: API_ref/data_characteristics/med_cr.md
+    - 2 - Metrics: 
       - Overview: API_ref/metrics/index.md
-      - PAE: API_ref/metrics/pae.md
-      - APAE: API_ref/metrics/apae.md
-      - RPAE: API_ref/metrics/rpae.md
-      - RAPAE: API_ref/metrics/rapae.md
-      - MC_metric: API_ref/metrics/MC_metric.md
-      - under_over_estimation: API_ref/metrics/under_over.md
-    - Utilities:
+      - Functions:
+        - PAE: API_ref/metrics/pae.md
+        - APAE: API_ref/metrics/apae.md
+        - RPAE: API_ref/metrics/rpae.md
+        - RAPAE: API_ref/metrics/rapae.md
+        - MC_metric: API_ref/metrics/MC_metric.md
+        - under_over_estimation: API_ref/metrics/under_over.md
+    - 3 - Utilities:
       - Overview: API_ref/utils/index.md
-      - Nyquist_min_samples: API_ref/utils/nyquist.md
-      - heuristic_min_samples: API_ref/utils/heuristic.md
-      - true_test_indices: API_ref/utils/indices.md
-    - Validation methods:
+      - Functions:
+        - Nyquist_min_samples: API_ref/utils/nyquist.md
+        - heuristic_min_samples: API_ref/utils/heuristic.md
+        - true_test_indices: API_ref/utils/indices.md
+    - 4 - Validation methods:
       - Overview: API_ref/validation_methods/index.md
       - Methods:
-        - Out-of-sample: API_ref/validation_methods/OOS/index.md
-        - Prequential: API_ref/validation_methods/prequential/index.md
-        - Cross-validation: API_ref/validation_methods/CV/index.md
+        - Out-of-sample: 
+          - Overview: API_ref/validation_methods/OOS/index.md
+          - OOS methods:
+            - Holdout: API_ref/validation_methods/OOS/holdout.md
+            - Repeated Holdout: API_ref/validation_methods/OOS/rep_holdout.md
+            - Rolling Origin Update: API_ref/validation_methods/OOS/roll_update.md
+            - Rolling Origin Recalibration: API_ref/validation_methods/OOS/roll_recal.md
+            - Fixed Size Rolling Window: API_ref/validation_methods/OOS/fixed_roll.md
+        - Prequential:
+          - Overview: API_ref/validation_methods/prequential/index.md
+          - Prequential methods:
+            - Growing Window: API_ref/validation_methods/prequential/grow.md
+            - Rolling Window: API_ref/validation_methods/prequential/roll.md
+        - Cross-validation:
+          - Overview: API_ref/validation_methods/CV/index.md
+          - CV methods:
+            - Block CV: API_ref/validation_methods/CV/block.md
+            - hv Block CV: API_ref/validation_methods/CV/hv.md
+            - Adapted hv Block CV: API_ref/validation_methods/CV/adapted_hv.md
         - Markov: API_ref/validation_methods/markov/index.md
-        - Weighting functions: API_ref/validation_methods/weights/index.md
+        - Weighting functions:
+          - Overview: API_ref/validation_methods/weights/index.md
+          - Functions:
+            - Constant weights: API_ref/validation_methods/weights/constant.md
+            - Linear weights: API_ref/validation_methods/weights/linear.md
+            - Exponential weights: API_ref/validation_methods/weights/exponential.md
+    - 5 - Data generation:
+      - Overview: API_ref/data_generation/index.md
+      - Modules:
+        - Frequency modulation:
+          - Overview: API_ref/data_generation/frequency_modulation/index.md
+          - Functions:
+            - Base frequency: API_ref/data_generation/frequency_modulation/base_freq.md
+            - Step frequency: API_ref/data_generation/frequency_modulation/step_freq.md
+            - Linear frequency: API_ref/data_generation/frequency_modulation/linear_freq.md
+        - Time Series Functions:
+          - Overview: API_ref/data_generation/time_series_functions/index.md
+          - Functions:
+            - Sinusoid: API_ref/data_generation/time_series_functions/sinusoid.md
+            - Time-varying sinusoid: API_ref/data_generation/time_series_functions/time_varying_sin.md
+            - Indicator: API_ref/data_generation/time_series_functions/indicator.md
+            - Scaled Indicator: API_ref/data_generation/time_series_functions/scaled_indicator.md
+            - Scaled Impulse: API_ref/data_generation/time_series_functions/impulse.md
+            - Linear: API_ref/data_generation/time_series_functions/linear.md
+            - Exponential: API_ref/data_generation/time_series_functions/exponential.md
+            - ARMA: API_ref/data_generation/time_series_functions/arma.md
+            - Nonlinear AR: API_ref/data_generation/time_series_functions/nonlinear_ar.md
+        - Time Series Generation:
+          - Overview: API_ref/data_generation/time_series_generation/index.md
+          - Classes:
+            - Time Series Generator: API_ref/data_generation/time_series_generation/gen.md
   - About: about.md
 
 not_in_nav: |
   /data_characteristics.md
   /metrics.md
   /utils.md
+  /API_ref/validation_methods/markov/markov.md
 
 plugins:
   - search
