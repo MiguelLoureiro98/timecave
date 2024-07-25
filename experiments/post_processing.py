@@ -420,7 +420,7 @@ def boxplots_per_iteration(processed_data: pd.DataFrame, performance_metric: str
         ax.axhline(0, c="r", linestyle="--");
         
         # Shade areas
-        ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[0], color='lightblue', alpha=0.1, label='Underestimation')
+        ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[0], color='darkblue', alpha=0.1, label='Underestimation')
         ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[1], color='lightgreen', alpha=0.1, label='Overestimation')
         ax.set_ylabel(metric, fontweight='bold')
         ax.set_xlabel("Iteration", fontweight='bold')
