@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=Try
-#SBATCH --time=168:01:00
+#SBATCH --job-name=s2
+#SBATCH --time=24:01:00
 #SBATCH --partition=hpc
 #SBATCH --error=err.job.%j
 #SBATCH --output=out.job.%j
