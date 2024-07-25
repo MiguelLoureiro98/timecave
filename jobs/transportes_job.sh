@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=transportes
-#SBATCH --time=24:01:00
+#SBATCH --time=10:01:00
 #SBATCH --partition=hpc
 #SBATCH --error=err.job.%j
 #SBATCH --output=out.job.%j
