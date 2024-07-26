@@ -301,34 +301,20 @@ def val_metrics_per_iteration(processed_data: pd.DataFrame, performance_metric: 
 
     return metrics_per_it;
 
-import pandas as pd
-import matplotlib.pyplot as plt
-
 def boxplots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int, shows_outliers: bool) -> None:
     """
     Function to generate box plots for the given model's validation metrics.
-
-    Parameters:
-    - processed_data: pd.DataFrame
-    - performance_metric: str
-    - model: str
-    - validation_metrics: list[str]
-    - height: int
-    - width: int
-    - shows_outliers: bool
     """
-    plt.rcParams.update({'font.size': 18})
+    plt.rcParams.update({'font.size': 22})
     model_data = processed_data.loc[processed_data["model"] == model].copy()
     val_metrics = compute_metrics_per_row(model_data, performance_metric)
 
     # Adjust y-axis limits if shows_outliers is False
     if not shows_outliers:
-        # Calculate Q1 (25th percentile) and Q3 (75th percentile)
         Q1 = val_metrics[validation_metrics].quantile(0.25)
         Q3 = val_metrics[validation_metrics].quantile(0.75)
         IQR = Q3 - Q1
 
-        # Define the limits for non-outliers
         lower_bound = Q1 - 1.5 * IQR
         upper_bound = Q3 + 1.5 * IQR
 
@@ -348,62 +334,34 @@ def boxplots(processed_data: pd.DataFrame, performance_metric: str, model: str, 
     )
     for ax, metric in zip(boxplot, validation_metrics):
         ax.axhline(0, c="r", linestyle="--", linewidth=3)
+        ax.set_ylabel(metric, fontweight='bold')
 
         # Shade areas
-        ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[0], color='orange', alpha=0.1, label='Underestimation' if metric == validation_metrics[0] else "")
+        ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[0], color='lightblue', alpha=0.1, label='Underestimation' if metric == validation_metrics[0] else "")
         ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[1], color='lightgreen', alpha=0.1, label='Overestimation' if metric == validation_metrics[0] else "")
 
-        
-        
         if not shows_outliers:
             ax.set_ylim(lower_bound[metric], upper_bound[metric])
+        
+        ax.set_title('')
 
     fig = boxplot[0].get_figure() if isinstance(boxplot, pd.Series) else boxplot[0, 0].get_figure()
     fig.legend(loc='upper right')
-    fig.suptitle(f"Validation method performance - {model} model")
-    plt.rcParams.update({'font.size': 22})
-    plt.xticks(rotation=90)
+    fig.suptitle("")
+    plt.xticks(rotation=45)
+    plt.xlabel('Method', fontweight='bold')
+
 
     plt.show()
 
     return
 
 
-"""def boxplots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int) -> None:
-
-
-
-    model_data = processed_data.loc[processed_data["model"] == model].copy();
-    val_metrics = compute_metrics_per_row(model_data, performance_metric);
-
-    # Do it separately for each model.
-    boxplot = val_metrics.boxplot(column=validation_metrics, by="method", layout=(len(validation_metrics), 1), return_type="axes", figsize=(width, height));
-
-    for ax in boxplot:
-
-        ax.axhline(0, c="r", linestyle="--");
-    
-    fig = boxplot.iloc[0].get_figure();
-    fig.suptitle(f"Validation method performance - {model} model");
-    plt.show();
-
-    return;"""
-
-
-
-def combined_box_violin_plots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int) -> None:
+def violin_plots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int) -> None:
     """
-    Generates combined box and violin plots for the specified performance metrics of a model.
-
-    Parameters:
-    processed_data (pd.DataFrame): The processed data containing performance metrics.
-    performance_metric (str): The name of the performance metric.
-    model (str): The name of the model.
-    validation_metrics (list[str]): A list of validation metrics to plot.
-    height (int): The height of the plot.
-    width (int): The width of the plot.
+    Generates combined violin plots for the specified performance metrics of a model.
     """
-
+    plt.rcParams.update({'font.size': 22})
     model_data = processed_data.loc[processed_data["model"] == model].copy()
     val_metrics = compute_metrics_per_row(model_data, performance_metric)
     
@@ -414,14 +372,18 @@ def combined_box_violin_plots(processed_data: pd.DataFrame, performance_metric: 
         axes = [axes]
 
     for ax, metric in zip(axes, validation_metrics):
+        ax.set_ylabel(metric, fontweight='bold')
         sns.violinplot(x="method", y=metric, data=val_metrics, ax=ax, inner=None, color=".8")
         #sns.boxplot(x="method", y=metric, data=val_metrics, ax=ax, whis=1.5)
         ax.axhline(0, c="r", linestyle="--")
-        ax.set_title(f'{metric} - {model}')
+        ax.set_title('')
     
-    fig.suptitle(f'Validation method performance - {model} model')
+    #fig.suptitle(f'Validation method performance - {model} model')
     plt.tight_layout()
-    plt.xticks(rotation=90)
+    plt.xticks(rotation=45)
+    fig.suptitle("")
+    
+    plt.xlabel('Method', fontweight='bold')
     plt.show()
 
     return
@@ -433,58 +395,56 @@ def boxplots_per_iteration(processed_data: pd.DataFrame, performance_metric: str
     """
     ...
     """
-
-    #methods_list = ["Growing_Window",
-    #                "Rolling_Window",
-    #                "Weighted_Growing_Window",
-    #                "Weighted_Rolling_Window",
-    #                "Gap_Growing_Window",
-    #                "Gap_Rolling_Window",
-    #                "Block_CV",
-    #                "Weighted_Block_CV",
-    #                "hv_Block_CV"];
-    
+    plt.rcParams.update({'font.size': 18})
     filters = (processed_data["method"] == method) & (processed_data["model"] == model);
     preq_CV_data = processed_data.loc[filters].copy();
 
     val_metrics = compute_metrics_per_row(preq_CV_data, performance_metric);
-    
-    # Do it separately for each model.
-    boxplot = val_metrics.boxplot(column=validation_metrics, by="iteration", layout=(len(validation_metrics), 1), return_type="axes", figsize=(width, height));
 
-    for ax in boxplot:
+    boxplot = val_metrics.boxplot(
+        column=validation_metrics,
+        by="iteration",
+        layout=(len(validation_metrics), 1),
+        return_type="axes",
+        figsize=(width, height),
+        patch_artist=True,  # Enable facecolor setting
+        boxprops=dict(color='darkgrey', linewidth=2, facecolor='lightgrey'),
+        medianprops=dict(color='black', linewidth=3),
+        whiskerprops=dict(color='darkgrey', linewidth=2),
+        capprops=dict(color='darkgrey', linewidth=2),
+        flierprops=dict(markerfacecolor='darkgrey', markersize=2))
+    
+
+    for ax, metric in zip(boxplot, validation_metrics):
 
         ax.axhline(0, c="r", linestyle="--");
+        
+        # Shade areas
+        ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[0], color='darkblue', alpha=0.1, label='Underestimation')
+        ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[1], color='lightgreen', alpha=0.1, label='Overestimation')
+        ax.set_ylabel(metric, fontweight='bold')
+        ax.set_xlabel("Iteration", fontweight='bold')
+        ax.set_title('')
     
     fig = boxplot.iloc[0].get_figure();
-    fig.suptitle(f"Estimation accuracy per iteration - {model} model");
+    fig.suptitle("")
+    fig.legend(loc='upper right')
+    #fig.suptitle(f"Estimation accuracy per iteration - {model} model");
+    
     plt.show();
 
     return;
 
 
-def violinplots_per_iteration(processed_data: pd.DataFrame, performance_metric: str, model: str, method: str, validation_metrics: list[str], height: int, width: int) -> None:
+def violin_plots_per_iteration(processed_data: pd.DataFrame, performance_metric: str, model: str, method: str, validation_metrics: list[str], height: int, width: int) -> None:
     """
     Generates violin plots of validation metrics per iteration for a given model and method.
-
-    Parameters:
-    processed_data (pd.DataFrame): The processed data containing performance metrics.
-    performance_metric (str): The name of the performance metric to compute.
-    model (str): The name of the model to filter the data.
-    method (str): The name of the method to filter the data.
-    validation_metrics (list[str]): A list of validation metrics to plot.
-    height (int): The height of the plots.
-    width (int): The width of the plots.
-
-    Returns:
-    None
     """
 
     # Filter the data for the specified model and method
     filters = (processed_data["method"] == method) & (processed_data["model"] == model)
     preq_CV_data = processed_data.loc[filters].copy()
 
-    # Compute metrics per row
     val_metrics = compute_metrics_per_row(preq_CV_data, performance_metric)
     
     # Plot violin plots for each validation metric
@@ -494,12 +454,14 @@ def violinplots_per_iteration(processed_data: pd.DataFrame, performance_metric: 
         ax = axes[i] if len(validation_metrics) > 1 else axes
         sns.violinplot(data=val_metrics, x="iteration", y=metric, ax=ax)
         ax.axhline(0, c="r", linestyle="--")
-        ax.set_title(f"{metric} per iteration")
-        ax.set_ylabel(metric)
-        ax.set_xlabel("Iteration")
+        ax.set_ylabel(metric, fontweight='bold')
+        ax.set_xlabel("Iteration", fontweight='bold')
+        ax.set_title('')
 
-    fig.suptitle(f"Estimation accuracy per iteration - {model} model")
+    #fig.suptitle(f"Estimation accuracy per iteration - {model} model")
+    fig.suptitle("")
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    plt.rcParams.update({'font.size': 18})
     plt.show()
 
     return
