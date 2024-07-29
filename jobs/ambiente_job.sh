@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=ambiente
 #SBATCH --time=06:00:00
-#SBATCH --partition=short
+#SBATCH --partition=hpc
 #SBATCH --error=err.job.%j
 #SBATCH --output=out.job.%j
 #SBATCH -D .
