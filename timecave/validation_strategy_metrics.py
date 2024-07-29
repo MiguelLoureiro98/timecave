@@ -1,11 +1,13 @@
 """
 This module contains metrics to evaluate the performance of model validation methods.
+
+>>> print("Hey")
+Hey
 """
 
 import numpy as np
 
-def PAE(estimated_error: float | int, test_error: float | int) -> float:
-    
+def PAE(estimated_error: float | int, test_error: float | int) -> float:    
     """
     Compute the Predictive Accuracy Error (PAE).
 
@@ -24,6 +26,45 @@ def PAE(estimated_error: float | int, test_error: float | int) -> float:
     -------
     float
         Predictive Accuracy Error.
+
+    See also
+    --------
+    [APAE](apae.md) :
+        Absolute Predictive Accuracy Error.
+
+    [RPAE](rpae.md) : 
+        Relative Predictive Accuracy Error.
+
+    [RAPAE](rapae.md):
+        Relative Absolute Predictive Accuracy Error.
+
+    Notes
+    -----
+    The Predictive Accuracy Error is defined as the difference between the estimate of a model's error given by a validation method\
+    and the model's true error:
+    
+    $$
+    PAE = \hat{L}_m - L_m
+    $$ 
+    
+    Note that, in all likelihood, the true error will not be known. It is usually estimated using an independent test set. For more details, please refer to [[1]](#1).
+
+    References
+    ----------
+    <a id="1">[1]</a>
+    Cerqueira, V., Torgo, L., Mozetiˇc, I., 2020. Evaluating time series forecasting
+    models: An empirical study on performance estimation methods.
+    Machine Learning 109, 1997–2028.
+
+    Examples
+    --------
+    >>> from timecave.validation_strategy_metrics import PAE
+    >>> PAE(10, 3)
+    7
+    >>> PAE(1, 5)
+    -4
+    >>> PAE(8, 8)
+    0
     """
 
     return estimated_error - test_error;
@@ -88,9 +129,9 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
 def sMPAE(estimated_error: float | int, test_error: float | int) -> float:
     
     """
-    Compute the Relative Predictive Accuracy Error (RPAE).
+    Compute the Relative Predictive Accuracy Error (sMPAE).
 
-    This function computes the RPAE metric. Both the estimated (i.e. validation) error
+    This function computes the sMPAE metric. Both the estimated (i.e. validation) error
     and the test error must be passed as parameters.
 
     Parameters
@@ -274,3 +315,9 @@ def under_over_estimation(estimated_error_list: list[float | int], test_error_li
         print("No errors were overestimated. Overestimation data dictionary empty.");
 
     return (under_estimation_stats, over_estimation_stats);
+
+if __name__ == "__main__":
+
+    import doctest
+
+    doctest.testmod(verbose=True);

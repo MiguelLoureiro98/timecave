@@ -151,3 +151,13 @@ plugins:
           options:
             docstring_style: numpy
             show_submodules: true
+  - autorefs
+
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+  - attr_list
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
