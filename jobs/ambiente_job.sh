@@ -1,14 +1,14 @@
 #!/bin/bash
 
 #SBATCH --job-name=ambiente
-#SBATCH --time=24:01:00
-#SBATCH --partition=hpc
+#SBATCH --time=00:29:55
+#SBATCH --partition=short
 #SBATCH --error=err.job.%j
 #SBATCH --output=out.job.%j
 #SBATCH -D .
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=2
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
