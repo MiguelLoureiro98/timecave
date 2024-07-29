@@ -10,28 +10,27 @@ transportes = [
     "datasets/processed_data/taxi_data_15052024.csv",
     "datasets/processed_data/traffic_17052024.csv",
 ]
+
 commands = [
     "git checkout transportes",
     "git fetch origin",
-    "if ! git diff --quiet origin/main; then git merge origin/main; ",
-    '  echo "Branch is not up to date with main. Merging main into transportes."',
-    "  git merge origin/main",
-    '  git config --global user.email "beatriz.plourenco99@gmail.com"',
-    '  git config --global user.name "Beatriz - Colab"',
-    "  git add .",
-    '  git commit -m "Merge"',
-    "  git push origin transportes",
-    "fi"
+    "if ! git diff --quiet origin/main; then git merge origin/main fi",
+    'if ! git diff --quiet origin/main; then git config --global user.email "beatriz.plourenco99@gmail.com" fi',
+    'if ! git diff --quiet origin/main; then git config --global user.name "Beatriz - Colab" fi',
+    "if ! git diff --quiet origin/main; then git add .  fi",
+    'if ! git diff --quiet origin/main; then git commit -m "Merge"  fi',
+    "if ! git diff --quiet origin/main; then git push origin transportes  fi",
 ]
 
-for command in commands:
-    print(f"Running command: {command}")
-    result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
-    print(f"Return code: {result.returncode}")
-    print(f"Standard Output: {result.stdout}")
-    print(f"Standard Error: {result.stderr}")
-    if result.returncode != 0:
-        print(f"Command failed: {command}")
+full_command = " && ".join(commands)
+
+
+result = subprocess.run(full_command, shell=True, check=True, text=True, capture_output=True)
+
+print("Return code:", result.returncode)
+print("Standard Output:", result.stdout)
+print("Standard Error:", result.stderr)
+
 
 cmd = """
 git config --global user.email "beatriz.plourenco99@gmail.com"
