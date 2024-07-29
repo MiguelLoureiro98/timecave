@@ -13,6 +13,9 @@ from experiment_utils import (
 )
 from models import predict_models
 import os
+import subprocess
+
+
 
 
 def run(
@@ -28,6 +31,7 @@ def run(
     model_func: callable = predict_models,
     save_stats: bool = True,
     models: list[str] = ["ARMA", "LSTM", "Tree"],
+    cmd: str = ""
 ):
     assert not resume_run or (from_ts == 0 and to_ts is None)
 
@@ -93,6 +97,9 @@ def run(
                         col_idx,
                         freq=freq,
                     )
+                
+                if len(cmd) != 0:
+                    subprocess.run(cmd, shell=True, check=True, text=True, capture_output=True)
 
             # Results without Validation (Table_B)
             model_func(train_val, test, file, col_idx, table_B, models=models)
