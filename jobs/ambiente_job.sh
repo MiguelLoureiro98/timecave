@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=ambiente
 #SBATCH --time=00:29:55
-#SBATCH --partition=medusa
+#SBATCH --partition=short
 #SBATCH --error=err.job.%j
 #SBATCH --output=out.job.%j
 #SBATCH -D .
