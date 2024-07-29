@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --job-name=ambiente
-#SBATCH --time=00:30:00
-#SBATCH --partition=hpc
+#SBATCH --time=00:29:55
+#SBATCH --partition=short
 #SBATCH --error=err.job.%j
 #SBATCH --output=out.job.%j
 #SBATCH -D .
