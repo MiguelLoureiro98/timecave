@@ -18,12 +18,13 @@ git fetch origin
 if ! git diff --quiet origin/main; then
   echo "Branch is not up to date with main. Merging main into transportes."
   git merge origin/main
-git config --global user.email "beatriz.plourenco99@gmail.com"
-git config --global user.name "Beatriz - Colab"
-git add .
-git commit -m "Merge"
-git push origin transportes
-fi"""
+  git config --global user.email "beatriz.plourenco99@gmail.com"
+  git config --global user.name "Beatriz - Colab"
+  git add .
+  git commit -m "Merge"
+  git push origin transportes
+fi
+"""
 
 subprocess.run(cmd_0, shell=True, check=True, text=True, capture_output=True)
 
