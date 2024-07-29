@@ -18,6 +18,7 @@ git fetch origin
 if ! git diff --quiet origin/main; then
   echo "Branch is not up to date with main. Merging main into transportes."
   git merge origin/main
+git push origin transportes
 fi"""
 
 subprocess.run(cmd_0, shell=True, check=True, text=True, capture_output=True)
