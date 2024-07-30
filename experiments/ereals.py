@@ -42,7 +42,7 @@ run(
 backup_dir = "results/eng_ciencias/backups"
 results_dir = "results/eng_ciencias"
 eng_ciencias = [
-    "datasets/processed_data/mechanical_gear_vibration_data.csv",
+#    "datasets/processed_data/mechanical_gear_vibration_data.csv",
     "datasets/processed_data/room_occupancy_data.csv",
     "datasets/processed_data/torque_characteristics_15052024.csv",
 ]
@@ -52,7 +52,7 @@ run(
     backup_dir,
     results_dir,
     resume_run=True,
-    add_name="eng_ciencias_LSTM",
+    add_name="eng_ciencias_LSTM_room_torque",
     models=["LSTM"],
     save_stats=False,
     resume_files=['results/eng_ciencias/backups/table_A_eng_ciencias_LSTM_2024_07_30__14_59_43.csv', 
