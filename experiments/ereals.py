@@ -55,6 +55,6 @@ run(
     add_name="eng_ciencias_LSTM",
     models=["LSTM"],
     save_stats=False,
-    resume_files=['results/eng_ciencias/backups/table_A_eng_ciencias_LSTM_2024_07_29__20_26_52.csv', 
-                  'results/eng_ciencias/backups/table_B_eng_ciencias_LSTM_2024_07_29__20_26_52.csv'] + [None, None, None]
+    resume_files=['results/eng_ciencias/backups/table_A_eng_ciencias_LSTM_2024_07_30__14_59_43.csv', 
+                  'results/eng_ciencias/backups/table_B_eng_ciencias_LSTM_2024_07_30__14_59_43.csv'] + [None, None, None]
 )
