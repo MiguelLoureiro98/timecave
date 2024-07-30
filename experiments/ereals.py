@@ -51,10 +51,8 @@ run(
     eng_ciencias,
     backup_dir,
     results_dir,
-    resume_run=True,
+    resume_run=False,
     add_name="eng_ciencias_LSTM_room_torque",
     models=["LSTM"],
-    save_stats=False,
-    resume_files=['results/eng_ciencias/backups/table_A_eng_ciencias_LSTM_2024_07_30__14_59_43.csv', 
-                  'results/eng_ciencias/backups/table_B_eng_ciencias_LSTM_2024_07_30__14_59_43.csv'] + [None, None, None]
+    save_stats=False
 )
