@@ -18,5 +18,6 @@ hide:
 - [APAE](apae.md)
 - [RPAE](rpae.md)
 - [RAPAE](rapae.md)
+- [sMPAE](smpae.md)
 - [MC_metric](MC_metric.md)
 - [under_over_estimation](under_over.md)

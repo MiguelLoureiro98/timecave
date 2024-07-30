@@ -72,6 +72,7 @@ nav:
         - APAE: API_ref/metrics/apae.md
         - RPAE: API_ref/metrics/rpae.md
         - RAPAE: API_ref/metrics/rapae.md
+        - sMPAE: API_ref/metrics/smpae.md
         - MC_metric: API_ref/metrics/MC_metric.md
         - under_over_estimation: API_ref/metrics/under_over.md
     - 3 - Utilities:
@@ -145,6 +146,10 @@ not_in_nav: |
 
 plugins:
   - search
+  - bibtex:
+      bib_file: "docs/refs.bib"
+      options:
+        bib_by_default: true
   - mkdocstrings:
       handlers:
         python:
@@ -157,6 +162,7 @@ markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
   - attr_list
+  - footnotes
 
 extra_javascript:
   - javascripts/mathjax.js
