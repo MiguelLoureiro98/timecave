@@ -15,6 +15,8 @@ from models import predict_models
 import os
 
 
+
+
 def run(
     filenames: list[str],
     backup_dir: str,
@@ -27,7 +29,7 @@ def run(
     add_name: str = "",
     model_func: callable = predict_models,
     save_stats: bool = True,
-    models: list[str] = ["ARMA", "LSTM", "Tree"],
+    models: list[str] = ["ARMA", "LSTM", "Tree"]
 ):
     assert not resume_run or (from_ts == 0 and to_ts is None)
 
@@ -93,6 +95,8 @@ def run(
                         col_idx,
                         freq=freq,
                     )
+                
+                
 
             # Results without Validation (Table_B)
             model_func(train_val, test, file, col_idx, table_B, models=models)

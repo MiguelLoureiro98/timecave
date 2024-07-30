@@ -1,5 +1,6 @@
 from run_experiments import run
 import os
+import subprocess
 
 os.chdir("experiments")
 backup_dir = "results/transportes/backups"
@@ -17,5 +18,5 @@ run(
     resume_run=False,
     add_name="transportes_LSTM",
     models=["LSTM"],
-    save_stats=False,
+    save_stats=False
 )

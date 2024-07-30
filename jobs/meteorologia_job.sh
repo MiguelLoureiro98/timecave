@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=meteorologia
-#SBATCH --time=02:01:00
+#SBATCH --time=06:01:00
 #SBATCH --partition=hpc
 #SBATCH --error=err.job.%j
 #SBATCH --output=out.job.%j
@@ -13,8 +13,7 @@
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 module load python/3.10.13
-module load cuda/12.1
-module load tensorflow/2.14-0
+module load gcc-13.2
 
 git checkout meteorologia
 git fetch origin
