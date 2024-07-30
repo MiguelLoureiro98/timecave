@@ -6,11 +6,15 @@ from statsmodels.tsa.arima.model import ARIMA
 from experiment_utils import get_X_y
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Input, GRU, SimpleRNN, LSTM
-from timecave.validation_methods._base import base_splitter
+from timecave.validation_methods.base import BaseSplitter
 import tensorflow as tf
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.ar_model import AutoReg
 import time
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+import random
 
 
 def rnn_model(lags: int):
@@ -97,11 +101,14 @@ def predict_rnn(
     epochs: int = 200,
     verbose: int = 0,
     one_step_head_eval: bool = True,
+    seed: int = 42
 ) -> dict:
     """
     Predict future values using Long Short-Term Memory (LSTM).
     """
-
+    np.random.seed(seed)
+    tf.random.set_seed(seed)
+    random.seed(seed)
     X_val, y_val = get_X_y(val_series, lags)
     X_train, y_train = get_X_y(train_series, lags)
 
@@ -225,7 +232,7 @@ def predict_models(
     filename,
     col_idx,
     table: pd.DataFrame,
-    method: base_splitter = None,
+    method: BaseSplitter = None,
     it: int = None,
     models: list[str] = ["ARMA", "LSTM", "Tree"],
 ):

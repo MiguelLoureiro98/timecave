@@ -14,8 +14,8 @@ run(
     backup_dir,
     results_dir,
     resume_run=False,
-    add_name="eco_financas",
-    models=["ARMA", "tree"],
+    add_name="eco_financas_LSTM",
+    models=["LSTM"],
     save_stats=False,
 )
 
@@ -33,8 +33,8 @@ run(
     backup_dir,
     results_dir,
     resume_run=False,
-    add_name="energia",
-    models=["ARMA", "tree"],
+    add_name="energia_LSTM",
+    models=["LSTM"],
     save_stats=False,
 )
 
@@ -51,7 +51,7 @@ run(
     backup_dir,
     results_dir,
     resume_run=False,
-    add_name="eng_ciencias",
-    models=["ARMA", "tree"],
+    add_name="eng_ciencias_LSTM",
+    models=["LSTM"],
     save_stats=False,
 )

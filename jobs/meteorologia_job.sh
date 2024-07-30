@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#SBATCH --job-name=meteorologia
+#SBATCH --time=06:01:00
+#SBATCH --partition=hpc
+#SBATCH --error=err.job.%j
+#SBATCH --output=out.job.%j
+#SBATCH -D .
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=10
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+module load python/3.10.13
+module load gcc-13.2
+
+git checkout meteorologia
+git fetch origin
+
+# Check if the branch is up to date with main
+if ! git diff --quiet origin/main; then
+  echo "Branch is not up to date with main. Merging main into meteorologia."
+  git merge origin/main
+fi
+python experiments/meteorologia.py
+git config --global user.email "beatriz.plourenco99@gmail.com"
+git config --global user.name "Beatriz - Colab"
+git add experiments/results/meteorologia
+git commit -m "meteorologia results from hpc."
+git push origin meteorologia
+
+exit

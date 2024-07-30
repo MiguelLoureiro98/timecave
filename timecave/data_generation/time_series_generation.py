@@ -22,6 +22,9 @@ from typing import Callable, List, Dict
 
 class TimeSeriesGenerator:
     """
+    TimeSeriesGenerator(functions: List[Callable], length: int = 100, noise_level: float or int = 0.1, weights: List[float] = None, parameter_values: list[Dict] = None)
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     A class for generating time series data using provided functions.
 
     This class enables the generation of multiple time series by combining various functions with parameters.

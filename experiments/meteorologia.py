@@ -16,7 +16,7 @@ run(
     backup_dir,
     results_dir,
     resume_run=False,
-    add_name="meteorologia",
-    models=["ARMA", "tree"],
+    add_name="meteorologia_LSTM",
+    models=["LSTM"],
     save_stats=False,
 )

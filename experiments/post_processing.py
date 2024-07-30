@@ -7,18 +7,20 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import timecave.validation_strategy_metrics as metrics
 from timecave.validation_methods.weights import exponential_weights
+import seaborn as sns
 
-def series_name(data: pd.DataFrame) -> pd.DataFrame:
+
+def series_name(data: pd.DataFrame, file_name = "filename", column_name="column_index") -> pd.DataFrame:
 
     """
     Merges file name and column name columns into a single series column.
     """
 
-    # ! Check the column names!!!
-
     new_data = data.copy();
-    new_data["series"] = new_data["file_name"] + "_" + new_data["column_name"];
-    new_data = new_data.drop(columns=["file_name", "column_name"]);
+    new_data["series"] = new_data[file_name] + "_" + new_data[column_name];
+    new_data = new_data.drop(columns=[file_name, column_name]);
+    cols = ["series"] + [col for col in new_data.columns if col != "series"]
+    new_data = new_data[cols]
 
     return new_data;
 
@@ -35,17 +37,20 @@ def add_weights(processed_data: pd.DataFrame, preq_methods: list[str], CV_method
     exp_weights_CV = exponential_weights(5);
     exp_weights_preq = exponential_weights(5, compensation=1);
 
-    paper_weights_df = pd.DataFrame({"iterations": [1, 2, 3, 4, 5], "weights": paper_weights.tolist()});
-    exp_weights_df = pd.DataFrame({"iterations": [1, 2, 3, 4, 5], "weights": exp_weights_CV.tolist()});
-    exp_weights_preq_df = pd.DataFrame({"iterations": [1, 2, 3, 4], "weights": exp_weights_preq.tolist()});
+    paper_weights_df = pd.DataFrame({"iteration": [1, 2, 3, 4, 5], "weights": paper_weights.tolist()});
+    exp_weights_df = pd.DataFrame({"iteration": [1, 2, 3, 4, 5], "weights": exp_weights_CV.tolist()});
+    exp_weights_preq_df = pd.DataFrame({"iteration": [1, 2, 3, 4], "weights": exp_weights_preq.tolist()});
 
     CV_weights_paper = data.loc[data["method"].isin(CV_methods)].copy();
     CV_weights = data.loc[data["method"].isin(CV_methods)].copy();
     preq_weights = data.loc[data["method"].isin(preq_methods)].copy();
 
-    CV_weights_paper_df = pd.merge(left=CV_weights_paper, right=paper_weights_df, on=["iterations"]);
-    CV_weights_df = pd.merge(left=CV_weights, right=exp_weights_df, on=["iterations"]);
-    preq_weights_df = pd.merge(left=preq_weights, right=exp_weights_preq_df, on=["iterations"]);
+    CV_weights_paper_df = pd.merge(left=CV_weights_paper, right=paper_weights_df, on=["iteration"]);
+    CV_weights_paper_df['method']  = CV_weights_paper_df['method'] + '_with_weights_paper'
+    CV_weights_df = pd.merge(left=CV_weights, right=exp_weights_df, on=["iteration"]);
+    CV_weights_df['method']  = CV_weights_df['method'] + '_with_weights'
+    preq_weights_df = pd.merge(left=preq_weights, right=exp_weights_preq_df, on=["iteration"]);
+    preq_weights_df['method']  = preq_weights_df['method'] + '_with_weights'
 
     CV_all_weighted_df = pd.concat([CV_weights_paper_df, CV_weights_df], axis=0).reset_index().drop(columns=["index"]);
     all_weighted_df = pd.concat([CV_all_weighted_df, preq_weights_df], axis=0).reset_index().drop(columns=["index"]);
@@ -109,7 +114,7 @@ def compute_val_metrics(aggregate_data: pd.DataFrame, performance_metric: str = 
     methods = aggregate_data["method"].unique().tolist();
 
     frames = [];
-    val_metrics = [metrics.PAE, metrics.APAE, metrics.RPAE, metrics.RAPAE];
+    val_metrics = [metrics.PAE, metrics.APAE, metrics.RPAE, metrics.RAPAE, metrics.sMPAE];
 
     for method in methods:
 
@@ -127,7 +132,7 @@ def compute_val_metrics(aggregate_data: pd.DataFrame, performance_metric: str = 
                 df["model"] = model;
     
             final_df = pd.concat(res_df, axis=0).reset_index().drop(columns=["index"]);
-            final_df["metric"] = ["PAE", "APAE", "RPAE", "RAPAE"];
+            final_df["metric"] = ["PAE", "APAE", "RPAE", "RAPAE", "sMPAE"];
             frames.append(final_df);
     
     results = pd.concat(frames, axis=0).reset_index().drop(columns=["index"]);
@@ -247,6 +252,16 @@ def RAPAE_row(row, metric: str):
 
     return metrics.RAPAE(row[f"{metric}_estimate"], row[f"{metric}_true"]);
 
+def sMPAE_row(row, metric: str):
+
+    """
+    Computes the sMPAE metric by row.
+    """
+
+    return metrics.sMPAE(row[f"{metric}_estimate"], row[f"{metric}_true"]);
+
+
+
 def compute_metrics_per_row(aggregate_data: pd.DataFrame, performance_metric: str) -> pd.DataFrame:
 
     """
@@ -257,6 +272,7 @@ def compute_metrics_per_row(aggregate_data: pd.DataFrame, performance_metric: st
     aggregate_data["APAE"] = aggregate_data.apply(APAE_row, args=[performance_metric], axis=1);
     aggregate_data["RPAE"] = aggregate_data.apply(RPAE_row, args=[performance_metric], axis=1);
     aggregate_data["RAPAE"] = aggregate_data.apply(RAPAE_row, args=[performance_metric], axis=1);
+    aggregate_data["sMPAE"] = aggregate_data.apply(sMPAE_row, args=[performance_metric], axis=1);
 
     return aggregate_data;
 
@@ -285,61 +301,172 @@ def val_metrics_per_iteration(processed_data: pd.DataFrame, performance_metric: 
 
     return metrics_per_it;
 
-def boxplots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int) -> None:
-
+def boxplots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int, shows_outliers: bool) -> None:
     """
-    ...
+    Function to generate box plots for the given model's validation metrics.
     """
+    plt.rcParams.update({'font.size': 22})
+    model_data = processed_data.loc[processed_data["model"] == model].copy()
+    val_metrics = compute_metrics_per_row(model_data, performance_metric)
 
-    model_data = processed_data.loc[processed_data["model"] == model].copy();
-    val_metrics = compute_metrics_per_row(model_data, performance_metric);
+    # Adjust y-axis limits if shows_outliers is False
+    if not shows_outliers:
+        Q1 = val_metrics[validation_metrics].quantile(0.25)
+        Q3 = val_metrics[validation_metrics].quantile(0.75)
+        IQR = Q3 - Q1
 
-    # Do it separately for each model.
-    boxplot = val_metrics.boxplot(column=validation_metrics, by="method", layout=(len(validation_metrics), 1), return_type="axes", figsize=(width, height));
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
 
-    for ax in boxplot:
+    boxplot = val_metrics.boxplot(
+        column=validation_metrics,
+        by="method",
+        layout=(len(validation_metrics), 1),
+        return_type="axes",
+        figsize=(width, height),
+        showfliers=shows_outliers,
+        patch_artist=True,  # Enable facecolor setting
+        boxprops=dict(color='darkgrey', linewidth=2, facecolor='lightgrey'),
+        medianprops=dict(color='black', linewidth=3),
+        whiskerprops=dict(color='darkgrey', linewidth=2),
+        capprops=dict(color='darkgrey', linewidth=2),
+        flierprops=dict(markerfacecolor='darkgrey', markersize=2)
+    )
+    for ax, metric in zip(boxplot, validation_metrics):
+        ax.axhline(0, c="r", linestyle="--", linewidth=3)
+        ax.set_ylabel(metric, fontweight='bold')
 
-        ax.axhline(0, c="r", linestyle="--");
+        # Shade areas
+        ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[0], color='lightblue', alpha=0.1, label='Underestimation' if metric == validation_metrics[0] else "")
+        ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[1], color='lightgreen', alpha=0.1, label='Overestimation' if metric == validation_metrics[0] else "")
+
+        if not shows_outliers:
+            ax.set_ylim(lower_bound[metric], upper_bound[metric])
+        
+        ax.set_title('')
+
+    fig = boxplot[0].get_figure() if isinstance(boxplot, pd.Series) else boxplot[0, 0].get_figure()
+    fig.legend(loc='upper right')
+    fig.suptitle("")
+    plt.xticks(rotation=45)
+    plt.xlabel('Method', fontweight='bold')
+
+
+    plt.show()
+
+    return
+
+
+def violin_plots(processed_data: pd.DataFrame, performance_metric: str, model: str, validation_metrics: list[str], height: int, width: int) -> None:
+    """
+    Generates combined violin plots for the specified performance metrics of a model.
+    """
+    plt.rcParams.update({'font.size': 22})
+    model_data = processed_data.loc[processed_data["model"] == model].copy()
+    val_metrics = compute_metrics_per_row(model_data, performance_metric)
     
-    fig = boxplot.iloc[0].get_figure();
-    fig.suptitle(f"Validation method performance - {model} model");
-    plt.show();
+    # Create a subplot for each validation metric
+    fig, axes = plt.subplots(len(validation_metrics), 1, figsize=(width, height))
 
-    return;
+    if len(validation_metrics) == 1:
+        axes = [axes]
+
+    for ax, metric in zip(axes, validation_metrics):
+        ax.set_ylabel(metric, fontweight='bold')
+        sns.violinplot(x="method", y=metric, data=val_metrics, ax=ax, inner=None, color=".8")
+        #sns.boxplot(x="method", y=metric, data=val_metrics, ax=ax, whis=1.5)
+        ax.axhline(0, c="r", linestyle="--")
+        ax.set_title('')
+    
+    #fig.suptitle(f'Validation method performance - {model} model')
+    plt.tight_layout()
+    plt.xticks(rotation=45)
+    fig.suptitle("")
+    
+    plt.xlabel('Method', fontweight='bold')
+    plt.show()
+
+    return
+
+
 
 def boxplots_per_iteration(processed_data: pd.DataFrame, performance_metric: str, model: str, method: str, validation_metrics: list[str], height: int, width: int) -> None:
 
     """
     ...
     """
-
-    #methods_list = ["Growing_Window",
-    #                "Rolling_Window",
-    #                "Weighted_Growing_Window",
-    #                "Weighted_Rolling_Window",
-    #                "Gap_Growing_Window",
-    #                "Gap_Rolling_Window",
-    #                "Block_CV",
-    #                "Weighted_Block_CV",
-    #                "hv_Block_CV"];
-    
+    plt.rcParams.update({'font.size': 18})
     filters = (processed_data["method"] == method) & (processed_data["model"] == model);
     preq_CV_data = processed_data.loc[filters].copy();
 
     val_metrics = compute_metrics_per_row(preq_CV_data, performance_metric);
-    
-    # Do it separately for each model.
-    boxplot = val_metrics.boxplot(column=validation_metrics, by="iteration", layout=(len(validation_metrics), 1), return_type="axes", figsize=(width, height));
 
-    for ax in boxplot:
+    boxplot = val_metrics.boxplot(
+        column=validation_metrics,
+        by="iteration",
+        layout=(len(validation_metrics), 1),
+        return_type="axes",
+        figsize=(width, height),
+        patch_artist=True,  # Enable facecolor setting
+        boxprops=dict(color='darkgrey', linewidth=2, facecolor='lightgrey'),
+        medianprops=dict(color='black', linewidth=3),
+        whiskerprops=dict(color='darkgrey', linewidth=2),
+        capprops=dict(color='darkgrey', linewidth=2),
+        flierprops=dict(markerfacecolor='darkgrey', markersize=2))
+    
+
+    for ax, metric in zip(boxplot, validation_metrics):
 
         ax.axhline(0, c="r", linestyle="--");
+        
+        # Shade areas
+        ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[0], color='darkblue', alpha=0.1, label='Underestimation')
+        ax.fill_between(ax.get_xlim(), 0, ax.get_ylim()[1], color='lightgreen', alpha=0.1, label='Overestimation')
+        ax.set_ylabel(metric, fontweight='bold')
+        ax.set_xlabel("Iteration", fontweight='bold')
+        ax.set_title('')
     
     fig = boxplot.iloc[0].get_figure();
-    fig.suptitle(f"Estimation accuracy per iteration - {model} model");
+    fig.suptitle("")
+    fig.legend(loc='upper right')
+    #fig.suptitle(f"Estimation accuracy per iteration - {model} model");
+    
     plt.show();
 
     return;
+
+
+def violin_plots_per_iteration(processed_data: pd.DataFrame, performance_metric: str, model: str, method: str, validation_metrics: list[str], height: int, width: int) -> None:
+    """
+    Generates violin plots of validation metrics per iteration for a given model and method.
+    """
+
+    # Filter the data for the specified model and method
+    filters = (processed_data["method"] == method) & (processed_data["model"] == model)
+    preq_CV_data = processed_data.loc[filters].copy()
+
+    val_metrics = compute_metrics_per_row(preq_CV_data, performance_metric)
+    
+    # Plot violin plots for each validation metric
+    fig, axes = plt.subplots(nrows=len(validation_metrics), ncols=1, figsize=(width, height))
+
+    for i, metric in enumerate(validation_metrics):
+        ax = axes[i] if len(validation_metrics) > 1 else axes
+        sns.violinplot(data=val_metrics, x="iteration", y=metric, ax=ax)
+        ax.axhline(0, c="r", linestyle="--")
+        ax.set_ylabel(metric, fontweight='bold')
+        ax.set_xlabel("Iteration", fontweight='bold')
+        ax.set_title('')
+
+    #fig.suptitle(f"Estimation accuracy per iteration - {model} model")
+    fig.suptitle("")
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    plt.rcParams.update({'font.size': 18})
+    plt.show()
+
+    return
+
+
 
 if __name__ == "__main__":
 

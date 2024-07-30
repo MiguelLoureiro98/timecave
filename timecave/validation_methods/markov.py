@@ -7,8 +7,8 @@ MarkovCV
 
 """
 
-from timecave.validation_methods._base import base_splitter
-from timecave.data_characteristics import get_features
+from .base import BaseSplitter
+from ..data_characteristics import get_features
 import warnings
 import numpy as np
 import pandas as pd
@@ -17,7 +17,27 @@ import matplotlib.pyplot as plt
 import math
 
 
-class MarkovCV(base_splitter):
+class MarkovCV(BaseSplitter):
+    """
+    MarkovCV(ts: np.ndarray | pd.Series, p: int, seed: int = 1)
+    -----------------------------------------------------------
+
+    _summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    ts : np.ndarray | pd.Series
+        Univariate time series.
+
+    p : int
+        _description_
+
+    seed : int, default=1
+        _description_
+    """
+
     def __init__(self, ts: np.ndarray | pd.Series, p: int, seed: int = 1) -> None:
         self._check_seed(seed)
         self._check_p(p)
@@ -135,6 +155,17 @@ class MarkovCV(base_splitter):
             self._sue[u] = Su[u * 2]
 
     def split(self) -> Generator[tuple, None, None]:
+        """
+        _summary_
+
+        _extended_summary_
+
+        Yields
+        ------
+        Generator[tuple, None, None]
+            _description_
+        """
+
         self._markov_partitions()
         for i in range(1, len(self._suo.items()) + 1):
             train, validation = self._suo[i], self._sue[i]
@@ -143,6 +174,12 @@ class MarkovCV(base_splitter):
             yield (train, validation, 1.0)  # two-fold cross validation
 
     def info(self) -> None:
+        """
+        _summary_
+
+        _extended_summary_
+        """
+
         self._markov_partitions()
 
         lengths = []
@@ -157,6 +194,21 @@ class MarkovCV(base_splitter):
         pass
 
     def statistics(self) -> tuple[pd.DataFrame]:
+        """
+        _summary_
+
+        _extended_summary_
+
+        Returns
+        -------
+        tuple[pd.DataFrame]
+            _description_
+
+        Raises
+        ------
+        ValueError
+            _description_
+        """
 
         columns = [
             "Mean",
@@ -177,6 +229,8 @@ class MarkovCV(base_splitter):
                 "Basic statistics can only be computed if the time series comprises more than two samples."
             )
 
+        print("Frequency features are only meaningful if the correct sampling frequency is passed to the class.")
+
         full_features = get_features(self._series, self._fs)[columns]
         training_stats = []
         validation_stats = []
@@ -195,6 +249,18 @@ class MarkovCV(base_splitter):
         return (full_features, training_features, validation_features)
 
     def plot(self, height: int, width: int) -> None:
+        """
+        _summary_
+
+        _extended_summary_
+
+        Parameters
+        ----------
+        height : int
+            _description_
+        width : int
+            _description_
+        """
 
         fig, axs = plt.subplots(self.n_splits, 1, sharex=True)
         fig.set_figheight(height)

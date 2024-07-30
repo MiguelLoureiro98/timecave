@@ -3,7 +3,7 @@ This file contains unit tests targetting the 'CV' module.
 """
 
 import unittest
-from timecave.validation_methods.CV import Block_CV, hv_Block_CV, AdaptedhvBlockCV
+from timecave.validation_methods.CV import BlockCV, hvBlockCV, AdaptedhvBlockCV
 from timecave.validation_methods.weights import linear_weights, exponential_weights
 import numpy as np
 
@@ -26,22 +26,22 @@ class TestCV(unittest.TestCase):
         cls.h_large = 50;
         cls.v_large = 50;
 
-        cls.Block1 = Block_CV(cls.n_splits, cls.test_array_simple, cls.simple_freq);
-        cls.Block2 = Block_CV(cls.n_splits, cls.test_array_simple_odd, cls.simple_freq);
-        cls.Block3 = Block_CV(cls.n_splits, cls.test_array_high_freq, cls.high_freq);
-        cls.Block4 = Block_CV(cls.n_splits, cls.specific_array_1, cls.simple_freq);
-        cls.Block5 = Block_CV(cls.n_splits, cls.specific_array_2, cls.simple_freq);
-        cls.Block1_linear = Block_CV(cls.n_splits, cls.test_array_simple, cls.simple_freq, weight_function=linear_weights, params={"slope": 2});
-        cls.Block2_linear = Block_CV(cls.n_splits, cls.test_array_simple_odd, cls.simple_freq, weight_function=linear_weights, params={"slope": 2});
-        cls.Block3_linear = Block_CV(cls.n_splits, cls.test_array_high_freq, cls.high_freq, weight_function=linear_weights, params={"slope": 2});
-        cls.Block1_exponential = Block_CV(cls.n_splits, cls.test_array_simple, cls.simple_freq, weight_function=exponential_weights, params={"base": 2});
-        cls.Block2_exponential = Block_CV(cls.n_splits, cls.test_array_simple_odd, cls.simple_freq, weight_function=exponential_weights, params={"base": 2});
-        cls.Block3_exponential = Block_CV(cls.n_splits, cls.test_array_high_freq, cls.high_freq, weight_function=exponential_weights, params={"base": 2});
+        cls.Block1 = BlockCV(cls.n_splits, cls.test_array_simple, cls.simple_freq);
+        cls.Block2 = BlockCV(cls.n_splits, cls.test_array_simple_odd, cls.simple_freq);
+        cls.Block3 = BlockCV(cls.n_splits, cls.test_array_high_freq, cls.high_freq);
+        cls.Block4 = BlockCV(cls.n_splits, cls.specific_array_1, cls.simple_freq);
+        cls.Block5 = BlockCV(cls.n_splits, cls.specific_array_2, cls.simple_freq);
+        cls.Block1_linear = BlockCV(cls.n_splits, cls.test_array_simple, cls.simple_freq, weight_function=linear_weights, params={"slope": 2});
+        cls.Block2_linear = BlockCV(cls.n_splits, cls.test_array_simple_odd, cls.simple_freq, weight_function=linear_weights, params={"slope": 2});
+        cls.Block3_linear = BlockCV(cls.n_splits, cls.test_array_high_freq, cls.high_freq, weight_function=linear_weights, params={"slope": 2});
+        cls.Block1_exponential = BlockCV(cls.n_splits, cls.test_array_simple, cls.simple_freq, weight_function=exponential_weights, params={"base": 2});
+        cls.Block2_exponential = BlockCV(cls.n_splits, cls.test_array_simple_odd, cls.simple_freq, weight_function=exponential_weights, params={"base": 2});
+        cls.Block3_exponential = BlockCV(cls.n_splits, cls.test_array_high_freq, cls.high_freq, weight_function=exponential_weights, params={"base": 2});
 
-        cls.hvBlock1 = hv_Block_CV(cls.test_array_simple, cls.simple_freq, cls.h_simple, cls.v_simple);
-        cls.hvBlock2 = hv_Block_CV(cls.test_array_simple_odd, cls.simple_freq, cls.h_simple, cls.v_simple);
-        cls.hvBlock3 = hv_Block_CV(cls.test_array_high_freq, cls.high_freq, cls.h_large, cls.v_large);
-        cls.hvBlock_limit = hv_Block_CV(cls.test_array_simple, cls.simple_freq, 2, 2);
+        cls.hvBlock1 = hvBlockCV(cls.test_array_simple, cls.simple_freq, cls.h_simple, cls.v_simple);
+        cls.hvBlock2 = hvBlockCV(cls.test_array_simple_odd, cls.simple_freq, cls.h_simple, cls.v_simple);
+        cls.hvBlock3 = hvBlockCV(cls.test_array_high_freq, cls.high_freq, cls.h_large, cls.v_large);
+        cls.hvBlock_limit = hvBlockCV(cls.test_array_simple, cls.simple_freq, 2, 2);
 
         cls.adapted1 = AdaptedhvBlockCV(cls.n_splits, cls.test_array_simple, cls.simple_freq, cls.h_simple);
         cls.adapted2 = AdaptedhvBlockCV(cls.n_splits, cls.test_array_simple_odd, cls.simple_freq, cls.h_simple);
@@ -88,12 +88,12 @@ class TestCV(unittest.TestCase):
         """
 
         # Exceptions
-        self.assertRaises(TypeError, hv_Block_CV, self.test_array_simple, self.simple_freq, 0.5);
-        self.assertRaises(TypeError, hv_Block_CV, self.test_array_simple, self.simple_freq, 1, 0.5);
-        self.assertRaises(ValueError, hv_Block_CV, self.test_array_simple, self.simple_freq, -1);
-        self.assertRaises(ValueError, hv_Block_CV, self.test_array_simple, self.simple_freq, 1, -1);
-        self.assertRaises(ValueError, hv_Block_CV, self.test_array_simple, self.simple_freq, 3, 2);
-        self.assertRaises(ValueError, hv_Block_CV, self.test_array_simple_odd, self.simple_freq, 3, 4);
+        self.assertRaises(TypeError, hvBlockCV, self.test_array_simple, self.simple_freq, 0.5);
+        self.assertRaises(TypeError, hvBlockCV, self.test_array_simple, self.simple_freq, 1, 0.5);
+        self.assertRaises(ValueError, hvBlockCV, self.test_array_simple, self.simple_freq, -1);
+        self.assertRaises(ValueError, hvBlockCV, self.test_array_simple, self.simple_freq, 1, -1);
+        self.assertRaises(ValueError, hvBlockCV, self.test_array_simple, self.simple_freq, 3, 2);
+        self.assertRaises(ValueError, hvBlockCV, self.test_array_simple_odd, self.simple_freq, 3, 4);
         self.assertRaises(TypeError, AdaptedhvBlockCV, 5, self.test_array_simple, self.simple_freq, 0.5);
         self.assertRaises(ValueError, AdaptedhvBlockCV, 5, self.test_array_simple, self.simple_freq, -1);
         self.assertRaises(ValueError, AdaptedhvBlockCV, 5, self.test_array_simple, self.simple_freq, 10);
@@ -175,7 +175,7 @@ class TestCV(unittest.TestCase):
         blockCV4 = [[ind for ind in indices4 if ind not in blockCV_val4[i]] for i in range(5)];
         blockCV5 = [[ind for ind in indices5 if ind not in blockCV_val5[i]] for i in range(5)];
 
-        hv_block_val1 = [[0, 1],
+        hvblock_val1 = [[0, 1],
                          [0, 1, 2],
                          [1, 2, 3],
                          [2, 3, 4],
@@ -185,7 +185,7 @@ class TestCV(unittest.TestCase):
                          [6, 7, 8],
                          [7, 8, 9],
                          [8, 9]];
-        hv_block_val2 = [[0, 1],
+        hvblock_val2 = [[0, 1],
                          [0, 1, 2],
                          [1, 2, 3],
                          [2, 3, 4],
@@ -198,8 +198,8 @@ class TestCV(unittest.TestCase):
                          [9, 10, 11],
                          [10, 11, 12],
                          [11, 12]];
-        hv_block_val3 = [indices3[np.fmax(i - self.v_large, 0) : np.fmin(i + self.v_large + 1, len(indices3))] for i in indices3];
-        hv_block_val_limit = [[0, 1, 2],
+        hvblock_val3 = [indices3[np.fmax(i - self.v_large, 0) : np.fmin(i + self.v_large + 1, len(indices3))] for i in indices3];
+        hvblock_val_limit = [[0, 1, 2],
                               [0, 1, 2, 3],
                               [0, 1, 2, 3, 4],
                               [1, 2, 3, 4, 5],
@@ -215,10 +215,10 @@ class TestCV(unittest.TestCase):
         h_list3 = [indices3[np.fmax(i - self.v_large - self.h_large, 0) : np.fmin(i + self.v_large + self.h_large + 1, len(indices3))] for i in indices3];
         h_list4 = [indices1[np.fmax(i - 2 - 2, 0) : np.fmin(i + 2 + 2 + 1, len(indices1))] for i in indices1];
         
-        hv_block1 = [[ind for ind in indices1 if ind not in h_list1[i]] for i in range(len(h_list1))];
-        hv_block2 = [[ind for ind in indices2 if ind not in h_list2[i]] for i in range(len(h_list2))];
-        hv_block3 = [[ind for ind in indices3 if ind not in h_list3[i]] for i in range(len(h_list3))];
-        hv_block_limit = [[ind for ind in indices1 if ind not in h_list4[i]] for i in range(len(h_list4))];
+        hvblock1 = [[ind for ind in indices1 if ind not in h_list1[i]] for i in range(len(h_list1))];
+        hvblock2 = [[ind for ind in indices2 if ind not in h_list2[i]] for i in range(len(h_list2))];
+        hvblock3 = [[ind for ind in indices3 if ind not in h_list3[i]] for i in range(len(h_list3))];
+        hvblock_limit = [[ind for ind in indices1 if ind not in h_list4[i]] for i in range(len(h_list4))];
 
         adapted_val1 = [indices1[ind:ind+2] for ind in indices1 if ind % 2 == 0];
         adapted_val2 = [[0, 1, 2],
@@ -310,23 +310,23 @@ class TestCV(unittest.TestCase):
         # Tests - hv Block CV
         for ind, (train, val, _) in enumerate(self.hvBlock1.split()):
 
-            self.assertListEqual(train.tolist(), hv_block1[ind]);
-            self.assertListEqual(val.tolist(), hv_block_val1[ind]);
+            self.assertListEqual(train.tolist(), hvblock1[ind]);
+            self.assertListEqual(val.tolist(), hvblock_val1[ind]);
         
         for ind, (train, val, _) in enumerate(self.hvBlock2.split()):
 
-            self.assertListEqual(train.tolist(), hv_block2[ind]);
-            self.assertListEqual(val.tolist(), hv_block_val2[ind]);
+            self.assertListEqual(train.tolist(), hvblock2[ind]);
+            self.assertListEqual(val.tolist(), hvblock_val2[ind]);
         
         for ind, (train, val, _) in enumerate(self.hvBlock3.split()):
 
-            self.assertListEqual(train.tolist(), hv_block3[ind]);
-            self.assertListEqual(val.tolist(), hv_block_val3[ind]);
+            self.assertListEqual(train.tolist(), hvblock3[ind]);
+            self.assertListEqual(val.tolist(), hvblock_val3[ind]);
         
         for ind, (train, val, _) in enumerate(self.hvBlock_limit.split()):
 
-            self.assertListEqual(train.tolist(), hv_block_limit[ind]);
-            self.assertListEqual(val.tolist(), hv_block_val_limit[ind]);
+            self.assertListEqual(train.tolist(), hvblock_limit[ind]);
+            self.assertListEqual(val.tolist(), hvblock_val_limit[ind]);
 
         # Tests - Adapted hv Block CV
         for ind, (train, val, _) in enumerate(self.adapted1.split()):
@@ -387,12 +387,12 @@ class TestCV(unittest.TestCase):
         two_sample_series = np.zeros(shape=(2,));
         small_series = np.zeros(shape=(5,));
 
-        block_2samp = Block_CV(2, two_sample_series, 1);
-        hv_2samp = hv_Block_CV(two_sample_series, 1);
-        block_small = Block_CV(5, small_series, 1);
+        block_2samp = BlockCV(2, two_sample_series, 1);
+        hv2samp = hvBlockCV(two_sample_series, 1);
+        block_small = BlockCV(5, small_series, 1);
 
         self.assertRaises(ValueError, block_2samp.statistics);
-        self.assertRaises(ValueError, hv_2samp.statistics);
+        self.assertRaises(ValueError, hv2samp.statistics);
         self.assertRaises(ValueError, block_small.statistics);
 
         # Functionality
@@ -415,8 +415,8 @@ class TestCV(unittest.TestCase):
 
         block1_full_stats, block1_train_stats, block1_val_stats = self.Block1.statistics();
         block2_full_stats, block2_train_stats, block2_val_stats = self.Block2.statistics();
-        hv_block1_full_stats, hv_block1_train_stats, hv_block1_val_stats = self.hvBlock1.statistics();
-        hv_block2_full_stats, hv_block2_train_stats, hv_block2_val_stats = self.hvBlock2.statistics();
+        hvblock1_full_stats, hvblock1_train_stats, hvblock1_val_stats = self.hvBlock1.statistics();
+        hvblock2_full_stats, hvblock2_train_stats, hvblock2_val_stats = self.hvBlock2.statistics();
         adapted1_full_stats, adapted1_train_stats, adapted1_val_stats = self.adapted1.statistics();
         adapted2_full_stats, adapted2_train_stats, adapted2_val_stats = self.adapted2.statistics();
         
@@ -430,12 +430,12 @@ class TestCV(unittest.TestCase):
         self.assertEqual(block2_train_stats.shape[0], 5);
         self.assertEqual(block2_val_stats.shape[0], 5);
 
-        self.assertEqual(hv_block1_full_stats.shape[0], 1);
-        self.assertEqual(hv_block1_train_stats.shape[0], self.test_array_simple.shape[0]);
-        self.assertEqual(hv_block1_val_stats.shape[0], self.test_array_simple.shape[0]);
-        self.assertEqual(hv_block2_full_stats.shape[0], 1);
-        self.assertEqual(hv_block2_train_stats.shape[0], self.test_array_simple_odd.shape[0]);
-        self.assertEqual(hv_block2_val_stats.shape[0], self.test_array_simple_odd.shape[0]);
+        self.assertEqual(hvblock1_full_stats.shape[0], 1);
+        self.assertEqual(hvblock1_train_stats.shape[0], self.test_array_simple.shape[0]);
+        self.assertEqual(hvblock1_val_stats.shape[0], self.test_array_simple.shape[0]);
+        self.assertEqual(hvblock2_full_stats.shape[0], 1);
+        self.assertEqual(hvblock2_train_stats.shape[0], self.test_array_simple_odd.shape[0]);
+        self.assertEqual(hvblock2_val_stats.shape[0], self.test_array_simple_odd.shape[0]);
 
         self.assertEqual(adapted1_full_stats.shape[0], 1);
         self.assertEqual(adapted1_train_stats.shape[0], 5);
