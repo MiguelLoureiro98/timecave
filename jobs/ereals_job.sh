@@ -15,10 +15,6 @@ export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 module load python/3.10.13
 module load gcc-13.2
 
-git checkout ereals
-git fetch origin
-
 python experiments/ereals.py
-
 
 exit
