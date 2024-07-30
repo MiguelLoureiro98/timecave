@@ -1,0 +1,2 @@
+filename,column_index,model,mse,mae,rmse
+datasets/processed_data/metro_nyc_17052024.csv,0,LSTM,9681605.365358848,2571.896795611189,3111.527818509558
