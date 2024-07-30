@@ -1,6 +1,5 @@
 from run_experiments import run
 import os
-import subprocess
 
 os.chdir("experiments")
 backup_dir = "results/transportes/backups"

@@ -15,19 +15,6 @@ export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 module load python/3.10.13
 module load gcc-13.2
 
-git checkout transportes
-git fetch origin
-
-# Check if the branch is up to date with main
-if ! git diff --quiet origin/main; then
-  echo "Branch is not up to date with main. Merging main into transportes."
-  git merge origin/main
-fi
 python experiments/transportes.py
-git config --global user.email "beatriz.plourenco99@gmail.com"
-git config --global user.name "Beatriz - Colab"
-git add experiments/results/transportes
-git commit -m "transportes results from hpc."
-git push origin transportes
 
 exit
