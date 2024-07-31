@@ -11,15 +11,6 @@ meteorologia = [
     "datasets/processed_data/MLTempDataset_13052024.csv",
 ]
 
-run(
-    meteorologia,
-    backup_dir,
-    results_dir,
-    resume_run=False,
-    add_name="meteorologia_LSTM",
-    models=["LSTM"],
-    save_stats=False,
-)
 
 run(
     meteorologia,

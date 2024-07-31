@@ -55,6 +55,6 @@ run(
     add_name="eng_ciencias_LSTM_room_torque",
     models=["LSTM"],
     save_stats=False,
-    resume_files=['results/eng_ciencias/backups/table_A_eng_ciencias_LSTM_room_torque_2024_07_30__23_44_17', 
-                  'results/eng_ciencias/backups/table_B_eng_ciencias_LSTM_room_torque_2024_07_30__23_44_17'] + [None, None, None]
+    resume_files=['results/eng_ciencias/backups/table_A_eng_ciencias_LSTM_room_torque_2024_07_30__23_44_17.csv', 
+                  'results/eng_ciencias/backups/table_B_eng_ciencias_LSTM_room_torque_2024_07_30__23_44_17.csv'] + [None, None, None]
 )
