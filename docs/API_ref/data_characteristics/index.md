@@ -12,9 +12,3 @@ hide:
         show_source: false
         show_signature: false
         members: []
-
-## Functions:
-- [get_features](get_features.md)
-- [strength_of_trend](sot.md)
-- [mean_crossing_rate](mean_cr.md)
-- [median_crossing_rate](med_cr.md)

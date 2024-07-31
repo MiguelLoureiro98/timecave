@@ -4,21 +4,21 @@ This module contains functions to compute time series features.
 The 'get_features' function extracts all features supported by this package.
 Functions to extract the strength of trend, mean-crossing rate, and median-crossing
 rate are also provided.
-For the remaining features, the tsfel package should be used.
+For the remaining features, the [tsfel](https://github.com/fraunhoferportugal/tsfel) package should be used.
 
 Functions
 ---------
 get_features
-    _description_
+    Extract 13 different features from a time series.
 
 strength_of_trend
-    _description_
+    Compute the time series' strength of trend.
 
 mean_crossing_rate
-    _description_
+    Compute the time series' mean-crossing rate.
 
 median_crossing_rate
-    _description_
+    Compute the time series' median-crossing rate.
 """
 
 import numpy as np
@@ -47,6 +47,47 @@ def get_features(ts: np.ndarray | pd.Series, fs: float | int) -> pd.DataFrame:
     -------
     pd.DataFrame
         Data frame containing all time series features supported by this package.
+
+    Raises
+    ------
+    TypeError
+        If 'ts' is neither an Numpy array or a Pandas series.
+
+    TypeError
+        If 'fs' is neither a float or an integer.
+
+    ValueError
+        If 'fs' is negative.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from timecave.data_characteristics import get_features
+    >>> t = np.arange(0, 10, 0.01);
+    >>> time_series = np.sin(2 * np.pi * t);
+    >>> sampling_frequency = 1 / 0.01;
+    >>> get_features(time_series, sampling_frequency)
+               Mean        Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+    0  3.552714e-18 -3.673940e-16 -1.0  1.0       0.5            2.0    -0.000191                1.0               1.0      6.485530e-29          15.926086             0.02002              0.019019
+
+    If the time series is neither an array or a series, an exception is thrown:
+
+    >>> get_features([0, 1, 2], sampling_frequency)
+    Traceback (most recent call last):
+    ...
+    TypeError: Time series must be either a Numpy array or a Pandas series.
+
+    The same happens if the sampling frequency is neither a float nor an integer:
+    >>> get_features(time_series, "Hello")
+    Traceback (most recent call last):
+    ...
+    TypeError: The sampling frequency should be either a float or an integer.
+
+    A different exception is raised if the sampling frequency is negative:
+    >>> get_features(time_series, -1)
+    Traceback (most recent call last):
+    ...
+    ValueError: The sampling frequency should be larger than zero.
     """
 
     _check_type(ts);
@@ -101,6 +142,13 @@ def strength_of_trend(ts: np.ndarray | pd.Series) -> float:
     -------
     float
         Strength of trend.
+
+    References
+    ----------
+    ##1
+    Cerqueira, V., Torgo, L., Mozetiˇc, I., 2020. Evaluating time series forecasting
+    models: An empirical study on performance estimation methods.
+    Machine Learning 109, 1997–2028.
     """
 
     _check_type(ts);
@@ -243,3 +291,9 @@ def _check_sampling_rate(fs: float | int) -> None:
         raise ValueError("The sampling frequency should be larger than zero.");
 
     return;
+
+if __name__ == "__main__":
+
+    import doctest
+
+    doctest.testmod(verbose=True);
