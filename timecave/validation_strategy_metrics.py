@@ -26,10 +26,10 @@ under_over_estimation
 
 Notes
 -----
-- PAE and APAE are absolute metrics. Their values may range from $0$ to $\infty$.\
+- PAE and APAE are absolute metrics. Their values may range from $-L_m$ to $\infty$ and from $0$ to $\infty$, respectively. \
 These should not be used to compare results obtained with different models or using different time series.
-- RPAE and RAPAE are relative metrics, as they measure how large the validation error is with respect to the true (test) error, thus eliminating the latter's influence on the metric.\
-Their values lie in the $[-1, \infty]$ and $[0, \infty]$ intervals, respectively.\
+- RPAE and RAPAE are relative metrics, as they measure how large the validation error is with respect to the true (test) error, thus eliminating the latter's influence on the metric. \
+Their values lie in the $[-1, \infty]$ and $[0, \infty]$ intervals, respectively. \
 These can be used to compare results for different models and/or time series.
 - sMPAE is a scaled, symmetric version of the PAE. It can be used to compare results for different models and/or time series.
 """
@@ -142,8 +142,8 @@ def APAE(estimated_error: float | int, test_error: float | int) -> float:
 
     Notes
     -----
-    The Absolute Predictive Accuracy Error is defined as the absolute value of the difference between the\
-    estimate of a model's error given by a validation method\
+    The Absolute Predictive Accuracy Error is defined as the absolute value of the difference between the \
+    estimate of a model's error given by a validation method \
     and the model's true error. In other words, it is the absolute value of the Predictive Accuracy Error:
     
     $$
@@ -151,7 +151,7 @@ def APAE(estimated_error: float | int, test_error: float | int) -> float:
     $$ 
     
     Since the APAE is always non-negative, this metric does not measure [cannot be used to determine] whether the validation method is overestimating or underestimating\
-    the model's true error.\
+    the model's true error.
     
     Note that, in all likelihood, the true error will not be known. It is usually estimated using an independent test set. For more details, please refer to [[1]](#1).
 
@@ -224,10 +224,10 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
     $$ 
     
     [By doing so, the metric is made ... .]
-    This makes this metric scale-independent with respect to the model's true error, which in turn makes it useful for comparing validation methods\
-    [that have been applied on different ...] across different time series and/or forecasting models. Since this is essentially a scaled version of the PAE,\
-    the sign retains its significance (negative sign for underestimation, positive sign for overestimation).\
-    However, it should be noted that the RPAE is asymmetric: in case of an underestimation, its values will be contained in the interval of $[-1, 0[$; if the error is\
+    This makes this metric scale-independent with respect to the model's true error, which in turn makes it useful for comparing validation methods \
+    [that have been applied on different ...] across different time series and/or forecasting models. Since this is essentially a scaled version of the PAE, \
+    the sign retains its significance (negative sign for underestimation, positive sign for overestimation). \
+    However, it should be noted that the RPAE is asymmetric: in case of an underestimation, its values will be contained in the interval of $[-1, 0[$; if the error is \
     overestimated, however, the RPAE can take any value in the range of $]0, \infty[$. A value of zero denotes a perfect estimate.
 
     Note that, in all likelihood, the true error will not be known. It is usually estimated using an independent test set.
@@ -298,16 +298,16 @@ def sMPAE(estimated_error: float | int, test_error: float | int) -> float:
 
     Notes
     -----
-    The symmetric Mean Predictive Accuracy Error is obtained by dividing the Predictive Accuracy Error (PAE)\
+    The symmetric Mean Predictive Accuracy Error is obtained by dividing the Predictive Accuracy Error (PAE) \
     by half the sum of the absolute values of both the error estimate and the true error:
 
     $$
     sMPAE = 2 \cdot \\frac{(\hat{L}_m - L_m)}{|\hat{L}_m| + |L_m|} = 2 \cdot \\frac{PAE}{|\hat{L}_m| + |L_m|}
     $$
 
-    Similarly to the Relative Predictive Accuracy Error (RPAE), this metric can be seen as a scaled version of\
-    the PAE. Unlike the RPAE, however, the sMPAE is symmetric, as all possible values lie in the interval of $[-2, 2]$. If the\
-    error estimate is equal to the true error (perfect estimation), the sMPAE is zero.\
+    Similarly to the Relative Predictive Accuracy Error (RPAE), this metric can be seen as a scaled version of \
+    the PAE. Unlike the RPAE, however, the sMPAE is symmetric, as all possible values lie in the interval of $[-2, 2]$. If the \
+    error estimate is equal to the true error (perfect estimation), the sMPAE is zero. \
     Since this metric is based on the PAE, the sign retains its significance (negative sign for underestimation, positive sign for overestimation).
 
     Note that, in all likelihood, the true error will not be known. It is usually estimated using an independent test set.
@@ -384,15 +384,15 @@ def RAPAE(estimated_error: float | int, test_error: float | int) -> float:
 
     Notes
     -----
-    The Relative Absolute Predictive Accuracy Error is defined as the Absolute Predictive Accuracy Error (APAE) divided by the\
+    The Relative Absolute Predictive Accuracy Error is defined as the Absolute Predictive Accuracy Error (APAE) divided by the \
     model's true error. It can also be seen as the absolute value of the Relative Predictive Accuracy Error (RPAE):
     
     $$
     RAPAE = \\frac{|\hat{L}_m - L_m|}{L_m} = \\frac{|PAE|}{L_m} = \\frac{APAE}{L_m} = |RPAE|
     $$ 
     
-    This metric essentially takes the absolute value of the RPAE, and can be used in a similar fashion. However, since it uses the\
-    absolute value, it cannot be used to determine whether a validation method is overestimating or underestimating the model's\
+    This metric essentially takes the absolute value of the RPAE, and can be used in a similar fashion. However, since it uses the \
+    absolute value, it cannot be used to determine whether a validation method is overestimating or underestimating the model's \
     true error. Like the RPAE, it is an asymmetric measure.
 
     Note that, in all likelihood, the true error will not be known. It is usually estimated using an independent test set.
@@ -426,7 +426,7 @@ def MC_metric(estimated_error_list: list[float | int], test_error_list: list[flo
     """
     Compute validation strategy metrics for N different experiments (MC stands for Monte Carlo).
 
-    This function processes the results of a Monte Carlo experiment and outputs [relevant statistics...] a statistical summary of the results.\
+    This function processes the results of a Monte Carlo experiment and outputs [relevant statistics...] a statistical summary of the results. \
     This [it] can be useful if one needs to analyse the performance of a given validation method on several different time series or using different models.  
     Users may provide a custom metric if they so desire, but it must have the same function signature as the metrics provided by this package.
 
@@ -525,7 +525,7 @@ def under_over_estimation(estimated_error_list: list[float | int], test_error_li
     Returns
     -------
     tuple[dict]
-        [Separate] Statistical summaries for the overestimation and underestimation cases.\
+        [Separate] Statistical summaries for the overestimation and underestimation cases. \
         The first dictionary is for the underestimation cases.
 
     Raises
