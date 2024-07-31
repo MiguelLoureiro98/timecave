@@ -1,0 +1,2 @@
+filename,column_index,model,mse,mae,rmse
+datasets/synthetic_data/s3.csv,477,LSTM,373944965.3948996,19326.846484700814,19337.656667623913
