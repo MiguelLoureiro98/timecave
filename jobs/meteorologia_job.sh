@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=meteorologia
-#SBATCH --time=03:01:00
+#SBATCH --time=12:01:00
 #SBATCH --partition=hpc
 #SBATCH --error=err.job.%j
 #SBATCH --output=out.job.%j
