@@ -1,5 +1,37 @@
 """
-This module contains metrics to evaluate the performance of model validation methods.
+This module contains several metrics to evaluate the performance of model validation methods.
+
+Functions
+---------
+PAE
+    Implements the Predictive Accuracy Error metric.
+
+APAE
+    Implements the Absolute Predictive Accuracy Error metric.
+
+RPAE
+    Implements the Relative Predictive Accuracy Error metric.
+
+RAPAE
+    Implements the Relative Absolute Predictive Accuracy Error metric.
+
+sMPAE
+    Implements the symmetric Mean Predictive Accuracy Error metric.
+
+MC_metric
+    Statistical summary for Monte Carlo experiments regarding validation methods.
+
+under_over_estimation
+    Separate statistical summaries for [the] underestimation and overestimation cases.
+
+Notes
+-----
+- PAE and APAE are absolute metrics. Their values may range from $0$ to $\infty$.\
+These should not be used to compare results obtained with different models or using different time series.
+- RPAE and RAPAE are relative metrics, as they measure how large the validation error is with respect to the true (test) error, thus eliminating the latter's influence on the metric.\
+Their values lie in the $[-1, \infty]$ and $[0, \infty]$ intervals, respectively.\
+These can be used to compare results for different models and/or time series.
+- sMPAE is a scaled, symmetric version of the PAE. It can be used to compare results for different models and/or time series.
 """
 
 import numpy as np
@@ -15,10 +47,10 @@ def PAE(estimated_error: float | int, test_error: float | int) -> float:
     Parameters
     ----------
     estimated_error : float | int
-        The model's validation error.
+        Validation error.
 
     test_error : float | int
-        The model's test error.
+        True (i.e. test) error.
 
     Returns
     -------
@@ -50,6 +82,7 @@ def PAE(estimated_error: float | int, test_error: float | int) -> float:
     
     One can infer from the sign [The sign is important / relevant to determine ...] whether the validation method is overestimating or underestimating the model's true error:\
     a negative value denotes an underestimation, while a positive value corresponds to an overestimation.\
+    
     Note that, in all likelihood, the true error will not be known. It is usually estimated using an independent test set. For more details, please refer to [[1]](#1).
 
     References
@@ -83,10 +116,10 @@ def APAE(estimated_error: float | int, test_error: float | int) -> float:
     Parameters
     ----------
     estimated_error : float | int
-        The model's validation error.
+        Validation error.
 
     test_error : float | int
-        The model's test error.
+        True (i.e. test) error.
 
     Returns
     -------
@@ -119,6 +152,7 @@ def APAE(estimated_error: float | int, test_error: float | int) -> float:
     
     Since the APAE is always non-negative, this metric does not measure [cannot be used to determine] whether the validation method is overestimating or underestimating\
     the model's true error.\
+    
     Note that, in all likelihood, the true error will not be known. It is usually estimated using an independent test set. For more details, please refer to [[1]](#1).
 
     References
@@ -152,10 +186,10 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
     Parameters
     ----------
     estimated_error : float | int
-        The model's validation error.
+        Validation error.
 
     test_error : float | int
-        The model's test error.
+        True (i.e. test) error.
 
     Returns
     -------
@@ -183,7 +217,7 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
 
     Notes
     -----
-    The Relative Predictive Accuracy Error divides the Predictive Accuracy Error (PAE) by the model's true error:
+    The Relative Predictive Accuracy Error is obtained by dividing the Predictive Accuracy Error (PAE) by the model's true error:
     
     $$
     RPAE = \\frac{\hat{L}_m - L_m}{L_m} = \\frac{PAE}{L_m}
@@ -191,9 +225,10 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
     
     [By doing so, the metric is made ... .]
     This makes this metric scale-independent with respect to the model's true error, which in turn makes it useful for comparing validation methods\
-    [that have been applied on different ...] across different time series and/or forecasting models. Since this is essentially a scaled version of the PAE, the sign retains its significance.\
-    However, it should be noted that the RPAE is asymmetric: in case of an underestimation, its values will be contained in the interval [-1, 0[; if the error is\
-    overestimated, however, the RPAE can take any value in the range ]0, $\infty$[.
+    [that have been applied on different ...] across different time series and/or forecasting models. Since this is essentially a scaled version of the PAE,\
+    the sign retains its significance (negative sign for underestimation, positive sign for overestimation).\
+    However, it should be noted that the RPAE is asymmetric: in case of an underestimation, its values will be contained in the interval of $[-1, 0[$; if the error is\
+    overestimated, however, the RPAE can take any value in the range of $]0, \infty[$. A value of zero denotes a perfect estimate.
 
     Note that, in all likelihood, the true error will not be known. It is usually estimated using an independent test set.
 
@@ -232,10 +267,10 @@ def sMPAE(estimated_error: float | int, test_error: float | int) -> float:
     Parameters
     ----------
     estimated_error : float | int
-        The model's validation error.
+        Validation error.
 
     test_error : float | int
-        The model's test error.
+        True (i.e. test) error.
 
     Returns
     -------
@@ -246,6 +281,57 @@ def sMPAE(estimated_error: float | int, test_error: float | int) -> float:
     ------
     ValueError
         If 'test_error' is zero.
+
+    See also
+    --------
+    [PAE](pae.md):
+        Predictive Accuracy Error.
+
+    [APAE](apae.md):
+        Absolute Predictive Accuracy Error.
+
+    [RPAE](rpae.md):
+        Relative Predictive Accuracy Error.
+
+    [RAPAE](rapae.md):
+        Relative Absolute Predictive Accuracy Error.
+
+    Notes
+    -----
+    The symmetric Mean Predictive Accuracy Error is obtained by dividing the Predictive Accuracy Error (PAE)\
+    by half the sum of the absolute values of both the error estimate and the true error:
+
+    $$
+    sMPAE = 2 \cdot \\frac{(\hat{L}_m - L_m)}{|\hat{L}_m| + |L_m|} = 2 \cdot \\frac{PAE}{|\hat{L}_m| + |L_m|}
+    $$
+
+    Similarly to the Relative Predictive Accuracy Error (RPAE), this metric can be seen as a scaled version of\
+    the PAE. Unlike the RPAE, however, the sMPAE is symmetric, as all possible values lie in the interval of $[-2, 2]$. If the\
+    error estimate is equal to the true error (perfect estimation), the sMPAE is zero.\
+    Since this metric is based on the PAE, the sign retains its significance (negative sign for underestimation, positive sign for overestimation).
+
+    Note that, in all likelihood, the true error will not be known. It is usually estimated using an independent test set.
+
+    Examples
+    --------
+    >>> from timecave.validation_strategy_metrics import sMPAE
+    >>> sMPAE(3, 2)
+    0.4
+    >>> sMPAE(3, 5)
+    -0.5
+    >>> sMPAE(5, 5)
+    0.0
+    >>> sMPAE(5, 0)
+    2.0
+    >>> sMPAE(0, 5)
+    -2.0
+
+    If both the true error and the estimated error are zero, this metric is undefined:
+
+    >>> sMPAE(0, 0)
+    Traceback (most recent call last):
+    ...
+    ValueError: sMPAE is undefined.
     """
 
     if((abs(estimated_error) + abs(test_error)) == 0):
@@ -267,10 +353,10 @@ def RAPAE(estimated_error: float | int, test_error: float | int) -> float:
     Parameters
     ----------
     estimated_error : float | int
-        The model's validation error.
+        Validation error.
 
     test_error : float | int
-        The model's test error.
+        True (i.e. test) error.
 
     Returns
     -------
@@ -338,9 +424,11 @@ def RAPAE(estimated_error: float | int, test_error: float | int) -> float:
 def MC_metric(estimated_error_list: list[float | int], test_error_list: list[float | int], metric: callable) -> dict:
     
     """
-    Compute validation strategy metrics for N different experiments.
+    Compute validation strategy metrics for N different experiments (MC stands for Monte Carlo).
 
-    This function computes ... .
+    This function processes the results of a Monte Carlo experiment and outputs [relevant statistics...] a statistical summary of the results.\
+    This [it] can be useful if one needs to analyse the performance of a given validation method on several different time series or using different models.  
+    Users may provide a custom metric if they so desire, but it must have the same function signature as the metrics provided by this package.
 
     Parameters
     ----------
@@ -356,7 +444,7 @@ def MC_metric(estimated_error_list: list[float | int], test_error_list: list[flo
     Returns
     -------
     dict
-        _description_
+        A statistical summary of the results.
 
     Raises
     ------
@@ -366,7 +454,22 @@ def MC_metric(estimated_error_list: list[float | int], test_error_list: list[flo
     See also
     --------
     [under_over_estimation](under_over.md):
-        _description_
+        Computes separate statistics for overestimation and underestimation cases.
+
+    Examples
+    --------
+    >>> from timecave.validation_strategy_metrics import PAE, MC_metric
+    >>> true_errors = [10, 30, 10, 50];
+    >>> validation_errors = [20, 20, 50, 30];
+    >>> MC_metric(validation_errors, true_errors, PAE)
+    {'Mean': 5.0, 'Median': 0.0, '1st_Quartile': -12.5, '3rd_Quartile': 17.5, 'Minimum': -20.0, 'Maximum': 40.0, 'Standard_deviation': 22.9128784747792}
+
+    If the lengths of the estimated error and test error lists do not match, an exception is thrown:
+
+    >>> MC_metric(validation_errors, [10], PAE)
+    Traceback (most recent call last):
+    ...
+    ValueError: The estimated error and test error lists must have the same length.
     """
 
     if(len(estimated_error_list) != len(test_error_list)):
@@ -402,7 +505,11 @@ def under_over_estimation(estimated_error_list: list[float | int], test_error_li
     """
     Compute separate validation strategy metrics for underestimation and overestimation instances (for N different experiments).
 
-    This function can be used to compute ... .
+    This function processes the results of a Monte Carlo experiment and outputs two separate
+    sets of summary statistics: one for cases where the true error is underestimated, and another one for cases 
+    where the validation method overestimates the error.
+    This [it] can be useful if one needs to analyse the performance of a given validation method on several different time series or using different models.  
+    Users may provide a custom metric if they so desire, but it must have the same function signature as the metrics provided by this package.
 
     Parameters
     ----------
@@ -418,7 +525,8 @@ def under_over_estimation(estimated_error_list: list[float | int], test_error_li
     Returns
     -------
     tuple[dict]
-        _description_
+        [Separate] Statistical summaries for the overestimation and underestimation cases.\
+        The first dictionary is for the underestimation cases.
 
     Raises
     ------
@@ -428,7 +536,28 @@ def under_over_estimation(estimated_error_list: list[float | int], test_error_li
     See also
     --------
     [MC_metric](MC_metric.md):
-        _description_
+        Computes relevant statistics for the whole Monte Carlo experiment (i.e. does not differentiate between overestimation and underestimation).
+
+    Examples
+    --------
+    >>> from timecave.validation_strategy_metrics import under_over_estimation, PAE
+    >>> true_errors = [10, 30, 10, 50];
+    >>> validation_errors = [20, 20, 50, 30];
+    >>> under_over_estimation(validation_errors, true_errors, PAE)
+    ({'Mean': -15.0, 'Median': -15.0, '1st_Quartile': -17.5, '3rd_Quartile': -12.5, 'Minimum': -20.0, 'Maximum': -10.0, 'Standard_deviation': 5.0, 'N': 2, '%': 50.0}, {'Mean': 25.0, 'Median': 25.0, '1st_Quartile': 17.5, '3rd_Quartile': 32.5, 'Minimum': 10.0, 'Maximum': 40.0, 'Standard_deviation': 15.0, 'N': 2, '%': 50.0})
+    
+    If there are no overestimation or underestimation cases, the respective dictionary will be empty:
+
+    >>> under_over_estimation([10, 20, 30], [5, 10, 15], PAE)
+    No errors were underestimated. Underestimation data dictionary empty.
+    ({}, {'Mean': 10.0, 'Median': 10.0, '1st_Quartile': 7.5, '3rd_Quartile': 12.5, 'Minimum': 5.0, 'Maximum': 15.0, 'Standard_deviation': 4.08248290463863, 'N': 3, '%': 100.0})
+
+    If the lengths of the estimated error and test error lists do not match, an exception is thrown:
+
+    >>> under_over_estimation(validation_errors, [10], PAE)
+    Traceback (most recent call last):
+    ...
+    ValueError: The estimated error and test error lists must have the same length.
     """
 
     if(len(estimated_error_list) != len(test_error_list)):

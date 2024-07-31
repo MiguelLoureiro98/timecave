@@ -8,7 +8,17 @@ For the remaining features, the tsfel package should be used.
 
 Functions
 ---------
+get_features
+    _description_
 
+strength_of_trend
+    _description_
+
+mean_crossing_rate
+    _description_
+
+median_crossing_rate
+    _description_
 """
 
 import numpy as np
