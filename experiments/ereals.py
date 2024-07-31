@@ -51,7 +51,7 @@ run(
     eng_ciencias,
     backup_dir,
     results_dir,
-    resume_run=True,
+    resume_run=False,
     add_name="eng_ciencias_LSTM_torque",
     from_ts=2,
     models=["LSTM"],
