@@ -1,14 +1,14 @@
 #!/bin/bash
 
 #SBATCH --job-name=ereals
-#SBATCH --time=06:01:00
+#SBATCH --time=03:01:00
 #SBATCH --partition=hpc
 #SBATCH --error=err.job.%j
 #SBATCH --output=out.job.%j
 #SBATCH -D .
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=20
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 

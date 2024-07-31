@@ -29,6 +29,6 @@ run(
     add_name="meteorologia_LSTM",
     models=["LSTM"],
     save_stats=False,
-    resume_files=['results/eng_ciencias/backups/table_A_meteorologia_LSTM_2024_07_30__15_07_20.csv', 
-                  'results/eng_ciencias/backups/table_B_meteorologia_LSTM_2024_07_30__15_07_20.csv'] + [None, None, None]
+    resume_files=['results/meteorologia/backups/table_A_meteorologia_LSTM_2024_07_30__20_10_04.csv', 
+                  'results/meteorologia/backups/table_B_meteorologia_LSTM_2024_07_30__20_10_04.csv'] + [None, None, None]
 )
