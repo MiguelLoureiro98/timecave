@@ -1,0 +1,5 @@
+filename,column_index,model,mse,mae,rmse
+datasets/processed_data/aire_discharge_weather_data.csv,0,LSTM,1.2095201221103098,0.8736418789432895,1.0997818520553564
+datasets/processed_data/aire_discharge_weather_data.csv,1,LSTM,1313.5666808355654,34.868636420465286,36.24316046974333
+datasets/processed_data/aire_discharge_weather_data.csv,2,LSTM,4.535694743349659,1.6477007454922121,2.129717057111028
+datasets/processed_data/aire_discharge_weather_data.csv,3,LSTM,912242.4029851274,955.0215240232405,955.1138167700891

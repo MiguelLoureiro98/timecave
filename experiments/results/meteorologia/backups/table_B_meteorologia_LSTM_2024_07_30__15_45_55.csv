@@ -1,0 +1,9 @@
+filename,column_index,model,mse,mae,rmse
+datasets/processed_data/aire_discharge_weather_data.csv,0,LSTM,1.2095201221103098,0.8736418789432895,1.0997818520553564
+datasets/processed_data/aire_discharge_weather_data.csv,1,LSTM,1313.5666808355654,34.868636420465286,36.24316046974333
+datasets/processed_data/aire_discharge_weather_data.csv,2,LSTM,4.535694743349659,1.6477007454922121,2.129717057111028
+datasets/processed_data/aire_discharge_weather_data.csv,3,LSTM,912242.4029851274,955.0215240232405,955.1138167700891
+datasets/processed_data/aire_discharge_weather_data.csv,4,LSTM,0.1812482955347245,0.3199960224811108,0.42573265735050736
+datasets/processed_data/aire_discharge_weather_data.csv,5,LSTM,2.4349219312639314,1.1688963328277873,1.5604236383956542
+datasets/processed_data/aire_discharge_weather_data.csv,6,LSTM,31.54859020399753,4.482441788335,5.616813171541095
+datasets/processed_data/aire_discharge_weather_data.csv,7,LSTM,0.4513449685729773,0.4997510184203425,0.6718221256947238
