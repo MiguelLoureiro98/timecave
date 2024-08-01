@@ -60,7 +60,7 @@ class Holdout(BaseSplitter):
     """
 
     def __init__(
-        self, ts: np.ndarray | pd.Series, fs: float | int, validation_size: float = 0.3
+        self, ts: np.ndarray | pd.Series, fs: float | int = 1, validation_size: float = 0.3
     ) -> None:
 
         super().__init__(2, ts, fs)
@@ -251,8 +251,8 @@ class RepeatedHoldout(BaseSplitter):
     def __init__(
         self,
         ts: np.ndarray | pd.Series,
-        fs: float | int,
-        iterations: int,
+        fs: float | int = 1,
+        iterations: int = 5,
         splitting_interval: list[int | float] = [0.7, 0.8],
         seed: int = 0,
     ) -> None:
@@ -509,7 +509,7 @@ class RollingOriginUpdate(BaseSplitter):
     """
 
     def __init__(
-        self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
+        self, ts: np.ndarray | pd.Series, fs: float | int = 1, origin: int | float = 0.7
     ) -> None:
 
         super().__init__(2, ts, fs)
@@ -713,7 +713,7 @@ class RollingOriginRecalibration(BaseSplitter):
     """
 
     def __init__(
-        self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
+        self, ts: np.ndarray | pd.Series, fs: float | int = 1, origin: int | float = 0.7
     ) -> None:
 
         super().__init__(2, ts, fs)
@@ -925,7 +925,7 @@ class FixedSizeRollingWindow(BaseSplitter):
     """
 
     def __init__(
-        self, ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7
+        self, ts: np.ndarray | pd.Series, fs: float | int = 1, origin: int | float = 0.7
     ) -> None:
 
         super().__init__(2, ts, fs)

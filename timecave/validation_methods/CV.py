@@ -37,7 +37,7 @@ class BlockCV(BaseSplitter):
         self,
         splits: int,
         ts: np.ndarray | pd.Series,
-        fs: float | int,
+        fs: float | int = 1,
         weight_function: callable = constant_weights,
         params: dict = None,
     ) -> None:
@@ -236,7 +236,7 @@ class hvBlockCV(BaseSplitter):
     def __init__(
         self,
         ts: np.ndarray | pd.Series,
-        fs: float | int,
+        fs: float | int = 1,
         h: int = 0,
         v: int = 0,
     ) -> None:
@@ -445,8 +445,8 @@ class AdaptedhvBlockCV(BaseSplitter):
         self,
         splits: int,
         ts: np.ndarray | pd.Series,
-        fs: float | int,
-        h: int,
+        fs: float | int = 1,
+        h: int = 1,
     ) -> None:
 
         super().__init__(splits, ts, fs)

@@ -1,17 +1,18 @@
 """
 This module contains utility functions to help the users make the most of their data. \
-More specifically, it provides routines to ... .
+More specifically, it provides routines to aid users in [on / with] their [during the] data collection process and \
+their validation procedures.
 
 Functions
 ---------
 Nyquist_min_samples
-    _description_
+    Computes the minimum amount of samples needed to capture a frequency of interest using the Nyquist theorem.
 
 heuristic_min_samples
-    _description_
+    Computes the minimum amount of samples needed to capture a frequency of interest using an heuristic algorithm.
 
 true_test_indices
-    _description_
+    Readies an array of validation indices for insertion into a model.
 """
 
 import numpy as np
@@ -19,11 +20,11 @@ import numpy as np
 def Nyquist_min_samples(fs: float | int, freq_limit: float | int) -> int:
     
     """
-    Compute the minimum number of samples each partition should have
+    Compute the minimum number of samples the series should have
     for the Nyquist theorem to be satisfied.
 
-    This function computes the minimum length for each training and 
-    validation partition, assuming the time series was sampled at
+    This function computes the minimum series length for capturing a given frequency,
+    assuming the time series was sampled at
     a frequency of 'fs' Hertz and the largest frequency of interest
     for modelling purposes is 'freq_limit' Hertz. Additionally,
     the function computes the largest frequency that can be captured
@@ -64,12 +65,59 @@ def Nyquist_min_samples(fs: float | int, freq_limit: float | int) -> int:
 
     Notes
     -----
+    The Nyquist sampling theorem is a fundamental result in digital signal processing. It states that, \
+    for one to be able to reconstruct a continuous-time signal from its discrete counterpart, the sampling \
+    frequency should be at least twice as high as the largest frequency of interest [the signal should be sampled at a rate / frequency at least twice as high as ...].
+    Mathematically speaking, the sampling frequency should be [is] given by:
+    
+    $$
+    f_s >= 2 \cdot f
+    $$
+    
+    where $f_s$ is the sampling frequency and $f$ is the frequency of interest. \
+    The Nyquist sampling theorem is discussed in several reference books, of which [[1]](#1) is but an example.
+
+    Since time series are essentially signals, the minimum number of samples that need to be collected if one needs [is] to capture a given frequency [if a given frequency is to be captured] can be computed \
+    using the Nyquist theorem.
 
     References
     ----------
+    ##1
+    A. Oppenheim, R. Schafer, and J. Buck. Discrete-Time Signal Processing.
+    Prentice Hall, 1999.
 
     Examples
     --------
+    >>> from timecave.utils import Nyquist_min_samples
+    >>> n_samples = Nyquist_min_samples(100, 20);
+    Nyquist theorem results
+    -----------------------
+    Maximum frequency that can be extracted using a sampling frequency of 100 Hz : 50.0 Hz
+    Sampling rate required to capture a frequency of 20 Hz : 40 Hz
+    ------------------------------------------------------------------------------------------
+    Minimum number of samples required to capture a frequency of 20 Hz with a
+    sampling frequency of 100 Hz: 10 samples
+    >>> n_samples
+    10
+
+    If the frequency of interest cannot be captured using the sampling frequency provided \
+    by the user according to the Nyquist theorem, an exception is thrown:
+
+    >>> samples = Nyquist_min_samples(1, 2);
+    Traceback (most recent call last):
+    ...
+    Warning: According to the Nyquist theorem, the selected frequency cannot be captured using this sampling frequency.
+
+    If negative frequencies are passed, or if their values are neither integers nor floats, exceptions are thrown as well:
+
+    >>> samples = Nyquist_min_samples(-2, 1);
+    Traceback (most recent call last):
+    ...
+    ValueError: Frequencies should be non-negative.
+    >>> samples = Nyquist_min_samples(1, "a");
+    Traceback (most recent call last):
+    ...
+    TypeError: Both 'fs' and 'freq_limit' should be either integers or floats.
     """
 
     _check_frequencies(fs, freq_limit);
@@ -94,11 +142,11 @@ def Nyquist_min_samples(fs: float | int, freq_limit: float | int) -> int:
 def heuristic_min_samples(fs: float | int, freq_limit: float | int) -> dict:
     
     """
-    Compute the minimum number of samples each partition should have
+    Compute the minimum number of samples the series should have
     according to the 10 / 20 sampling heuristic.
 
-    This function computes the minimum and maximum lengths for each 
-    training and validation partition, assuming the time series was 
+    This function computes the minimum and maximum lengths for capturing a given frequency, 
+    assuming the time series was 
     sampled at a frequency of 'fs' Hertz and the largest frequency 
     of interest for modelling purposes is 'freq_limit' Hertz. The
     interval in which the sampling frequency should lie for 'freq_limit' 
@@ -130,6 +178,57 @@ def heuristic_min_samples(fs: float | int, freq_limit: float | int) -> dict:
 
     Warning
         If the choice of 'fs' and 'freq_limit' does not abide by the 10 / 20 heuristic.
+
+    See also
+    --------
+    [Nyquist_min_samples](nyquist.md):
+        Performs the same computations using the Nyquist theorem.
+    
+    Notes
+    -----
+    Under certain circumstances, the conditions of the Nyquist theorem might not be enough to guarantee that the reconstruction of the signal is possible.
+    An heuristic has been developed in the field of control engineering, whereby the sampling frequency should be 10 to 20 times higher than the largest \
+    frequency of interest:
+    
+    $$
+    10 \cdot f <= f_s <= 20 \cdot f
+    $$
+
+    Theoretically, the higher the sampling frequency, the better (i.e. the easier it can be to reconstruct the original signal), \
+    though hardware limitations naturally come into play here.
+
+    Examples
+    --------
+    >>> from timecave.utils import heuristic_min_samples
+    >>> n_samples = heuristic_min_samples(150, 10);
+    10 / 20 sampling heuristic results
+    ----------------------------------
+    Minimum sampling rate required to capture a frequency of 10 Hz : 100 Hz
+    Maximum sampling rate required to capture a frequency of 10 Hz : 200 Hz
+    ----------------------------------------------------------------------------------------------
+    Capturing a frequency of 10 Hz with a sampling frequency of 150 Hz would require:
+    150 to 300 samples
+    >>> n_samples
+    {'Min_samples': 150, 'Max_samples': 300}
+
+    If the frequency of interest cannot be captured using the sampling frequency provided \
+    by the user according to the heuristic, an exception is thrown:
+
+    >>> samples = heuristic_min_samples(80, 10);
+    Traceback (most recent call last):
+    ...
+    Warning: This choice of sampling frequency and frequency of interest is not compliant with the 10 / 20 sampling heuristic.
+
+    If negative frequencies are passed, or if their values are neither integers nor floats, exceptions are thrown as well:
+
+    >>> samples = heuristic_min_samples(-2, 1);
+    Traceback (most recent call last):
+    ...
+    ValueError: Frequencies should be non-negative.
+    >>> samples = heuristic_min_samples(1, "a");
+    Traceback (most recent call last):
+    ...
+    TypeError: Both 'fs' and 'freq_limit' should be either integers or floats.
     """
 
     _check_frequencies(fs, freq_limit);
@@ -228,6 +327,37 @@ def true_test_indices(test_ind: np.ndarray, model_order: int) -> np.ndarray:
 
     ValueError
         If 'model_order' is larger than the amount of samples in the training set, assuming it precedes the validation set.
+
+    Examples
+    --------
+    >>> from timecave.utils import true_test_indices
+    >>> test_indices = np.array([8, 9, 10]);
+    >>> model_order = 2;
+    >>> true_test_indices(test_indices, model_order)
+    array([ 6,  7,  8,  9, 10])
+
+    The order of a model must be an integer value:
+
+    >>> true_test_indices(test_indices, 0.5)
+    Traceback (most recent call last):
+    ...
+    TypeError: 'model_order' should be an integer.
+
+    The order of a model must not be a negative value:
+
+    >>> true_test_indices(test_indices, -1)
+    Traceback (most recent call last):
+    ...
+    ValueError: 'model_order' should be positive.
+
+    This function assumes training and validation are done sequentially. \
+    Therefore, an exception will be thrown if the amount of samples preceding the validation \
+    set is smaller than the order of the model:
+
+    >>> true_test_indices(test_indices, 10)
+    Traceback (most recent call last):
+    ...
+    ValueError: 'model_order' should be smaller than the amount of samples in the training set.
     """
 
     _check_order(model_order);
@@ -265,3 +395,9 @@ def _check_ind(test_ind: np.ndarray, model_order: int) -> None:
         raise ValueError("'model_order' should be smaller than the amount of samples in the training set.");
 
     return;
+
+if __name__ == "__main__":
+
+    import doctest
+
+    doctest.testmod(verbose=True);
