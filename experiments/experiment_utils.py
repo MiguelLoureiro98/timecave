@@ -61,15 +61,18 @@ def get_latest_files(directory, prefix):
 def read_tables(
     table_A_file: str,
     table_B_file: str,
-    stats_total_file: str,
-    stats_train_file: str,
-    stats_val_file: str,
+    stats_total_file: str = None,
+    stats_train_file: str = None,
+    stats_val_file: str = None,
 ):
     table_A = pd.read_csv(table_A_file)
     table_B = pd.read_csv(table_B_file)
-    stats_total = pd.read_csv(stats_total_file)
-    stats_train = pd.read_csv(stats_train_file)
-    stats_val = pd.read_csv(stats_val_file)
+    if stats_total_file is not None:
+        stats_total = pd.read_csv(stats_total_file)
+        stats_train = pd.read_csv(stats_train_file)
+        stats_val = pd.read_csv(stats_val_file)
+    else:
+        stats_total, stats_train, stats_val = None, None, None
 
     return table_A, table_B, stats_total, stats_train, stats_val
 

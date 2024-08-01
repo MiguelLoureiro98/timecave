@@ -2,7 +2,8 @@ from run_experiments import run
 import os
 
 os.chdir("experiments")
-backup_dir = "results/eco_financas/backups"
+
+"""backup_dir = "results/eco_financas/backups"
 results_dir = "results/eco_financas"
 eco_financas = [
     "datasets/processed_data/euro-daily-hist_1999_2024_14052024.csv",
@@ -36,7 +37,7 @@ run(
     add_name="energia_LSTM",
     models=["LSTM"],
     save_stats=False,
-)
+)"""
 
 backup_dir = "results/eng_ciencias/backups"
 results_dir = "results/eng_ciencias"
@@ -50,8 +51,10 @@ run(
     eng_ciencias,
     backup_dir,
     results_dir,
-    resume_run=False,
+    resume_run=True,
     add_name="eng_ciencias_LSTM",
     models=["LSTM"],
     save_stats=False,
+    resume_files=['results/eng_ciencias/backups/table_A_eng_ciencias_LSTM_2024_07_29__20_26_52.csv', 
+                  'results/eng_ciencias/backups/table_B_eng_ciencias_LSTM_2024_07_29__20_26_52.csv'] + [None, None, None]
 )
