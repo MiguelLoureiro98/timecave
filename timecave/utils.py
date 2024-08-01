@@ -1,11 +1,17 @@
 """
-This module contains utility functions to help the user ... .
+This module contains utility functions to help the users make the most of their data. \
+More specifically, it provides routines to ... .
 
 Functions
 ---------
 Nyquist_min_samples
+    _description_
+
 heuristic_min_samples
+    _description_
+
 true_test_indices
+    _description_
 """
 
 import numpy as np
@@ -50,6 +56,20 @@ def Nyquist_min_samples(fs: float | int, freq_limit: float | int) -> int:
 
     Warning
         If the choice of 'fs' and 'freq_limit' does not satisfy the Nyquist sampling theorem.
+
+    See also
+    --------
+    [heuristic_min_samples](heuristic.md):
+        Performs the same computations using an heuristic rule.
+
+    Notes
+    -----
+
+    References
+    ----------
+
+    Examples
+    --------
     """
 
     _check_frequencies(fs, freq_limit);

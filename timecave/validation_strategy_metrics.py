@@ -59,13 +59,13 @@ def PAE(estimated_error: float | int, test_error: float | int) -> float:
 
     See also
     --------
-    [APAE](apae.md) :
+    [APAE](apae.md):
         Absolute Predictive Accuracy Error.
 
-    [RPAE](rpae.md) : 
+    [RPAE](rpae.md): 
         Relative Predictive Accuracy Error.
 
-    [RAPAE](rapae.md) :
+    [RAPAE](rapae.md):
         Relative Absolute Predictive Accuracy Error.
 
     [sMPAE](smpae.md):
@@ -128,13 +128,13 @@ def APAE(estimated_error: float | int, test_error: float | int) -> float:
 
     See also
     --------
-    [PAE](pae.md) :
+    [PAE](pae.md):
         Predictive Accuracy Error.
 
-    [RPAE](rpae.md) : 
+    [RPAE](rpae.md): 
         Relative Predictive Accuracy Error.
 
-    [RAPAE](rapae.md) :
+    [RAPAE](rapae.md):
         Relative Absolute Predictive Accuracy Error.
 
     [sMPAE](smpae.md):
@@ -203,13 +203,13 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
 
     See also
     --------
-    [PAE](pae.md) :
+    [PAE](pae.md):
         Predictive Accuracy Error.
 
-    [APAE](apae.md) : 
+    [APAE](apae.md): 
         Absolute Predictive Accuracy Error.
 
-    [RAPAE](rapae.md) :
+    [RAPAE](rapae.md):
         Relative Absolute Predictive Accuracy Error.
 
     [sMPAE](smpae.md):
@@ -370,13 +370,13 @@ def RAPAE(estimated_error: float | int, test_error: float | int) -> float:
 
     See also
     --------
-    [PAE](pae.md) :
+    [PAE](pae.md):
         Predictive Accuracy Error.
 
-    [APAE](apae.md) : 
+    [APAE](apae.md): 
         Absolute Predictive Accuracy Error.
 
-    [RPAE](rpae.md) :
+    [RPAE](rpae.md):
         Relative Predictive Accuracy Error.
 
     [sMPAE](smpae.md):

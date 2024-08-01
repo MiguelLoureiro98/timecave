@@ -12,8 +12,3 @@ hide:
         show_source: false
         show_signature: false
         members: []
-
-## Links to functions:
-- [Nyquist](nyquist.md)
-- [Heuristic](heuristic.md)
-- [Indices](indices.md)
