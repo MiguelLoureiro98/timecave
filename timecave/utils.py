@@ -187,7 +187,7 @@ def heuristic_min_samples(fs: float | int, freq_limit: float | int) -> dict:
     Notes
     -----
     Under certain circumstances, the conditions of the Nyquist theorem might not be enough to guarantee that the reconstruction of the signal is possible.
-    An heuristic has been developed in the field of control engineering, whereby the sampling frequency should be 10 to 20 times higher than the largest \
+    [To address this isssue,] A heuristic has been developed in the field of control engineering, whereby [according to which] the sampling frequency should be 10 to 20 times higher than the largest \
     frequency of interest:
     
     $$
