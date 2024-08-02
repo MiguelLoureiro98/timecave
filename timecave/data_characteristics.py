@@ -78,12 +78,14 @@ def get_features(ts: np.ndarray | pd.Series, fs: float | int) -> pd.DataFrame:
     TypeError: Time series must be either a Numpy array or a Pandas series.
 
     The same happens if the sampling frequency is neither a float nor an integer:
+
     >>> get_features(time_series, "Hello")
     Traceback (most recent call last):
     ...
     TypeError: The sampling frequency should be either a float or an integer.
 
     A different exception is raised if the sampling frequency is negative:
+
     >>> get_features(time_series, -1)
     Traceback (most recent call last):
     ...
@@ -183,8 +185,16 @@ def strength_of_trend(ts: np.ndarray | pd.Series) -> float:
     543.4144869043147
 
     For pure trends, the strength of trend is infinite:
+
     >>> strength_of_trend(series_trend)
     inf
+
+    If the time series is neither an array nor a series, an exception is thrown:
+
+    >>> strength_of_trend([0, 1, 2])
+    Traceback (most recent call last):
+    ...
+    TypeError: Time series must be either a Numpy array or a Pandas series.
     """
 
     _check_type(ts);
@@ -274,6 +284,13 @@ def mean_crossing_rate(ts: np.ndarray | pd.Series) -> float:
     >>> ts3 = np.array([50, 50, 50, 0, 0]);
     >>> mean_crossing_rate(ts3)
     0.25
+
+    If the time series is neither an array nor a series, an exception is thrown:
+
+    >>> mean_crossing_rate([0, 1, 2])
+    Traceback (most recent call last):
+    ...
+    TypeError: Time series must be either a Numpy array or a Pandas series.
     """
 
     _check_type(ts);
@@ -354,6 +371,13 @@ def median_crossing_rate(ts: np.ndarray | pd.Series) -> float:
     >>> ts4 = np.array([0, 20, 5, 5, 5]);
     >>> median_crossing_rate(ts4)
     0.5
+
+    If the time series is neither an array nor a series, an exception is thrown:
+
+    >>> median_crossing_rate([0, 1, 2])
+    Traceback (most recent call last):
+    ...
+    TypeError: Time series must be either a Numpy array or a Pandas series.
     """
 
     _check_type(ts);
