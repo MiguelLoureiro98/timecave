@@ -1,6 +1,6 @@
 # TimeCaVe documentation
 
-Welcome to the TimeCaVe documentation! The package that helps you validate your time series models!
+Welcome to TimeCaVe's documentation! The package that helps you validate your time series models!
 
 ## What is TimeCaVe?
 
@@ -17,15 +17,16 @@ In addition to the validation methods themselves, TimeCaVe provides several util
 Model validation is a crucial step in the machine learning modelling process, and time series forecasting is no different. However, while implementations of model validation methods for tabular data abound, there is a shortage of publicly available packages that provide easy-to-use implementations of validation methods for time series data. This is exactly what TimeCaVe does.
 
 ### Main features:
-- **Flexibility**: Our implementations are generic and flexible. ... .
-- **Statistics/Info/Plot**: ... .
-- **Data generation**: ... .
-- **Validation metrics**: ... .
-- **Data collection**: ... .
+- **Versatility**: Our flexible, generic implementations are able to accomodate a wide variety of time series forecasting models.
+- **Scikit-learn-like syntax**: TimeCaVe's validation methods are implemented in a similar way to those of Scikit-learn, thereby smoothing the learning curve.
+- **Extra functionality**: In addition to splitting your data, TimeCaVe allows you to plot your partitioned data, compute relevant statistics for all training and validation sets, and access information regarding how much data is being used for training and validation. All this to ensure you make the best possible use of your data.
+- **Data generation**: Generate synthetic time series data easily with TimeCaVe's data generation capabilities [allow you to generate synthetic time series data without breaking a sweat].
+- **Validation metrics**: Several metrics are provided to help you select the most appropriate validation method, if need be.
+- **Data collection**: TimeCaVe provides utility functions that can help determine the necessary amount of samples to capture a given dominant frequency.
 
 ## Documentation Guide
 
-For a quick overview ... [Getting Started](starters.md) guide.
+For a quick overview of how to install and use TimeCaVe, please check our [Getting Started](starters.md) guide.
 
 Detailed information about each function or class is provided in TimeCaVe's [API reference](API_ref/index.md).
 
