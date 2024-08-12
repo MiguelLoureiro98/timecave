@@ -167,16 +167,16 @@ class Holdout(BaseSplitter):
         >>> for train, val, _ in splitter.split():
         ...     
         ...     # Print the training indices and their respective values
-        ...     print(train);
-        ...     print(ts[train]);
+        ...     print(f"Training indices: {train}");
+        ...     print(f"Training values: {ts[train]}");
         ...     
         ...     # Do the same for the validation indices
-        ...     print(val);
-        ...     print(ts[val]);
-        [0 1 2 3 4 5 6]
-        [1. 1. 1. 1. 1. 1. 1.]
-        [7 8 9]
-        [1. 1. 1.]
+        ...     print(f"Validation indices: {val}");
+        ...     print(f"Validation values: {ts[val]}");
+        Training indices: [0 1 2 3 4 5 6]
+        Training values: [1. 1. 1. 1. 1. 1. 1.]
+        Validation indices: [7 8 9]
+        Validation values: [1. 1. 1.]
         """
 
         split_ind = int(np.round((1 - self._val_size) * self._n_samples))
