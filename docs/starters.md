@@ -18,7 +18,7 @@ This will install dependencies that have been used to develop TimeCaVe and its d
 
 ## Basic Usage
 
-TimeCaVe is, above all, built to provide easy-to-use validation methods for time series forecasting models. The syntax is relatively similar to that of the methods provided by Scikit-learn (e.g. K-fold). Here is an example of how to use one of the methods provided by this package (Block Cross-Validation):
+TimeCaVe is, above all else, built to provide easy-to-use validation methods for time series forecasting models. The syntax is relatively similar to that of the methods provided by Scikit-learn (e.g. K-fold). Here is an example of how to use one of the methods provided by this package (Block Cross-Validation):
 
 ```py
 import numpy as np
@@ -26,7 +26,8 @@ from timecave.validation_methods.CV import BlockCV
 
 ts = np.arange(0, 10)
 
-splitter = BlockCV(ts);
+# Split the data into 5 folds
+splitter = BlockCV(5, ts);
 
 for train, test in splitter.split():
 
