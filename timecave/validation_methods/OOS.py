@@ -6,19 +6,40 @@ Classes
 Holdout
     Implements the classic Holdout method.
 
-Repeated_Holdout
+RepeatedHoldout
     Implements the Repeated Holdout approach.
 
-Rolling_Origin_Update
+RollingOriginUpdate
     Implements the Rolling Origin Update method.
 
-Rolling_Origin_Recalibration
+RollingOriginRecalibration
     Implements the Rolling Origin Recalibration method.
 
-Fixed_Size_Rolling_Window
+FixedSizeRollingWindow
     Implements the Fixed-size Rolling Window method.
 
-TODO: Add Tashman reference to the last 3/4 methods.
+See also
+--------
+[Prequential methods](../prequential/index.md): Prequential or forward validation methods for time series data.
+
+[Cross-validation methods](../CV/index.md): Cross-validation methods for time series data.
+
+[Markov methods](../markov/index.md): Markov cross-validation method for time series data.
+
+Notes
+-----
+Out-of-sample methods are one of the three main classes of validation methods for time series data (the others being prequential methods and cross-validation methods).
+
+References
+----------
+##1
+Leonard J Tashman. Out-of-sample tests of forecasting accuracy: an analysis
+and review. International journal of forecasting, 16(4):437–450, 2000.
+
+##2
+Vitor Cerqueira, Luis Torgo, and Igor Mozetiˇc. Evaluating time series fore-
+casting models: An empirical study on performance estimation methods.
+Machine Learning, 109(11):1997–2028, 2020.
 """
 
 from .base import BaseSplitter
@@ -31,10 +52,7 @@ from warnings import warn
 
 
 class Holdout(BaseSplitter):
-    """
-    Holdout(ts: np.ndarray | pd.Series, fs: float | int, validation_size: float = 0.3)
-    ----------------------------------------------------------------------------------
-    
+    """    
     Implements the classic Holdout method.
 
     extended_summary
@@ -50,6 +68,28 @@ class Holdout(BaseSplitter):
     validation_size : float, optional
         Validation set size (relative to the time series size), by default 0.3.
 
+    Attributes
+    ----------
+    n_splits
+        The number of splits.
+
+    sampling_freq
+        The series' sampling frequency (Hz).
+
+    Methods
+    -------
+    split()
+        Abstract method. The implementation differs for each validation method.
+
+    info()            
+        Abstract method. The implementation differs for each validation method.
+
+    statistics() 
+        Abstract method. The implementation differs for each validation method.
+
+    plot()
+        Abstract method. The implementation differs for each validation method.
+
     Raises
     ------
     TypeError
@@ -57,6 +97,20 @@ class Holdout(BaseSplitter):
 
     ValueError
         If the validation size does not lie in the ]0, 1[ interval.
+
+    See also
+    --------
+
+    Notes
+    -----
+    ![OOS_image](../../../images/OOS.png)
+    
+    References
+    ----------
+
+    Examples
+    --------
+
     """
 
     def __init__(
@@ -72,22 +126,6 @@ class Holdout(BaseSplitter):
     def _check_validation_size(self, validation_size: float) -> None:
         """
         Perform type and value checks on the 'validation_size' parameter.
-
-        This method checks whether the 'validation_size' parameter is a float and whether it
-        lies in the interval of 0 to 1.
-
-        Parameters
-        ----------
-        validation_size : float
-            Validation set size (relative to the time series size).
-
-        Raises
-        ------
-        TypeError
-            If the validation size is not a float.
-
-        ValueError
-            If the validation size does not lie in the ]0, 1[ interval.
         """
 
         if isinstance(validation_size, float) is False:
@@ -125,7 +163,7 @@ class Holdout(BaseSplitter):
         """
         Provide some basic information on the training and validation sets.
 
-        This method ... .
+        This method displays the time series size along with those of the training and validation sets.
         """
 
         print("Holdout method")
@@ -148,8 +186,14 @@ class Holdout(BaseSplitter):
 
         Returns
         -------
-        tuple[pd.DataFrame]
-            Relevant features for the entire time series, the training set, and the validation set.
+        pd.DataFrame
+            Relevant features for the entire time series.
+
+        pd.DataFrame
+            Relevant features for the training set.
+
+        pd.DataFrame
+            Relevant features for the validation set.
 
         Raises
         ------
