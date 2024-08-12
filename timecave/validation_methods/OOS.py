@@ -29,17 +29,15 @@ See also
 Notes
 -----
 Out-of-sample methods are one of the three main classes of validation methods for time series data (the others being prequential methods and cross-validation methods).
+Unlike cross-validation methods, this class of methods preserves the temporal order of observations, although it differs from prequential methods in that it does not \
+partition the series into equally sized folds.
+For a comprehensive review of this class of methods, the reader should refer to [[1]](#1).
 
 References
 ----------
 ##1
 Leonard J Tashman. Out-of-sample tests of forecasting accuracy: an analysis
 and review. International journal of forecasting, 16(4):437–450, 2000.
-
-##2
-Vitor Cerqueira, Luis Torgo, and Igor Mozetiˇc. Evaluating time series fore-
-casting models: An empirical study on performance estimation methods.
-Machine Learning, 109(11):1997–2028, 2020.
 """
 
 from .base import BaseSplitter
@@ -55,18 +53,20 @@ class Holdout(BaseSplitter):
     """    
     Implements the classic Holdout method.
 
-    extended_summary
+    This class implements the classic Holdout method, which splits the time series into two disjoint sets: one used for training, and another one used for validation purposes.
+    The larger the validation set, the smaller the training set, and vice-versa.
+    As this is an Out-of-Sample method, the training indices precede the validation ones.
 
     Parameters
     ----------
     ts : np.ndarray | pd.Series
         Univariate time series.
 
-    fs : float | int
+    fs : float | int, default=1
         Sampling frequency (Hz).
 
-    validation_size : float, optional
-        Validation set size (relative to the time series size), by default 0.3.
+    validation_size : float, default=0.3
+        Validation set size (relative to the time series size).
 
     Attributes
     ----------
@@ -79,16 +79,16 @@ class Holdout(BaseSplitter):
     Methods
     -------
     split()
-        Abstract method. The implementation differs for each validation method.
+        Split the time series into training and validation sets.
 
     info()            
-        Abstract method. The implementation differs for each validation method.
+        Provide additional information on the validation method.
 
     statistics() 
-        Abstract method. The implementation differs for each validation method.
+        Compute relevant statistics for both training and validation sets.
 
-    plot()
-        Abstract method. The implementation differs for each validation method.
+    plot(height: int, width: int)
+        Plot the partitioned time series.
 
     Raises
     ------
@@ -100,17 +100,17 @@ class Holdout(BaseSplitter):
 
     See also
     --------
+    [RepeatedHoldout](rep_holdout.md): Perform several iterations of the Holdout method with a randomised validation set size.
 
     Notes
     -----
+    The classic Holdout method consists of splitting the time series in two different sets: one for training and one for validation.
+    This method preserves the temporal order of observations: \
+    the oldest set of observations is used for training, while the most recent data is used for validating the model.
+
     ![OOS_image](../../../images/OOS.png)
     
-    References
-    ----------
-
-    Examples
-    --------
-
+    This method's computational cost is negligible.
     """
 
     def __init__(
@@ -140,16 +140,43 @@ class Holdout(BaseSplitter):
 
         return
 
-    def split(self) -> Generator[tuple, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
         """
-        _summary_
+        Split the time series into training and validation sets.
 
-        _extended_summary_
+        This method splits the series' indices into two disjoint sets: one containing the training indices, and another one with the validation indices.
+        Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
         ------
-        Generator[tuple, None, None]
-            _description_
+        np.ndarray
+            Array of training indices.
+
+        np.ndarray
+            Array of validation indices.
+
+        int
+            Used for compatibility reasons. Irrelevant for this method.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import Holdout
+        >>> ts = np.ones(10);
+        >>> splitter = Holdout(ts);
+        >>> for train, val, _ in splitter.split():
+        ...     
+        ...     # Print the training indices and their respective values
+        ...     print(train);
+        ...     print(ts[train]);
+        ...     
+        ...     # Do the same for the validation indices
+        ...     print(val);
+        ...     print(ts[val]);
+        [0 1 2 3 4 5 6]
+        [1. 1. 1. 1. 1. 1. 1.]
+        [7 8 9]
+        [1. 1. 1.]
         """
 
         split_ind = int(np.round((1 - self._val_size) * self._n_samples))
@@ -164,6 +191,19 @@ class Holdout(BaseSplitter):
         Provide some basic information on the training and validation sets.
 
         This method displays the time series size along with those of the training and validation sets.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import Holdout
+        >>> ts = np.ones(10);
+        >>> splitter = Holdout(ts);
+        >>> splitter.info();
+        Holdout method
+        --------------
+        Time series size: 10 samples
+        Training set size: 7 samples (70.0 %)
+        Validation set size: 3 samples (30.0 %)
         """
 
         print("Holdout method")
@@ -180,9 +220,11 @@ class Holdout(BaseSplitter):
 
     def statistics(self) -> tuple[pd.DataFrame]:
         """
-        _summary_
+        Compute relevant statistics for both training and validation sets.
 
-        _extended_summary_
+        This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
+        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
+        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
 
         Returns
         -------
@@ -199,6 +241,24 @@ class Holdout(BaseSplitter):
         ------
         ValueError
             If the time series is composed of less than three samples.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import Holdout
+        >>> ts = np.hstack((np.ones(5), np.zeros(5)));
+        >>> splitter = Holdout(ts, validation_size=0.5);
+        >>> ts_stats, training_stats, validation_stats = splitter.statistics();
+        Frequency features are only meaningful if the correct sampling frequency is passed to the class.
+        >>> ts_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.5     0.5  0.0  1.0      0.25            1.0    -0.151515           0.114058               0.5           0.38717            1.59099            0.111111              0.111111
+        >>> training_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude   Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   1.0     1.0  1.0  1.0       0.0            0.0 -1.050792e-16                0.0               0.0               0.0                inf                 0.0                   0.0
+        >>> validation_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
         """
 
         if self._n_samples <= 2:
@@ -236,9 +296,10 @@ class Holdout(BaseSplitter):
 
     def plot(self, height: int, width: int) -> None:
         """
-        _summary_
+        Plot the partitioned time series.
 
-        _extended_summary_
+        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
+        [Different colours are used to plot the training and validation sets.]
 
         Parameters
         ----------
@@ -247,6 +308,16 @@ class Holdout(BaseSplitter):
 
         width : int
             The figure's width.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import Holdout
+        >>> ts = np.arange(1, 11);
+        >>> splitter = Holdout(ts);
+        >>> splitter.plot(10, 10);
+
+        ![Holdout_plot_image](../../../images/Holdout_plot.png)
         """
 
         split = self.split()
@@ -290,6 +361,13 @@ class RepeatedHoldout(BaseSplitter):
 
     seed : int, default=0
         _description_
+
+    References
+    ----------
+    ##1
+    Vitor Cerqueira, Luis Torgo, and Igor Mozetiˇc. Evaluating time series fore-
+    casting models: An empirical study on performance estimation methods.
+    Machine Learning, 109(11):1997–2028, 2020.
     """
 
     def __init__(
@@ -1149,3 +1227,9 @@ class FixedSizeRollingWindow(BaseSplitter):
         plt.show()
 
         return
+
+if __name__ == "__main__":
+
+    import doctest
+
+    doctest.testmod(verbose=True);

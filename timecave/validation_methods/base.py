@@ -53,7 +53,7 @@ class BaseSplitter(ABC):
     statistics() 
         Abstract method. The implementation differs for each validation method.
 
-    plot()
+    plot(height: int, width: int)
         Abstract method. The implementation differs for each validation method.
 
     Raises
@@ -278,7 +278,7 @@ class BaseSplitter(ABC):
     @abstractmethod
     def statistics(self) -> tuple[pd.DataFrame]:
         """
-        Compute and plot relevant statistics for both training and validation sets.
+        Compute relevant statistics for both training and validation sets.
 
         Abstract method. The implementation differs for each validation method.
 
