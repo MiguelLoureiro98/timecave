@@ -40,8 +40,8 @@ Leonard J Tashman. Out-of-sample tests of forecasting accuracy: an analysis
 and review. International journal of forecasting, 16(4):437–450, 2000.
 """
 
-from timecave.validation_methods.base import BaseSplitter
-from timecave.data_characteristics import get_features
+from .base import BaseSplitter
+from ..data_characteristics import get_features
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -524,7 +524,7 @@ class RepeatedHoldout(BaseSplitter):
 
         return rand_ind
 
-    def split(self) -> Generator[tuple, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
         """
         Split the time series into training and validation sets.
 
@@ -792,20 +792,75 @@ class RepeatedHoldout(BaseSplitter):
 
 class RollingOriginUpdate(BaseSplitter):
     """
-    _summary_
+    Implements the Rolling Origin Update method.
 
-    _extended_summary_
+    This class implements the Rolling Origin Update method. This method splits the data into a single training set and several validation sets.
+    The validation sets are NOT disjoint, and, even though the model is validated several times, it only undergoes the training process once.
 
     Parameters
     ----------
     ts : np.ndarray | pd.Series
-        _description_
+        Univariate time series.
 
-    fs : float | int
-        _description_
+    fs : float | int, default=1
+        Sampling frequency (Hz).
 
     origin : int | float, default=0.7
-        _description_
+        The point from which the data is split. \
+        If an integer is passed, it is interpreted as an index. \
+        If a float is passed instead, it is treated as the percentage of samples \
+        that should be used for training.
+
+    Attributes
+    ----------
+    n_splits
+        The number of splits.
+
+    sampling_freq
+        The series' sampling frequency (Hz).
+    
+    Methods
+    -------
+    split()
+        Split the time series into training and validation sets.
+
+    info()            
+        Provide additional information on the validation method.
+
+    statistics() 
+        Compute relevant statistics for both training and validation sets.
+
+    plot(height: int, width: int)
+        Plot the partitioned time series.
+
+    Raises
+    ------
+    TypeError
+        If 'origin' is neither an integer nor a float.
+
+    ValueError
+        If 'origin' is a float that does not lie in the ]0, 1[ interval.
+
+    ValueError
+        If 'origin' is an integer that does not lie in the ]0, n_samples[ interval.
+
+    See also
+    --------
+    [Rolling Origin Recalibration](roll_recal.md): ... .
+    
+    Notes
+    -----
+    The Rolling Origin Update method ... .
+    
+    ![RollUpdate](../../../images/RollUpdate.png)
+
+    For more details on this method, the reader should refer to [[1]](#1).
+
+    References
+    ----------
+    ##1
+    Leonard J Tashman. Out-of-sample tests of forecasting accuracy: an analysis
+    and review. International journal of forecasting, 16(4):437–450, 2000.
     """
 
     def __init__(
@@ -857,16 +912,30 @@ class RollingOriginUpdate(BaseSplitter):
 
         return origin
 
-    def split(self) -> Generator[np.ndarray, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
         """
-        _summary_
+        Split the time series into training and validation sets.
 
-        _extended_summary_
+        This method splits the series' indices into disjoint sets containing the training and validation indices.
+        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
         ------
-        Generator[tuple, None, None]
-            _description_
+        np.ndarray
+            Array of training indices.
+
+        np.ndarray
+            Array of validation indices.
+
+        int
+            Used for compatibility reasons. Irrelevant for this method.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import RepeatedHoldout
+        >>> ts = np.ones(100);
         """
 
         for ind in self._splitting_ind:
@@ -878,9 +947,17 @@ class RollingOriginUpdate(BaseSplitter):
 
     def info(self) -> None:
         """
-        _summary_
+        Provide some basic information on the training and validation sets.
 
-        _extended_summary_
+        This method displays the average, minimum and maximum validation set sizes.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import RepeatedHoldout
+        >>> ts = np.ones(10);
+        >>> splitter = RepeatedHoldout(ts, splitting_interval=[0.6, 0.9]);
+        >>> splitter.info();
         """
 
         training_size = self._origin + 1
@@ -904,19 +981,35 @@ class RollingOriginUpdate(BaseSplitter):
 
     def statistics(self) -> tuple[pd.DataFrame]:
         """
-        _summary_
+        Compute relevant statistics for both training and validation sets.
 
-        _extended_summary_
+        This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
+        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
+        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
 
         Returns
         -------
-        tuple[pd.DataFrame]
-            _description_
+        pd.DataFrame
+            Relevant features for the entire time series.
+
+        pd.DataFrame
+            Relevant features for the training set.
+
+        pd.DataFrame
+            Relevant features for the validation set.
 
         Raises
         ------
         ValueError
-            _description_
+            If the time series is composed of less than three samples.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import Holdout
+        >>> ts = np.hstack((np.ones(5), np.zeros(5)));
+        >>> splitter = Holdout(ts, validation_size=0.5);
+        >>> ts_stats, training_stats, validation_stats = splitter.statistics();
         """
 
         if self._n_samples <= 2:
@@ -957,9 +1050,10 @@ class RollingOriginUpdate(BaseSplitter):
 
     def plot(self, height: int, width: int) -> None:
         """
-        _summary_
+        Plot the partitioned time series.
 
-        _extended_summary_
+        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
+        [Different colours are used to plot the training and validation sets.]
 
         Parameters
         ----------
@@ -968,6 +1062,16 @@ class RollingOriginUpdate(BaseSplitter):
 
         width : int
             The figure's width.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import Holdout
+        >>> ts = np.arange(1, 11);
+        >>> splitter = Holdout(ts);
+        >>> splitter.plot(10, 10);
+
+        ![Holdout_plot_image](../../../images/Holdout_plot.png)
         """
 
         fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True)
@@ -1061,7 +1165,7 @@ class RollingOriginRecalibration(BaseSplitter):
 
         return origin
 
-    def split(self) -> Generator[tuple, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
         """
         _summary_
 
@@ -1273,7 +1377,7 @@ class FixedSizeRollingWindow(BaseSplitter):
 
         return origin
 
-    def split(self) -> Generator[tuple, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
         """
         _summary_
 
