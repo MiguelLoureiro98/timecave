@@ -40,8 +40,8 @@ Leonard J Tashman. Out-of-sample tests of forecasting accuracy: an analysis
 and review. International journal of forecasting, 16(4):437–450, 2000.
 """
 
-from .base import BaseSplitter
-from ..data_characteristics import get_features
+from timecave.validation_methods.base import BaseSplitter
+from timecave.data_characteristics import get_features
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -54,7 +54,7 @@ class Holdout(BaseSplitter):
     Implements the classic Holdout method.
 
     This class implements the classic Holdout method, which splits the time series into two disjoint sets: one used for training, and another one used for validation purposes.
-    The larger the validation set, the smaller the training set, and vice-versa.
+    Note that the larger the validation set, the smaller the training set, and vice-versa.
     As this is an Out-of-Sample method, the training indices precede the validation ones.
 
     Parameters
@@ -107,6 +107,7 @@ class Holdout(BaseSplitter):
     The classic Holdout method consists of splitting the time series in two different sets: one for training and one for validation.
     This method preserves the temporal order of observations: \
     the oldest set of observations is used for training, while the most recent data is used for validating the model.
+    The model's error on the validation set data is used as an estimate of its true error.
 
     ![OOS_image](../../../images/OOS.png)
     
@@ -338,29 +339,83 @@ class Holdout(BaseSplitter):
 
 class RepeatedHoldout(BaseSplitter):
     """
-    RepeatedHoldout(ts: np.ndarray | pd.Series, fs: float | int, iterations: int, splitting_interval: list[int | float] = [0.7, 0.8], seed: int = 0)
-    ------------------------------------------------------------------------------------------------------------------------------------------------
+    Implements the Repeated Holdout method.
 
-    _summary_
-
-    _extended_summary_
+    This class implements the Repeated Holdout method. This is essentially an extension of the classic Holdout method, as it simply applies \
+    this method multiple times with a randomised splitting point. At every iteration, this point is chosen at random from an interval of values \
+    specified by the user. For this purpose, our implementation uses a uniform distribution, though, in theory, any continuous distribution could be used.
 
     Parameters
     ----------
     ts : np.ndarray | pd.Series
-        _description_
+        Univariate time series.
 
     fs : float | int
-        _description_
+        Sampling frequency (Hz).
 
     iterations : int
-        _description_
+        Number of iterations that should be performed.
 
     splitting_interval : list[int | float], default=[0.7, 0.8]
-        _description_
+        Interval from which the splitting point will be drawn. \
+        If the values are integers, they are interpreted as indices. \
+        Otherwise, they are regarded as the minimum and maximum allowable \
+        sizes for the training set.
 
     seed : int, default=0
-        _description_
+        Random seed.
+
+    Attributes
+    ----------
+    n_splits
+        The number of splits.
+
+    sampling_freq
+        The series' sampling frequency (Hz).
+    
+    Methods
+    -------
+    split()
+        Split the time series into training and validation sets.
+
+    info()            
+        Provide additional information on the validation method.
+
+    statistics() 
+        Compute relevant statistics for both training and validation sets.
+
+    plot(height: int, width: int)
+        Plot the partitioned time series.
+
+    Raises
+    ------
+    TypeError
+        If the 'iterations' parameter is not an integer.
+
+    ValueError
+        If the 'iterations' parameter is not positive.
+
+    TypeError
+        If the splitting interval is not a list.
+
+    ValueError
+        If the splitting interval list does not contain two values.
+    
+    See also
+    --------
+    [Holdout](holdout.md): The classic Holdout method.
+
+    Notes
+    -----
+    The Repeated Holdout method is an extension of the classic Holdout method. Essentially, the Holdout method is applied \
+    multiple times, and an average of the error on the validation set is used as an estimate of the model's true error.
+    At every iteration, the splitting point (and therefore the training and validation set sizes) is computed randomly from \
+    an interval of values specified by the user.
+
+    ![Rep_holdout](../../../images/RepHoldout.png)
+
+    Compared to the classic Holdout method, it has a greater computational cost, though, depending on the number \
+    of iterations and the prediction model, this may be negligible.
 
     References
     ----------
@@ -471,14 +526,76 @@ class RepeatedHoldout(BaseSplitter):
 
     def split(self) -> Generator[tuple, None, None]:
         """
-        _summary_
+        Split the time series into training and validation sets.
 
-        _extended_summary_
+        This method splits the series' indices into disjoint sets containing the training and validation indices.
+        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
         ------
-        Generator[tuple, None, None]
-            _description_
+        np.ndarray
+            Array of training indices.
+
+        np.ndarray
+            Array of validation indices.
+
+        int
+            Used for compatibility reasons. Irrelevant for this method.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import RepeatedHoldout
+        >>> ts = np.ones(100);
+
+        If the splitting interval consists of two floats, the method assumes they define the minimum and maximum training set sizes:
+
+        >>> splitter = RepeatedHoldout(ts, splitting_interval=[0.6, 0.8]);
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ...
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"# training samples: {train.shape[0]}");
+        ...     print(f"# validation samples: {val.shape[0]}");
+        Iteration 1
+        # training samples: 72
+        # validation samples: 28
+        Iteration 2
+        # training samples: 75
+        # validation samples: 25
+        Iteration 3
+        # training samples: 60
+        # validation samples: 40
+        Iteration 4
+        # training samples: 63
+        # validation samples: 37
+        Iteration 5
+        # training samples: 63
+        # validation samples: 37
+
+        If two integers are specified instead, they will be regarded as indices.
+
+        >>> splitter = RepeatedHoldout(ts, splitting_interval=[80, 95]);
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ...
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"# training samples: {train.shape[0]}");
+        ...     print(f"# validation samples: {val.shape[0]}");
+        Iteration 1
+        # training samples: 92
+        # validation samples: 8
+        Iteration 2
+        # training samples: 85
+        # validation samples: 15
+        Iteration 3
+        # training samples: 80
+        # validation samples: 20
+        Iteration 4
+        # training samples: 83
+        # validation samples: 17
+        Iteration 5
+        # training samples: 91
+        # validation samples: 9
         """
 
         for ind in self._splitting_ind:
@@ -490,9 +607,23 @@ class RepeatedHoldout(BaseSplitter):
 
     def info(self) -> None:
         """
-        _summary_
+        Provide some basic information on the training and validation sets.
 
-        _extended_summary_
+        This method displays the average, minimum and maximum validation set sizes.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import RepeatedHoldout
+        >>> ts = np.ones(10);
+        >>> splitter = RepeatedHoldout(ts, splitting_interval=[0.6, 0.9]);
+        >>> splitter.info();
+        Repeated Holdout method
+        -----------------------
+        Time series size: 10 samples
+        Average validation set size: 3.4 samples (34.0 %)
+        Maximum validation set size: 4 samples (40.0 %)
+        Minimum validation set size: 3 samples (30.0 %)
         """
 
         mean_size = self._n_samples - self._splitting_ind.mean()
@@ -506,20 +637,59 @@ class RepeatedHoldout(BaseSplitter):
         print("Repeated Holdout method")
         print("-----------------------")
         print(f"Time series size: {self._n_samples} samples")
-        print(f"Average validation set size: {mean_size} samples ({mean_pct} %)")
+        print(f"Average validation set size: {np.round(mean_size, 4)} samples ({mean_pct} %)")
         print(f"Maximum validation set size: {max_size} samples ({max_pct} %)")
         print(f"Minimum validation set size: {min_size} samples ({min_pct} %)")
 
     def statistics(self) -> tuple[pd.DataFrame]:
         """
-        _summary_
+        Compute relevant statistics for both training and validation sets.
 
-        _extended_summary_
+        This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
+        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
+        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
 
         Returns
         -------
-        tuple[pd.DataFrame]
-            _description_
+        pd.DataFrame
+            Relevant features for the entire time series.
+
+        pd.DataFrame
+            Relevant features for the training set.
+
+        pd.DataFrame
+            Relevant features for the validation set.
+
+        Raises
+        ------
+        ValueError
+            If the time series is composed of less than three samples.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import RepeatedHoldout
+        >>> ts = np.hstack((np.ones(5), np.zeros(5)));
+        >>> splitter = RepeatedHoldout(ts, splitting_interval=[0.6, 0.9]);
+        >>> ts_stats, training_stats, validation_stats = splitter.statistics();
+        Frequency features are only meaningful if the correct sampling frequency is passed to the class.
+        >>> ts_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.5     0.5  0.0  1.0      0.25            1.0    -0.151515           0.114058               0.5           0.38717            1.59099            0.111111              0.111111
+        >>> training_stats
+               Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0  0.833333     1.0  0.0  1.0  0.138889            1.0    -0.142857           0.125000          0.500000          0.792481           0.931695            0.200000              0.200000
+        0  0.714286     1.0  0.0  1.0  0.204082            1.0    -0.178571           0.094706          0.428571          0.556506           1.212183            0.166667              0.166667
+        0  0.833333     1.0  0.0  1.0  0.138889            1.0    -0.142857           0.125000          0.500000          0.792481           0.931695            0.200000              0.200000
+        0  0.714286     1.0  0.0  1.0  0.204082            1.0    -0.178571           0.094706          0.428571          0.556506           1.212183            0.166667              0.166667
+        0  0.714286     1.0  0.0  1.0  0.204082            1.0    -0.178571           0.094706          0.428571          0.556506           1.212183            0.166667              0.166667
+        >>> validation_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
         """
 
         if self._n_samples <= 2:
@@ -575,9 +745,10 @@ class RepeatedHoldout(BaseSplitter):
 
     def plot(self, height: int, width: int) -> None:
         """
-        _summary_
+        Plot the partitioned time series.
 
-        _extended_summary_
+        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
+        [Different colours are used to plot the training and validation sets.]
 
         Parameters
         ----------
@@ -586,6 +757,16 @@ class RepeatedHoldout(BaseSplitter):
 
         width : int
             The figure's width.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import RepeatedHoldout
+        >>> ts = np.ones(100);
+        >>> splitter = RepeatedHoldout(ts, splitting_interval=[0.6, 0.9]);
+        >>> splitter.plot(10, 10);
+
+        ![Holdout_plot_image](../../../images/RepHoldout_plot.png)
         """
 
         fig, axs = plt.subplots(self._iter, 1, sharex=True)
@@ -611,9 +792,6 @@ class RepeatedHoldout(BaseSplitter):
 
 class RollingOriginUpdate(BaseSplitter):
     """
-    RollingOriginUpdate(ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7)
-    -------------------------------------------------------------------------------------------
-
     _summary_
 
     _extended_summary_
