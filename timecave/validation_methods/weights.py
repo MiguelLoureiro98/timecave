@@ -1,5 +1,22 @@
 """
 This module contains built-in functions to compute weights for validation methods that so require.
+
+Functions
+---------
+constant_weights
+    Generates constant weights (i.e. every fold is weighted equally).
+
+linear_weights
+    Folds are weighted linearly.
+
+exponential_weights
+    Folds are weighted exponentially.
+
+Notes
+-----
+Users may write their own weighting function and pass it as an argument to a validation method class. 
+However, to make sure that the user-defined function is compatible with TimeCaVe, the function signature 
+must match those of the functions provided herein.
 """
 
 import numpy as np
