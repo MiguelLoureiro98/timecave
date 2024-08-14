@@ -415,7 +415,8 @@ class RepeatedHoldout(BaseSplitter):
     ![Rep_holdout](../../../images/RepHoldout.png)
 
     Compared to the classic Holdout method, it has a greater computational cost, though, depending on the number \
-    of iterations and the prediction model, this may be negligible.
+    of iterations and the prediction model, this may be negligible. For more details on this method, the reader should \
+    refer to [[1]](#1).
 
     References
     ----------
