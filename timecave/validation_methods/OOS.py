@@ -350,10 +350,10 @@ class RepeatedHoldout(BaseSplitter):
     ts : np.ndarray | pd.Series
         Univariate time series.
 
-    fs : float | int
+    fs : float | int, default=1
         Sampling frequency (Hz).
 
-    iterations : int
+    iterations : int, default=5
         Number of iterations that should be performed.
 
     splitting_interval : list[int | float], default=[0.7, 0.8]
@@ -844,13 +844,22 @@ class RollingOriginUpdate(BaseSplitter):
     ValueError
         If 'origin' is an integer that does not lie in the ]0, n_samples[ interval.
 
+    Warning
+    -------
+    The model should only be trained ONCE.
+
     See also
     --------
-    [Rolling Origin Recalibration](roll_recal.md): ... .
+    [Rolling Origin Recalibration](roll_recal.md): Similar to the Rolling Origin Update method, but the training set is updated along with the validation set.
     
     Notes
     -----
-    The Rolling Origin Update method ... .
+    The Rolling Origin Update method consists of splitting the data into a training set and a validation set, \
+    with the former preceding the latter. The model is only trained once. \
+    Then, at every iteration, a single data point (the one closest to the training set) is dropped from the \
+    validation set, and the model's performance is assessed using the new validation set. This process ends once \
+    the validation set consists of a single data point. The estimate of the true model error is the average validation \
+    error across [over] all iterations.
     
     ![RollUpdate](../../../images/RollUpdate.png)
 
@@ -934,8 +943,23 @@ class RollingOriginUpdate(BaseSplitter):
         Examples
         --------
         >>> import numpy as np
-        >>> from timecave.validation_methods.OOS import RepeatedHoldout
-        >>> ts = np.ones(100);
+        >>> from timecave.validation_methods.OOS import RollingOriginUpdate
+        >>> ts = np.ones(10);
+        >>> splitter = RollingOriginUpdate(ts);
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ...
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Validation set indices: {val}");
+        ...     print(f"Validation set size: {val.shape[0]}");
+        Iteration 1
+        Validation set indices: [7 8 9]
+        Validation set size: 3
+        Iteration 2
+        Validation set indices: [8 9]
+        Validation set size: 2
+        Iteration 3
+        Validation set indices: [9]
+        Validation set size: 1
         """
 
         for ind in self._splitting_ind:
@@ -949,15 +973,21 @@ class RollingOriginUpdate(BaseSplitter):
         """
         Provide some basic information on the training and validation sets.
 
-        This method displays the average, minimum and maximum validation set sizes.
+        This method displays the training set size and both the minimum and maximum validation set size.
 
         Examples
         --------
         >>> import numpy as np
-        >>> from timecave.validation_methods.OOS import RepeatedHoldout
+        >>> from timecave.validation_methods.OOS import RollingOriginUpdate
         >>> ts = np.ones(10);
-        >>> splitter = RepeatedHoldout(ts, splitting_interval=[0.6, 0.9]);
+        >>> splitter = RollingOriginUpdate(ts);
         >>> splitter.info();
+        Rolling Origin Update method
+        ----------------------------
+        Time series size: 10 samples
+        Training set size (fixed parameter): 7 samples (70.0 %)
+        Maximum validation set size: 3 samples (30.0 %)
+        Minimum validation set size: 1 sample (10.0 %)
         """
 
         training_size = self._origin + 1
@@ -1006,10 +1036,22 @@ class RollingOriginUpdate(BaseSplitter):
         Examples
         --------
         >>> import numpy as np
-        >>> from timecave.validation_methods.OOS import Holdout
+        >>> from timecave.validation_methods.OOS import RollingOriginUpdate
         >>> ts = np.hstack((np.ones(5), np.zeros(5)));
-        >>> splitter = Holdout(ts, validation_size=0.5);
+        >>> splitter = RollingOriginUpdate(ts);
         >>> ts_stats, training_stats, validation_stats = splitter.statistics();
+        Frequency features are only meaningful if the correct sampling frequency is passed to the class.
+        Training and validation set features can only computed if each set is composed of two or more samples.
+        >>> ts_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.5     0.5  0.0  1.0      0.25            1.0    -0.151515           0.114058               0.5           0.38717            1.59099            0.111111              0.111111
+        >>> training_stats
+               Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0  0.714286     1.0  0.0  1.0  0.204082            1.0    -0.178571           0.094706          0.428571          0.556506           1.212183            0.166667              0.166667
+        >>> validation_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
         """
 
         if self._n_samples <= 2:
@@ -1066,12 +1108,12 @@ class RollingOriginUpdate(BaseSplitter):
         Examples
         --------
         >>> import numpy as np
-        >>> from timecave.validation_methods.OOS import Holdout
+        >>> from timecave.validation_methods.OOS import RollingOriginUpdate
         >>> ts = np.arange(1, 11);
-        >>> splitter = Holdout(ts);
+        >>> splitter = RollingOriginUpdate(ts);
         >>> splitter.plot(10, 10);
 
-        ![Holdout_plot_image](../../../images/Holdout_plot.png)
+        ![Update_plot_image](../../../images/RollUpdate_plot.png)
         """
 
         fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True)
@@ -1097,23 +1139,84 @@ class RollingOriginUpdate(BaseSplitter):
 
 class RollingOriginRecalibration(BaseSplitter):
     """
-    RollingOriginRecalibration(ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7)
-    --------------------------------------------------------------------------------------------------
+    Implements the Rolling Origin Recalibration method.
 
-    _summary_
-
-    _extended_summary_
+    This class implements the Rolling Origin Recalibration method. This method splits the data into various training and validation sets.
+    Neither the training sets nor the validation sets are disjoint. At every iteration, a single data point is dropped from the validation set and added \
+    to the training set.
 
     Parameters
     ----------
     ts : np.ndarray | pd.Series
-        _description_
+        Univariate time series.
 
     fs : float | int
-        _description_
+        Sampling frequency (Hz).
 
     origin : int | float, default=0.7
-        _description_
+        The point from which the data is split. \
+        If an integer is passed, it is interpreted as an index. \
+        If a float is passed instead, it is treated as the percentage of samples \
+        that should be used for training.
+
+    Attributes
+    ----------
+    n_splits
+        The number of splits.
+
+    sampling_freq
+        The series' sampling frequency (Hz).
+    
+    Methods
+    -------
+    split()
+        Split the time series into training and validation sets.
+
+    info()            
+        Provide additional information on the validation method.
+
+    statistics() 
+        Compute relevant statistics for both training and validation sets.
+
+    plot(height: int, width: int)
+        Plot the partitioned time series.
+
+    Raises
+    ------
+    TypeError
+        If 'origin' is neither an integer nor a float.
+
+    ValueError
+        If 'origin' is a float that does not lie in the ]0, 1[ interval.
+
+    ValueError
+        If 'origin' is an integer that does not lie in the ]0, n_samples[ interval.
+
+    Warning
+    -------
+    Depending on the time series' size, this method can have a large computational cost.
+
+    See also
+    --------
+    [Rolling Origin Update](roll_update.md): Similar to the Rolling Origin Recalibration method, but the model is only trained once.
+    
+    Notes
+    -----
+    The Rolling Origin Recalibration method consists of splitting the data into a training set and a validation set, \
+    with the former preceding the latter. At every iteration, a single data point (the one closest to the training set) is dropped from the \
+    validation set and added to the training set. The model's performance is then assessed on the new validation set. This process ends once \
+    the validation set consists of a single data point. The estimate of the true model error is the average validation \
+    error across [over] all iterations.
+    
+    ![RollRecal](../../../images/RollRecal.png)
+
+    For more details on this method, the reader should refer to [[1]](#1).
+
+    References
+    ----------
+    ##1
+    Leonard J Tashman. Out-of-sample tests of forecasting accuracy: an analysis
+    and review. International journal of forecasting, 16(4):437–450, 2000.
     """
 
     def __init__(
@@ -1167,14 +1270,43 @@ class RollingOriginRecalibration(BaseSplitter):
 
     def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
         """
-        _summary_
+        Split the time series into training and validation sets.
 
-        _extended_summary_
+        This method splits the series' indices into disjoint sets containing the training and validation indices.
+        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
         ------
-        Generator[tuple, None, None]
-            _description_
+        np.ndarray
+            Array of training indices.
+
+        np.ndarray
+            Array of validation indices.
+
+        int
+            Used for compatibility reasons. Irrelevant for this method.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import RollingOriginRecalibration
+        >>> ts = np.ones(10);
+        >>> splitter = RollingOriginRecalibration(ts);
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ...
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Training set indices: {train}");
+        ...     print(f"Validation set indices: {val}");
+        Iteration 1
+        Training set indices: [0 1 2 3 4 5 6]
+        Validation set indices: [7 8 9]
+        Iteration 2
+        Training set indices: [0 1 2 3 4 5 6 7]
+        Validation set indices: [8 9]
+        Iteration 3
+        Training set indices: [0 1 2 3 4 5 6 7 8]
+        Validation set indices: [9]
         """
 
         for ind in self._splitting_ind:
@@ -1186,9 +1318,24 @@ class RollingOriginRecalibration(BaseSplitter):
 
     def info(self) -> None:
         """
-        _summary_
+        Provide some basic information on the training and validation sets.
 
-        _extended_summary_
+        This method displays the minimum and maximum sizes for both the training and validation sets.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import RollingOriginRecalibration
+        >>> ts = np.ones(10);
+        >>> splitter = RollingOriginRecalibration(ts);
+        >>> splitter.info();
+        Rolling Origin Recalibration method
+        -----------------------------------
+        Time series size: 10 samples
+        Minimum training set size: 7 samples (70.0 %)
+        Maximum validation set size: 3 samples (30.0 %)
+        Maximum training set size: 9 samples (90.0 %)
+        Minimum validation set size: 1 samples (10.0 %)
         """
 
         max_training_size = self._n_samples - 1
@@ -1221,19 +1368,49 @@ class RollingOriginRecalibration(BaseSplitter):
 
     def statistics(self) -> tuple[pd.DataFrame]:
         """
-        _summary_
+        Compute relevant statistics for both training and validation sets.
 
-        _extended_summary_
+        This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
+        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
+        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
 
         Returns
         -------
-        tuple[pd.DataFrame]
-            _description_
+        pd.DataFrame
+            Relevant features for the entire time series.
+
+        pd.DataFrame
+            Relevant features for the training set.
+
+        pd.DataFrame
+            Relevant features for the validation set.
 
         Raises
         ------
         ValueError
-            _description_
+            If the time series is composed of less than three samples.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import RollingOriginRecalibration
+        >>> ts = np.hstack((np.ones(5), np.zeros(5)));
+        >>> splitter = RollingOriginRecalibration(ts);
+        >>> ts_stats, training_stats, validation_stats = splitter.statistics();
+        Frequency features are only meaningful if the correct sampling frequency is passed to the class.
+        Training and validation set features can only computed if each set is composed of two or more samples.
+        >>> ts_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.5     0.5  0.0  1.0      0.25            1.0    -0.151515           0.114058               0.5           0.38717            1.59099            0.111111              0.111111
+        >>> training_stats
+               Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0  0.714286     1.0  0.0  1.0  0.204082            1.0    -0.178571           0.094706          0.428571          0.556506           1.212183            0.166667              0.166667
+        0  0.625000     1.0  0.0  1.0  0.234375            1.0    -0.178571           0.122818          0.500000          0.600876           1.383496            0.142857              0.142857
+        0  0.555556     1.0  0.0  1.0  0.246914            1.0    -0.166667           0.105483          0.444444          0.385860           1.502496            0.125000              0.125000
+        >>> validation_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
         """
 
         if self._n_samples <= 2:
@@ -1273,17 +1450,28 @@ class RollingOriginRecalibration(BaseSplitter):
 
     def plot(self, height: int, width: int) -> None:
         """
-        _summary_
+        Plot the partitioned time series.
 
-        _extended_summary_
+        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
+        [Different colours are used to plot the training and validation sets.]
 
         Parameters
         ----------
         height : int
-            _description_
+            The figure's height.
 
         width : int
-            _description_
+            The figure's width.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import RollingOriginRecalibration
+        >>> ts = np.arange(1, 11);
+        >>> splitter = RollingOriginRecalibration(ts);
+        >>> splitter.plot(10, 10);
+
+        ![Holdout_plot_image](../../../images/RollRecal_plot.png)
         """
 
         fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True)
@@ -1309,23 +1497,81 @@ class RollingOriginRecalibration(BaseSplitter):
 
 class FixedSizeRollingWindow(BaseSplitter):
     """
-    FixedSizeRollingWindow(ts: np.ndarray | pd.Series, fs: float | int, origin: int | float = 0.7)
-    ----------------------------------------------------------------------------------------------
+    Implements the Fixed Size Rolling Window method.
 
-    _summary_
-
-    _extended_summary_
+    This class implements the Fixed Size Rolling Window method. This method splits the data into a single training set and several validation sets.
+    Neither the training sets nor the validation sets are disjoint. At every iteration, a single data point is dropped from the validation set and added \
+    to the training set. The oldest data point belonging to the training set is also discarded, so that the amount of training samples remains constant.
 
     Parameters
     ----------
     ts : np.ndarray | pd.Series
-        _description_
+        Univariate time series.
 
-    fs : float | int
-        _description_
+    fs : float | int, default=1
+        Sampling frequency (Hz).
 
     origin : int | float, default=0.7
-        _description_
+        The point from which the data is split. \
+        If an integer is passed, it is interpreted as an index. \
+        If a float is passed instead, it is treated as the percentage of samples \
+        that should be used for training.
+
+    Attributes
+    ----------
+    n_splits
+        The number of splits.
+
+    sampling_freq
+        The series' sampling frequency (Hz).
+    
+    Methods
+    -------
+    split()
+        Split the time series into training and validation sets.
+
+    info()            
+        Provide additional information on the validation method.
+
+    statistics() 
+        Compute relevant statistics for both training and validation sets.
+
+    plot(height: int, width: int)
+        Plot the partitioned time series.
+
+    Raises
+    ------
+    TypeError
+        If 'origin' is neither an integer nor a float.
+
+    ValueError
+        If 'origin' is a float that does not lie in the ]0, 1[ interval.
+
+    ValueError
+        If 'origin' is an integer that does not lie in the ]0, n_samples[ interval.
+    
+    Warning
+    -------
+    Depending on the time series' size, this method can have a large computational cost.
+
+    Notes
+    -----
+    The Fixed Size Rolling Origin method consists of splitting the data into a training set and a validation set, \
+    with the former preceding the latter. At every iteration, a single data point (the one closest to the training set) is dropped from the \
+    validation set and added to the training set. Additionaly, the oldest data point belonging to the training set is discarded, so that the amount of training samples remains constant. \
+    The model is then trained on the new training set and tested on the new validation set. This process ends once \
+    the validation set consists of a single data point. The estimate of the true model error is the average validation \
+    error across [over] all iterations.
+    
+    ![FixedSizeRoll](../../../images/FixedRoll.png)
+
+    For more details on this method, the reader should refer to [[1]](#1).
+
+    References
+    ----------
+    ##1
+    Leonard J Tashman. Out-of-sample tests of forecasting accuracy: an analysis
+    and review. International journal of forecasting, 16(4):437–450, 2000.
     """
 
     def __init__(
@@ -1379,14 +1625,43 @@ class FixedSizeRollingWindow(BaseSplitter):
 
     def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
         """
-        _summary_
+        Split the time series into training and validation sets.
 
-        _extended_summary_
+        This method splits the series' indices into disjoint sets containing the training and validation indices.
+        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
         ------
-        Generator[tuple, None, None]
-            _description_
+        np.ndarray
+            Array of training indices.
+
+        np.ndarray
+            Array of validation indices.
+
+        int
+            Used for compatibility reasons. Irrelevant for this method.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import FixedSizeRollingWindow
+        >>> ts = np.ones(10);
+        >>> splitter = FixedSizeRollingWindow(ts);
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ...
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Training set indices: {train}");
+        ...     print(f"Validation set indices: {val}");
+        Iteration 1
+        Training set indices: [0 1 2 3 4 5 6]
+        Validation set indices: [7 8 9]
+        Iteration 2
+        Training set indices: [1 2 3 4 5 6 7]
+        Validation set indices: [8 9]
+        Iteration 3
+        Training set indices: [2 3 4 5 6 7 8]
+        Validation set indices: [9]
         """
         start_training_ind = self._splitting_ind - self._origin - 1
 
@@ -1399,9 +1674,23 @@ class FixedSizeRollingWindow(BaseSplitter):
 
     def info(self) -> None:
         """
-        _summary_
+        Provide some basic information on the training and validation sets.
 
-        _extended_summary_
+        This method displays the minimum and maximum validation set size, as well as the training set size.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import FixedSizeRollingWindow
+        >>> ts = np.ones(10);
+        >>> splitter = FixedSizeRollingWindow(ts);
+        >>> splitter.info();
+        Fixed-size Rolling Window method
+        --------------------------------
+        Time series size: 10 samples
+        Training set size (fixed parameter): 7 samples (70.0 %)
+        Maximum validation set size: 3 samples (30.0 %)
+        Minimum validation set size: 1 sample (10.0 %)
         """
 
         training_size = self._origin + 1
@@ -1425,19 +1714,49 @@ class FixedSizeRollingWindow(BaseSplitter):
 
     def statistics(self) -> tuple[pd.DataFrame]:
         """
-        _summary_
+        Compute relevant statistics for both training and validation sets.
 
-        _extended_summary_
+        This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
+        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
+        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
 
         Returns
         -------
-        tuple[pd.DataFrame]
-            _description_
+        pd.DataFrame
+            Relevant features for the entire time series.
+
+        pd.DataFrame
+            Relevant features for the training set.
+
+        pd.DataFrame
+            Relevant features for the validation set.
 
         Raises
         ------
         ValueError
             If the time series is composed of less than three samples.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import FixedSizeRollingWindow
+        >>> ts = np.hstack((np.ones(5), np.zeros(5)));
+        >>> splitter = FixedSizeRollingWindow(ts);
+        >>> ts_stats, training_stats, validation_stats = splitter.statistics();
+        Frequency features are only meaningful if the correct sampling frequency is passed to the class.
+        Training and validation set features can only computed if each set is composed of two or more samples.
+        >>> ts_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.5     0.5  0.0  1.0      0.25            1.0    -0.151515           0.114058               0.5           0.38717            1.59099            0.111111              0.111111
+        >>> training_stats
+               Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0  0.714286     1.0  0.0  1.0  0.204082            1.0    -0.178571           0.094706          0.428571          0.556506           1.212183            0.166667              0.166667
+        0  0.571429     1.0  0.0  1.0  0.244898            1.0    -0.214286           0.108266          0.428571          0.387375           1.327880            0.166667              0.166667
+        0  0.428571     0.0  0.0  1.0  0.244898            1.0    -0.214286           0.124661          0.428571          0.387375           1.327880            0.166667              0.166667
+        >>> validation_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
+        0   0.0     0.0  0.0  0.0       0.0            0.0          0.0                  0               0.0               0.0                inf                 0.0                   0.0
         """
 
         if self._n_samples <= 2:
@@ -1477,9 +1796,10 @@ class FixedSizeRollingWindow(BaseSplitter):
 
     def plot(self, height: int, width: int) -> None:
         """
-        _summary_
+        Plot the partitioned time series.
 
-        _extended_summary_
+        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
+        [Different colours are used to plot the training and validation sets.]
 
         Parameters
         ----------
@@ -1488,6 +1808,16 @@ class FixedSizeRollingWindow(BaseSplitter):
 
         width : int
             The figure's width.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.OOS import FixedSizeRollingWindow
+        >>> ts = np.ones(10);
+        >>> splitter = FixedSizeRollingWindow(ts);
+        >>> splitter.plot(10, 10);
+
+        ![Holdout_plot_image](../../../images/FixedRoll_plot.png)
         """
 
         fig, axs = plt.subplots(self._n_samples - self._origin - 1, 1, sharex=True)
