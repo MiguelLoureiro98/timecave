@@ -3,10 +3,37 @@ This module contains all the CV ('Cross-Validation') validation methods supporte
 
 Classes
 -------
-Block_CV
+BlockCV
+    Implements the Block CV method, along with its weighted version.
 
-hv_Block_CV
+hvBlockCV
+    Implements the hv Block method.
 
+AdaptedhvBlockCV
+    Implements the Adapted hv Block CV method, along with its weighted version.
+
+See also
+--------
+[Out-of-Sample methods](../prequential/index.md): Out-of-sample methods for time series data.
+
+[Prequential methods](../prequential/index.md): Prequential or forward validation methods for time series data.
+
+[Markov methods](../markov/index.md): Markov cross-validation method for time series data.
+
+Notes
+-----
+Cross-validation methods are one of the three main classes of validation methods for time series data (the others being \
+out-of-sample methods and prequential methods).
+Like prequential methods, CV methods partition the series into equally sized folds (with the exception of the hv Block variant).
+However, CV methods do not preserve the temporal order of observations, meaning that a model can be trained on later data and tested \
+on earlier data. CV methods also differ from Out-of-Sample methods, as the latter do not partition the series in the same way.
+For more details on this class of methods, the reader should refer to [[1]](#1).
+
+References
+----------
+##1
+Vitor Cerqueira, Luis Torgo, and Igor Mozetiˇc. Evaluating time series forecasting models: An empirical study on performance estimation methods.
+Machine Learning, 109(11):1997–2028, 2020.
 """
 
 from .base import BaseSplitter
