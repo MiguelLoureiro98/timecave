@@ -608,7 +608,7 @@ def nonlinear_ar_ts(
 
     Notes
     -----
-    This method of generating synthetic time series data was first proposed by Bergmeir and Benitez (2012). 
+    This method of generating synthetic time series data was first proposed by Bergmeir et al. (2018). 
     Please refer to [[1]](#1) for more details on this method.
 
     References

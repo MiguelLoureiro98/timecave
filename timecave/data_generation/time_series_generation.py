@@ -63,12 +63,6 @@ class TimeSeriesGenerator:
     ------
     ValueError
         If the lengths of 'functions', 'parameter_values', and 'weights' don't match.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> import matplotlib.pyplot as plt
-    >>> from timecave.data_generation.time_series_generation import TimeSeriesGenerator
     """
 
     def __init__(
@@ -167,13 +161,40 @@ class TimeSeriesGenerator:
         ----------
         nb_sim : int
             Number of simulations to generate.
-        og_seed : int, optional
-            The original seed for generating random numbers, by default 1.
+
+        og_seed : int, default=1
+            The original seed for generating random numbers.
 
         Returns
         -------
         List[np.array]
             A list of numpy arrays containing generated time series data.
+
+        Warning
+        -------
+        The `number_samples` parameter is inferred from the `length` parameter. 
+        Therefore, it should not be passed to the method using the `parameter_values` argument.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> import matplotlib.pyplot as plt
+        >>> from timecave.data_generation.time_series_functions import linear_ts, indicator_ts, exponential_ts
+        >>> from timecave.data_generation.time_series_generation import TimeSeriesGenerator
+
+        Generate 3 time series using a combination of linear, indicator, and exponential functions:
+
+        >>> gen = TimeSeriesGenerator([linear_ts, indicator_ts, exponential_ts],
+        ...                            length=10,
+        ...                            parameter_values=[{"max_interval_size": [10, 10], "slope": [1, 5]}, # A random slope between 1 and 5 will be generated.
+        ...                                              {"start_index": 2, "end_index": 6},
+        ...                                              {"max_interval_size": [10, 10], "decay_rate": [0.1, 10]}]); # 'max_interval_size' will always be 10.
+        >>> ts = gen.generate(3);
+        >>> ts
+        [array([ 1.1550022 ,  5.08763814, 10.75491998, 15.05675456, 19.71847986,
+               24.3300877 , 28.65378249, 32.42146755, 36.97335225, 41.32569794]), array([ 1.090524  ,  3.94981031,  7.7498048 , 10.77923442, 13.51272171,
+               16.82720927, 19.84383981, 21.52150532, 24.56596177, 27.69603248]), array([ 1.03173452,  4.41648421,  9.72828385, 13.96528833, 18.37799188,
+               22.61230447, 26.9295597 , 30.32151586, 34.57860333, 38.94221321])]
         """
 
         seeds = _generate_seeds(og_seed, nb_sim)
@@ -200,7 +221,40 @@ class TimeSeriesGenerator:
         Parameters
         ----------
         indexes : np.array or list or range, optional
-            Indexes of time series to plot, by default None.
+            Indexes of time series to plot. None by default.
+
+        Warning
+        -------
+        This method should only be called once the `generate` method has been run.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> import matplotlib.pyplot as plt
+        >>> from timecave.data_generation.time_series_generation import TimeSeriesGenerator
+        >>> from timecave.data_generation.time_series_functions import linear_ts, scaled_right_indicator_ts, exponential_ts, sinusoid_ts
+
+        Generate 5 time series using a combination of linear and indicator functions:
+
+        >>> gen = TimeSeriesGenerator([linear_ts, scaled_right_indicator_ts],
+        ...                            length=200,
+        ...                            parameter_values=[{"max_interval_size": [10, 10], "slope": [1, 10]},
+        ...                                              {"idx": 100, "constant": [5, 100]}]);
+        >>> ts = gen.generate(5);
+        >>> gen.plot([0, 1, 2, 3, 4]);
+
+        ![gen_plots](../../../images/Gen_plots1.png)
+
+        Using a combination of exponential functions and sinusoids instead:
+
+        >>> gen2 = TimeSeriesGenerator([exponential_ts, sinusoid_ts],
+        ...                             length=1000,
+        ...                             parameter_values=[{"max_interval_size": [10, 10], "decay_rate": [1, 10], "initial_value": [1, 10]},
+        ...                                               {"max_interval_size": [10, 10], "amplitude": [0.5, 3], "frequency": [0.1, 5]}]);
+        >>> ts2 = gen2.generate(5);
+        >>> gen2.plot([0, 1, 2, 3, 4]);
+
+        ![gen_plots2](../../../images/Gen_plots2.png)
         """
         if indexes is None:
             indexes = range(len(self.time_series))
