@@ -132,9 +132,20 @@ class FrequencyModulationWithStep(BaseFrequency):
             Number of timesteps for which modulation is meant to be performed.
 
         Returns
-        -------
-        float or int
-            The modulated frequency value at the given time.
+        ----------
+        np.array
+            Each entry of the array corresponds to the frequency at a given timestep.
+
+        Examples
+        --------
+        >>> from timecave.data_generation.frequency_modulation import FrequencyModulationWithStep
+        >>> mod = FrequencyModulationWithStep(1, 50);
+        >>> mod.modulate(25)
+        array(1)
+        >>> mod.modulate(100)
+        array(2)
+        >>> mod.modulate(50)
+        array(1)
         """
         initial_period = 1 / self._freq_init
         t_split_adjusted = (self._t_split // initial_period) * initial_period
@@ -204,8 +215,23 @@ class FrequencyModulationLinear(BaseFrequency):
             Number of timesteps for which modulation is meant to be performed.
 
         Returns
-        ----------
-        np.array
-            Each entry of the array corresponds to the frequency at a given timestep.
+        -------
+        float or int
+            The modulated frequency value at the given time instant.
+
+        Examples
+        --------
+        >>> from timecave.data_generation.frequency_modulation import FrequencyModulationLinear
+        >>> mod = FrequencyModulationLinear(1, 10);
+        >>> mod.modulate(5)
+        51
+        >>> mod.modulate(10)
+        101
         """
         return self._freq_init + self._slope * time
+
+if __name__ == "__main__":
+
+    import doctest
+
+    doctest.testmod(verbose=True);
