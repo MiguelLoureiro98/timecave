@@ -12,6 +12,3 @@ hide:
         show_source: false
         show_signature: false
         members: []
-
-# Links to classes:
-- [Time Series Generator](gen.md)

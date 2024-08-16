@@ -6,7 +6,7 @@ This module provides a class for generating time series data based on provided f
 Classes
 -------
 TimeSeriesGenerator
-    A class for generating time series data using provided functions.
+    A class for generating time series data using the functions provided by the time_series_functions module.
 """
 
 import numpy as np
@@ -22,9 +22,6 @@ from typing import Callable, List, Dict
 
 class TimeSeriesGenerator:
     """
-    TimeSeriesGenerator(functions: List[Callable], length: int = 100, noise_level: float or int = 0.1, weights: List[float] = None, parameter_values: list[Dict] = None)
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
     A class for generating time series data using provided functions.
 
     This class enables the generation of multiple time series by combining various functions with parameters.
@@ -34,22 +31,32 @@ class TimeSeriesGenerator:
     ----------
     functions : List[Callable]
         A list of functions used to generate the time series.
-    length : int, optional
-        The length of the time series to be generated, by default 100.
-    noise_level : float, optional
-        The standard deviation of the Gaussian noise added to the time series, by default 0.1.
+
+    length : int, default=100
+        The length of the time series to be generated.
+
+    noise_level : float, default=0.1
+        The standard deviation of the Gaussian noise added to the time series.
+
     weights : List[float], optional
-        A list of weights corresponding to each function, by default None.
+        A list of weights corresponding to each function.
+
     parameter_values : list[Dict], optional
-        A list of dictionaries containing parameter values for each function, by default None. Each dictionary contains
+        A list of dictionaries containing parameter values for each function. Each dictionary contains
         parameter names as keys and either single values, tuples (for discrete choices), or lists (for continuous ranges)
         as values, representing the possible values or ranges for each parameter.
 
+    Attributes
+    ----------
+    time_series
+        The generated time series.
+
     Methods
     -------
-    generate
+    generate(nb_sim: int, og_seed: int = 1)
         Generate time series data.
-    plot
+
+    plot(indexes: np.array or list or range = None)
         Plot the generated time series.
 
     Raises
