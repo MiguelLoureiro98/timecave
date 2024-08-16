@@ -1,7 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/processed_data/mechanical_gear_vibration_data.csv,0,LSTM,3.445715645874664e-06,0.0015373056829251948,0.0018562638944596924
-datasets/processed_data/mechanical_gear_vibration_data.csv,1,LSTM,6.109371262288272e-06,0.002037591562612929,0.002471714235563705
-datasets/processed_data/mechanical_gear_vibration_data.csv,2,LSTM,3.778151388885102e-05,0.0052269949121809866,0.006146666892621644
-datasets/processed_data/mechanical_gear_vibration_data.csv,3,LSTM,7.482476831678202e-05,0.006910538084406192,0.00865013111558328
-datasets/processed_data/mechanical_gear_vibration_data.csv,4,LSTM,4.1171535581378336e-05,0.0051037497812870935,0.006416504935038882
-datasets/processed_data/mechanical_gear_vibration_data.csv,5,LSTM,0.00019671654706202742,0.011112177840839569,0.014025567619958467

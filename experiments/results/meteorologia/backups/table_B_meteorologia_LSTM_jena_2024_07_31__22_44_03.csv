@@ -1,3 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/processed_data/jena_climate_data.csv,2,LSTM,72.09659556760825,6.881390981339301,8.49097141483872
-datasets/processed_data/jena_climate_data.csv,3,LSTM,0.0351774567807598,0.12497701538054069,0.18755654288976378

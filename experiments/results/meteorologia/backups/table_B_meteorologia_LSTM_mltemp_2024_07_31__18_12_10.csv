@@ -1,2 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/processed_data/MLTempDataset_13052024.csv,0,LSTM,3.088728595885995,0.7806659208001996,1.7574779076523253

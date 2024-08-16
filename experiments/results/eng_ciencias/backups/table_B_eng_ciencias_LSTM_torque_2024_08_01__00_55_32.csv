@@ -1,4 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/processed_data/torque_characteristics_15052024.csv,2,LSTM,0.018219585818619814,0.10397891563512998,0.13497994598687546
-datasets/processed_data/torque_characteristics_15052024.csv,3,LSTM,0.7876090529397456,0.3896539127661457,0.8874734097085645
-datasets/processed_data/torque_characteristics_15052024.csv,4,LSTM,0.8608597290382947,0.38489662840116184,0.9278252685922574

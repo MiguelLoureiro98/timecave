@@ -1,2 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/processed_data/aire_discharge_weather_data.csv,0,LSTM,1.2095201221103098,0.8736418789432895,1.0997818520553564

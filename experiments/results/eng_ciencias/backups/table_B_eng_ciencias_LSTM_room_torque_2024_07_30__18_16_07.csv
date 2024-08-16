@@ -1,2 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/processed_data/room_occupancy_data.csv,0,LSTM,0.0010734928532170394,0.024056079583206564,0.03276420078709443
