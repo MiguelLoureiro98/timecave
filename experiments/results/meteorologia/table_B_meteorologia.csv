@@ -93,7 +93,6 @@ datasets/processed_data/DailyDelhiClimate_12052024.csv,3,LSTM,886784.9953342782,
 datasets/processed_data/jena_climate_data.csv,0,LSTM,72.26415356475513,6.662897298662567,8.500832521862499
 datasets/processed_data/jena_climate_data.csv,1,LSTM,0.0458989579295547,0.1365238820295551,0.2142404208583309
 datasets/processed_data/jena_climate_data.csv,2,LSTM,72.09659556760825,6.881390981339301,8.49097141483872
-datasets/processed_data/jena_climate_data.csv,2,LSTM,72.09659556760825,6.881390981339301,8.49097141483872
 datasets/processed_data/jena_climate_data.csv,3,LSTM,0.0351774567807598,0.1249770153805406,0.1875565428897637
 datasets/processed_data/jena_climate_data.csv,4,LSTM,1.2549674664740893,0.7652584817796573,1.1202533046030658
 datasets/processed_data/jena_climate_data.csv,5,LSTM,0.0910309373669336,0.1553069415515932,0.3017133364088064
