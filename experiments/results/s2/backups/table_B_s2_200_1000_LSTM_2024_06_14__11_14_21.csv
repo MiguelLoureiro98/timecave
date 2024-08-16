@@ -1,2 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/synthetic_data/s2.csv,200,LSTM,1.1143942253711496,0.7982426360033572,1.055648722526177
