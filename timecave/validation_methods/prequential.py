@@ -44,24 +44,76 @@ from typing import Generator
 
 class GrowingWindow(BaseSplitter):
     """
-    GrowingWindow(splits: int, ts: np.ndarray | pd.Series, fs: float | int, gap: int = 0, weight_function: callable = constant_weights, params: dict = None)
-    --------------------------------------------------------------------------------------------------------------------------------------------------------
+    Implements every variant of the Growing Window method.
 
-    _summary_
-
-    _extended_summary_
+    This class implements the Growing Window method. It also supports every variant of this method, including Gap Growing Window and 
+    Weighted Growing Window. The 'gap' parameter can be used to implement the former, while the 'weight_function' argument allows the user 
+    to ... .
 
     Parameters
     ----------
-    BaseSplitter : _type_
+    splits : int
+        The number of folds used to partition the data.
+
+    ts : np.ndarray | pd.Series
+        Univariate time series.
+
+    fs : float | int, default=1
+        Sampling frequency (Hz).
+
+    gap : int, default=0
         _description_
+
+    weight_function : callable, default=constant_weights
+        Fold weighting function. See the [weights](../weights/index.md) module for more details.
+
+    params : dict, optional
+        Parameters to be passed to the weighting functions.
 
     Attributes
     ----------
+    n_splits
+        The number of splits.
+
+    sampling_freq
+        The series' sampling frequency (Hz).
 
     Methods
     -------
+    split()
+        Split the time series into training and validation sets.
 
+    info()            
+        Provide additional information on the validation method.
+
+    statistics() 
+        Compute relevant statistics for both training and validation sets.
+
+    plot(height: int, width: int)
+        Plot the partitioned time series.
+
+    Raises
+    ------
+    TypeError
+        If `gap` is not an integer.
+
+    ValueError
+        If `gap` is a negative number.
+
+    ValueError
+        If `gap` surpasses the limit imposed by the number of folds.
+
+    Notes
+    -----
+    The Growing Window method splits the data into $N$ different folds.
+
+    ![grow](../../../images/GrowWindow.png)
+    
+    References
+    ----------
+    ##1
+    Vitor Cerqueira, Luis Torgo, and Igor Mozetiˇc. Evaluating time series forecasting models: An empirical study on performance estimation methods.
+    Machine Learning, 109(11):1997–2028, 2020.
     """
 
     def __init__(
