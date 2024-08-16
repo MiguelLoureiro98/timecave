@@ -12,8 +12,3 @@ hide:
         show_source: false
         show_signature: false
         members: []
-
-## Links to functions:
-- [Constant weights](constant.md)
-- [Linear weights](linear.md)
-- [Exponential weights](exponential.md)

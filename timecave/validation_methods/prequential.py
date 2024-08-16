@@ -1,12 +1,36 @@
 """
-This module contains all the Prequential ('Predictive Sequential') validation methods supported by this package.
+This module contains all the Prequential ('Predictive Sequential') validation methods supported by this package. \
+These methods are also known as Forward Validation methods.
 
 Classes
 -------
-Growing_Window
+GrowingWindow
+    Implements every variant of the Growing Window method.
 
-Rolling_Window
+RollingWindow
+    Implements every variant of the Rolling Window method.
 
+See also
+--------
+[Out-of-Sample methods](../prequential/index.md): Out-of-sample methods for time series data.
+
+[Cross-validation methods](../CV/index.md): Cross-validation methods for time series data.
+
+[Markov methods](../markov/index.md): Markov cross-validation method for time series data.
+
+Notes
+-----
+Predictive Sequential, or "Prequential", methods are one of the three main classes of validation methods for time series data (the others being \
+out-of-sample methods and cross-validation methods).
+Unlike cross-validation methods, this class of methods preserves the temporal order of observations, although it differs from out-of-sample methods in that it \
+partitions the series into equally sized folds.
+For more details on this class of methods, the reader should refer to [[1]](#1).
+
+References
+----------
+##1
+Vitor Cerqueira, Luis Torgo, and Igor Mozetiˇc. Evaluating time series forecasting models: An empirical study on performance estimation methods.
+Machine Learning, 109(11):1997–2028, 2020.
 """
 
 from .base import BaseSplitter
@@ -44,7 +68,7 @@ class GrowingWindow(BaseSplitter):
         self,
         splits: int,
         ts: np.ndarray | pd.Series,
-        fs: float | int,
+        fs: float | int = 1,
         gap: int = 0,
         weight_function: callable = constant_weights,
         params: dict = None,
@@ -308,7 +332,7 @@ class RollingWindow(BaseSplitter):
         self,
         splits: int,
         ts: np.ndarray | pd.Series,
-        fs: float | int,
+        fs: float | int = 1,
         gap: int = 0,
         weight_function: callable = constant_weights,
         params: dict = None,

@@ -1,5 +1,5 @@
 """
-Module for generating various types of time series data.
+This module contains functions to generate various types of time series data.
 
 This module provides functions to generate different types of time series data, including sinusoidal signals, indicator functions, linear patterns, exponential decays,
 and time series based on autoregressive moving average (ARMA) models and nonlinear autoregressive (AR) models.
@@ -8,20 +8,28 @@ Functions
 ---------
 sinusoid_ts
     Generate a time series of a sinusoidal signal.
+
 frequency_varying_sinusoid_ts
     Generate a time series of a sinusoidal signal with varying frequency.
+
 indicator_ts
     Generate time series array based on a binary indicator function with specified start and end indices.
+
 scaled_right_indicator_ts
     Generate a time series array based on a indicator function that is 1 in the interval [idx, + inf[ and 0 otherwise.
+
 scaled_unit_impulse_function_ts
     Generate time series array based on a scaled unit impulse function with specified index.
+
 linear_ts
     Generate a linear time series array.
+
 exponential_ts
     Generates a time series based on a exponential function.
+
 arma_ts
     Generate a time series array based on an Autoregressive Moving Average (ARMA) model.
+
 nonlinear_ar_ts
     Generate a time series array based on a nonlinear autoregressive (AR) model.
 """
@@ -48,12 +56,16 @@ def sinusoid_ts(
     ----------
     number_samples : int
         The number of samples in the generated time series.
+
     max_interval_size : float
         The maximum interval size (time duration) of the generated time series.
+
     amplitude : float, optional
         The amplitude of the sinusoidal signal, by default 1.
+
     frequency : float, optional
         The frequency of the sinusoidal signal in cycles per unit time, by default 1.
+
     phase : float, optional
         The phase offset of the sinusoidal signal in radians, by default 0.
 
@@ -115,12 +127,16 @@ def frequency_varying_sinusoid_ts(
     ----------
     number_samples : int
         The number of samples in the time series.
+
     max_interval_size : float
         The maximum time interval size for the time series.
+
     frequency : BaseFrequency
         An object representing the base frequency of the sinusoid, which may vary over time.
+
     amplitude : float, optional
         The amplitude of the sinusoidal signal, by default 1.
+
     phase : float, optional
         The initial phase of the sinusoidal signal in radians, by default 0.
 
@@ -148,8 +164,10 @@ def indicator_ts(number_samples: int, start_index: int, end_index: int) -> np.nd
     ----------
     number_samples : int
         The total number of samples in the time series array.
+
     start_index : int
         The start index of the segment to be marked as 1.
+
     end_index : int
         The end index of the segment to be marked as 1.
 
@@ -194,8 +212,10 @@ def scaled_right_indicator_ts(
     ----------
     number_samples : int
         The total number of samples in the time series array.
+
     idx : int
         The index from which the segment starts to be marked as 1.
+
     constant : float, optional
         A scaling constant to multiply the array by, by default 1.
 
@@ -222,8 +242,10 @@ def scaled_unit_impulse_function_ts(
     ----------
     number_samples : int
         The total number of samples in the time series array.
+
     idx : int
         The index at which the impulse occurs, marked as 1.
+
     constant : float, optional
         A scaling constant to multiply the array by, by default 1.
 
@@ -252,10 +274,13 @@ def linear_ts(
     ----------
     number_samples : int
         The total number of samples in the time series array.
+
     max_interval_size : float
         The maximum interval size for generating the time series array.
+
     slope : float, optional
         The slope of the linear pattern, by default 1.
+
     intercept : float, optional
         The intercept of the linear pattern, by default 0.
 
@@ -286,10 +311,13 @@ def exponential_ts(
     ----------
     number_samples : int
         The total number of samples in the time series array.
+
     max_interval_size : float
         The maximum interval size for generating the time series array.
+
     decay_rate : float, optional
         The rate at which the values decay over time, by default 1.
+
     initial_value : float, optional
         The initial value of the time series array, by default 1.
 
@@ -325,16 +353,22 @@ def arma_ts(
     ----------
     number_samples : int
         The total number of samples in the time series array.
+
     lags : int
         The number of lags to consider in the ARMA model.
+
     max_root : float
         The maximum root for the ARMA model. This value has to be larger than 1.1.
+
     ar : bool, optional
         Whether to include autoregressive (AR) component in the ARMA model, by default True.
+
     ma : bool, optional
         Whether to include moving average (MA) component in the ARMA model, by default True.
+
     seed : int, optional
         Random seed for reproducibility, by default 1.
+
     **kwargs : dict
         Additional keyword arguments to pass to the ARMA process generator.
 
@@ -386,8 +420,10 @@ def nonlinear_ar_ts(
     ----------
     number_samples : int
         The total number of samples in the time series array.
+
     init_array : np.ndarray
         The initial array for generating the time series. The lengths corresponds to the number of lags.
+
     params : list
         The parameters for the nonlinear AR model. The index representing the specific nonlinear transformation to apply:
             0: Cosine function.
@@ -395,6 +431,7 @@ def nonlinear_ar_ts(
             2: Hyperbolic tangent function.
             3: Arctangent function.
             4: Exponential decay function.
+            
     func_idxs : list
         The indices of the nonlinear functions used in the model.
 

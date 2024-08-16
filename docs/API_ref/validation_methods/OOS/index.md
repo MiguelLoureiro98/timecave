@@ -12,10 +12,3 @@ hide:
         show_source: false
         show_signature: false
         members: []
-
-## Links to classes:
-- [Holdout](holdout.md)
-- [Repeated Holdout](rep_holdout.md)
-- [Rolling Origin Update](roll_update.md)
-- [Rolling Origin Recalibration](roll_recal.md)
-- [Fixed Size Rolling Window](fixed_roll.md)

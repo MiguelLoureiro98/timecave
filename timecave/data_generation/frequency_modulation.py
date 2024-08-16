@@ -1,3 +1,18 @@
+"""
+This module contains helper functions that can be used to generate time series with time-varying frequency characteristics.
+
+Classes
+-------
+BaseFrequency
+    Base class for frequency modulation.
+
+FrequencyModulationWithStep
+    Frequency modulation where the dominant frequency changes abruptly.
+
+FrequencyModulationLinear
+    Frequency modulation where the dominant frequency changes linearly.
+"""
+
 import numpy as np
 from abc import abstractmethod
 
@@ -9,7 +24,7 @@ class BaseFrequency:
     This class provides a base for implementing frequency modulation techniques.
 
     Methods
-    ----------
+    -------
     modulate(time)
         Adjusts the frequency based on the given time.
     """
@@ -30,7 +45,7 @@ class BaseFrequency:
             Number of timesteps for which modulation is meant to be performed.
 
         Returns
-        ----------
+        -------
         np.array
             Each entry of the array corresponds to the frequency at the given timestep.
 
@@ -52,6 +67,7 @@ class FrequencyModulationWithStep(BaseFrequency):
     ----------
     freq_init : float or int
         The initial frequency value.
+
     t_split : int
         The timestep at which the frequency changes.
 
@@ -64,6 +80,7 @@ class FrequencyModulationWithStep(BaseFrequency):
     ----------
     TypeError
         If 'freq_init' is not a float or int. If 't_split' is not an int.
+
     ValueError
         If 'freq_init' is not greater than zero. If 't_split' is not greater than zero.
     """
@@ -132,6 +149,7 @@ class FrequencyModulationLinear(BaseFrequency):
     ----------
     freq_init : float or int
         The initial frequency value.
+
     slope : float
         Slope of the frequency modulation over time.
 

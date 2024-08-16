@@ -12,8 +12,3 @@ hide:
         show_source: false
         show_signature: false
         members: []
-
-# Links to classes:
-- [Base frequency class](base_freq.md)
-- [Step modulation class](step_freq.md)
-- [Linear modulation class](linear_freq.md)

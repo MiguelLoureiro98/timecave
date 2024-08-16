@@ -1,10 +1,10 @@
 """
-This module contains all the Markov cross-validation method.
+This module contains the Markov cross-validation method.
 
 Classes
 -------
 MarkovCV
-
+    Implements the Markov cross-validation method.
 """
 
 from .base import BaseSplitter
@@ -19,10 +19,7 @@ import math
 
 class MarkovCV(BaseSplitter):
     """
-    MarkovCV(ts: np.ndarray | pd.Series, p: int, seed: int = 1)
-    -----------------------------------------------------------
-
-    _summary_
+    Implements the Markov cross-validation method.
 
     _extended_summary_
 
@@ -36,6 +33,22 @@ class MarkovCV(BaseSplitter):
 
     seed : int, default=1
         _description_
+
+    Notes
+    -----
+    The Markov cross-validation method partitions the data so that every partition can be regarded as \
+    a Markov Process. It uses the linear autocorrelation measure to ensure that the samples in both the \
+    training set and the validation set are neither too close nor too far apart.
+
+    ![Markov](../../../images/Markov.png)
+
+    For a thorough discussion of the method, see [[1]](#1).
+
+    References
+    ----------
+    ##1
+    Gaoxia Jiang and Wenjian Wang. Markov cross-validation for time series
+    model evaluations. Information Sciences, 375:219–233, 2017
     """
 
     def __init__(self, ts: np.ndarray | pd.Series, p: int, seed: int = 1) -> None:

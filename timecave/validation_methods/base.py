@@ -4,7 +4,7 @@ This class is simply an abstract class and should not be used directly (i.e. sho
 
 Classes
 -------
-base_splitter
+BaseSplitter
     Abstract base class for every validation method supported by this package.
 """
 
@@ -19,75 +19,73 @@ import pandas as pd
 
 class BaseSplitter(ABC):
     """
-    BaseSplitter(splits: int, ts: np.ndarray | pd.Series, fs: float | int = 1)
-    --------------------------------------------------------------------------
-
-    Base class for all time series validation methods provided / supported by this package.
+    Base class for all time series validation methods supported by this package.
 
     This is simply an abstract class. As such, it should not be used directly.
 
-    Attributes
+    Parameters
     ----------
-    _n_splits : int
-        Number of splits for this instance of the validation method.
+    splits : int
+        The number of splits.
 
-    _series : np.ndarray | pd.Series
+    ts : np.ndarray | pd.Series
         Univariate time series.
 
-    _n_samples : int
-        Number of samples in the time series.
+    fs : float | int, default=1
+        The series' sampling frequency (Hz).
 
-    _indices : np.ndarray
-        Array containing the time series' indices.
+    Attributes
+    ----------
+    n_splits
+        The number of splits.
+
+    sampling_freq
+        The series' sampling frequency (Hz).
 
     Methods
     -------
-    __init__(self, splits: int) -> None
-        Class constructor.
-
-    _splits_check(self, splits: int) -> None
-        Performs type and value checks on the 'splits' parameter.
-
-    _ts_check(self, ts: np.ndarray | pd.Series) -> None
-        Performs type and value checks on the 'ts' parameter.
-
-    _dim_check(self) -> None
-        Checks whether '_n_splits' <= '_n_samples'.
-
-    n_splits(self) -> int
-        Returns the number of splits (set during initialisation).
-
-    split(self) -> Generator[np.ndarray, np.ndarray]
+    split()
         Abstract method. The implementation differs for each validation method.
 
-    info(self) -> None
+    info()            
         Abstract method. The implementation differs for each validation method.
 
-    statistics(self) -> None
+    statistics() 
         Abstract method. The implementation differs for each validation method.
 
-    plot(self) -> None
+    plot(height: int, width: int)
         Abstract method. The implementation differs for each validation method.
+
+    Raises
+    ------
+    TypeError
+        If the number of splits is not an integer.
+
+    ValueError
+        If the number of splits is smaller than two.
+
+    TypeError
+        If ts is not a Numpy array nor a Pandas series.
+
+    TypeError
+        If the sampling frequency is neither a float nor an integer.
+    
+    ValueError
+        If the sampling frequency is negative.
+
+    ValueError
+        If the time series is multivariate (i.e. not one-dimensional).
+
+    ValueError
+        If the number of splits is larger than the number of samples in the time series.
     """
 
     def __init__(
         self, splits: int, ts: np.ndarray | pd.Series, fs: float | int = 1
     ) -> None:
+        
         """
         Class constructor.
-
-        This is the constructor of the base_splitter class.
-
-        Parameters
-        ----------
-        splits : int
-            The number of splits.
-
-        ts : np.ndarray | pd.Series
-            Univariate time series.
-
-        fs : float | int
-            The series' sampling frequency (Hz).
         """
 
         super().__init__()
@@ -106,21 +104,6 @@ class BaseSplitter(ABC):
     def _splits_check(self, splits: int) -> None:
         """
         Perform type and value checks on the 'splits' parameter.
-
-        This method checks whether 'splits' is an integer and whether 'splits' >= 2.
-
-        Parameters
-        ----------
-        splits : int
-            Number of splits.
-
-        Raises
-        ------
-        TypeError
-            If the number of splits is not an integer.
-
-        ValueError
-            If the number of splits is smaller than two.
         """
 
         if isinstance(splits, int) is False:
@@ -136,22 +119,6 @@ class BaseSplitter(ABC):
     def _ts_check(self, ts: np.ndarray | pd.Series) -> None:
         """
         Perform type and value checks on the 'ts' parameter.
-
-        This method checks whether 'ts' is a Numpy array or a Pandas series and whether
-        the time series is univariate.
-
-        Parameters
-        ----------
-        ts : np.ndarray | pd.Series
-            Univariate time series.
-
-        Raises
-        ------
-        TypeError
-            If ts is not a Numpy array nor a Pandas series.
-
-        ValueError
-            If the time series is multivariate (i.e. not one-dimensional).
         """
 
         if isinstance(ts, np.ndarray) is False and isinstance(ts, pd.Series) is False:
@@ -180,13 +147,6 @@ class BaseSplitter(ABC):
     def _dim_check(self) -> None:
         """
         Perform a dimension check on the time series.
-
-        This method checks whether 'n_samples' >= 'splits'.
-
-        Raises
-        ------
-        ValueError
-            If the number of splits is larger than the number of samples in the time series.
         """
 
         if self._n_splits > self._n_samples:
@@ -288,7 +248,7 @@ class BaseSplitter(ABC):
         return self._n_splits
 
     @abstractmethod
-    def split(self) -> Generator[tuple, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray], None, None]:
         """
         Split the time series into training and validation sets.
 
@@ -296,8 +256,11 @@ class BaseSplitter(ABC):
 
         Yields
         ------
-        Generator[tuple, None, None]
-            A tuple of Numpy arrays containing the training and validation indices.
+        np.ndarray
+            Array of training indices.
+
+        np.ndarray
+            Array of validation indices.
         """
 
         pass
@@ -315,14 +278,17 @@ class BaseSplitter(ABC):
     @abstractmethod
     def statistics(self) -> tuple[pd.DataFrame]:
         """
-        Compute and plot relevant statistics for both training and validation sets.
+        Compute relevant statistics for both training and validation sets.
 
         Abstract method. The implementation differs for each validation method.
 
         Returns
         -------
         pd.DataFrame
-            Relevant statistics and features for training and validation sets.
+            Relevant statistics and features for training sets.
+
+        pd.DataFrame
+            Relevant statistics and features for validation sets.
         """
 
         pass

@@ -12,7 +12,3 @@ hide:
         show_source: false
         show_signature: false
         members: []
-
-## Links to classes:
-- [Growing Window](grow.md)
-- [Rolling Window](roll.md)
