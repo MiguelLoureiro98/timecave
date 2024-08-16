@@ -63,6 +63,12 @@ class TimeSeriesGenerator:
     ------
     ValueError
         If the lengths of 'functions', 'parameter_values', and 'weights' don't match.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> from timecave.data_generation.time_series_generation import TimeSeriesGenerator
     """
 
     def __init__(
@@ -213,48 +219,52 @@ class TimeSeriesGenerator:
 
 if __name__ == "__main__":
 
-    from timecave.data_generation import frequency_modulation as dgu
-    from timecave.data_generation import time_series_functions as tsf
+    #from timecave.data_generation import frequency_modulation as dgu
+    #from timecave.data_generation import time_series_functions as tsf
 
-    linear_parameters = {"max_interval_size": 1, "slope": 5, "intercept": [5, 30]}
+    #linear_parameters = {"max_interval_size": 1, "slope": 5, "intercept": [5, 30]}
 
-    exp_parameters = {
-        "max_interval_size": (1, 2),
-        "decay_rate": [1, 25],
-        "initial_value": [1, 25],
-    }
+    #exp_parameters = {
+    #    "max_interval_size": (1, 2),
+    #    "decay_rate": [1, 25],
+    #    "initial_value": [1, 25],
+    #}
 
-    sin_parameters = {
-        "max_interval_size": (1, 2),
-        "amplitude": [1, 3],
-        "frequency": (
-            dgu.FrequencyModulationLinear(1, 20),
-            dgu.FrequencyModulationWithStep(10, 0.8),
-        ),
-    }
+    #sin_parameters = {
+    #    "max_interval_size": (1, 2),
+    #    "amplitude": [1, 3],
+    #    "frequency": (
+    #        dgu.FrequencyModulationLinear(1, 20),
+    #        dgu.FrequencyModulationWithStep(10, 0.8),
+    #    ),
+    #}
 
-    impulse_parameters = {"idx": (500, 600), "constant": [5, 10]}
+    #impulse_parameters = {"idx": (500, 600), "constant": [5, 10]}
 
-    indicator_parameters = {"start_index": (700, 600), "end_index": (800, 900)}
+    #indicator_parameters = {"start_index": (700, 600), "end_index": (800, 900)}
 
-    generator = TimeSeriesGenerator(
-        length=1000,
-        noise_level=0.2,
-        functions=[
-            tsf.linear_ts,
-            tsf.indicator_ts,
-            tsf.frequency_varying_sinusoid_ts,
-            tsf.scaled_unit_impulse_function_ts,
-            tsf.exponential_ts,
-        ],
-        parameter_values=[
-            linear_parameters,
-            indicator_parameters,
-            sin_parameters,
-            impulse_parameters,
-            exp_parameters,
-        ],
-    )
-    generator.generate(100)
+    #generator = TimeSeriesGenerator(
+    #    length=1000,
+    #    noise_level=0.2,
+    #    functions=[
+    #        tsf.linear_ts,
+    #        tsf.indicator_ts,
+    #        tsf.frequency_varying_sinusoid_ts,
+    #        tsf.scaled_unit_impulse_function_ts,
+    #        tsf.exponential_ts,
+    #    ],
+    #    parameter_values=[
+    #        linear_parameters,
+    #        indicator_parameters,
+    #        sin_parameters,
+    #        impulse_parameters,
+    #        exp_parameters,
+    #    ],
+    #)
+    #generator.generate(100)
 
-    generator.plot(range(0, 10))
+    #generator.plot(range(0, 10))
+
+    import doctest
+
+    doctest.testmod(verbose=True);

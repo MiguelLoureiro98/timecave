@@ -60,19 +60,50 @@ def sinusoid_ts(
     max_interval_size : float
         The maximum interval size (time duration) of the generated time series.
 
-    amplitude : float, optional
-        The amplitude of the sinusoidal signal, by default 1.
+    amplitude : float, default=1
+        The amplitude of the sinusoidal signal.
 
-    frequency : float, optional
-        The frequency of the sinusoidal signal in cycles per unit time, by default 1.
+    frequency : float, default=1
+        The frequency of the sinusoidal signal in cycles per unit time.
 
-    phase : float, optional
-        The phase offset of the sinusoidal signal in radians, by default 0.
+    phase : float, default=0
+        The phase offset of the sinusoidal signal in radians.
 
     Returns
     -------
     np.ndarray
         The generated sinusoidal time series.
+
+    See also
+    --------
+    [frequency_varying_sinusoid_ts](time_varying_sin.md): Generate a time-varying sinusoid.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> from timecave.data_generation.time_series_functions import sinusoid_ts
+    >>> ts = sinusoid_ts(1000, 10, amplitude=3, frequency=0.5);
+    >>> _ = plt.plot(np.arange(0, ts.shape[0]), ts);
+    >>> plt.show();
+
+    ![sinusoid](../../../images/Sinusoid.png)
+
+    Higher frequency sinusoids can be generated as well:
+
+    >>> ts2 = sinusoid_ts(1000, 10, amplitude=3, frequency=5);
+    >>> _ = plt.plot(np.arange(0, ts2.shape[0]), ts2);
+    >>> plt.show();
+
+    ![sinusoid_freq](../../../images/Sinusoid_high_freq.png)
+
+    Phase shifts can be added too:
+
+    >>> ts3 = sinusoid_ts(1000, 10, amplitude=3, frequency=0.5, phase=0.3);
+    >>> _ = plt.plot(np.arange(0, ts2.shape[0]), ts3);
+    >>> plt.show();
+
+    ![sinusoid_shift](../../../images/Shifted_sinusoid.png)
     """
     _check_number_samples(number_samples)
     _check_max_interval_size(max_interval_size)
@@ -134,16 +165,45 @@ def frequency_varying_sinusoid_ts(
     frequency : BaseFrequency
         An object representing the base frequency of the sinusoid, which may vary over time.
 
-    amplitude : float, optional
-        The amplitude of the sinusoidal signal, by default 1.
+    amplitude : float, default=1
+        The amplitude of the sinusoidal signal.
 
-    phase : float, optional
-        The initial phase of the sinusoidal signal in radians, by default 0.
+    phase : float, default=1
+        The initial phase of the sinusoidal signal in radians.
 
     Returns
     -------
     np.ndarray
         An array representing the generated time series of the sinusoidal signal with varying frequency.
+
+    See also
+    --------
+    [sinusoid_ts](sinusoid.md): Generate a simple sinusoid.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> from timecave.data_generation.frequency_modulation import FrequencyModulationWithStep, FrequencyModulationLinear
+    >>> from timecave.data_generation.time_series_functions import frequency_varying_sinusoid_ts
+
+    Generate a sinusoid whose frequency varies abruptly:
+
+    >>> mod = FrequencyModulationWithStep(20, 5);
+    >>> ts = frequency_varying_sinusoid_ts(100, 10, frequency=mod);
+    >>> _ = plt.plot(np.arange(0, ts.shape[0]), ts);
+    >>> plt.show();
+
+    ![step_freq](../../../images/Step_freq.png)
+
+    Time series with linearly varying frequencies can be generated as well:
+
+    >>> mod_lin = FrequencyModulationLinear(1, 0.2);
+    >>> ts2 = frequency_varying_sinusoid_ts(1000, 10, frequency=mod_lin, amplitude=5);
+    >>> _ = plt.plot(np.arange(0, ts2.shape[0]), ts2);
+    >>> plt.show();
+
+    ![lin_freq](../../../images/Lin_freq.png)
     """
     _check_number_samples(number_samples)
     _check_max_interval_size(max_interval_size)
@@ -175,6 +235,21 @@ def indicator_ts(number_samples: int, start_index: int, end_index: int) -> np.nd
     -------
     np.ndarray
         A time series array where the specified segment is marked as 1 and the rest as 0.
+
+    See also
+    --------
+    [scaled_right_indicator_ts](scaled_indicator.md): Scaled right indicator time series. Needs only a start index.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> from timecave.data_generation.time_series_functions import indicator_ts
+    >>> ts = indicator_ts(100, 20, 60);
+    >>> _ = plt.plot(np.arange(0, ts.shape[0]), ts);
+    >>> plt.show();
+
+    ![indicator](../../../images/Indicator.png)
     """
     _check_number_samples(number_samples)
     _check_index(start_index)
@@ -223,6 +298,21 @@ def scaled_right_indicator_ts(
     -------
     np.ndarray
         A scaled time series array where the segment starting from the specified index to the end is marked as 1 and the rest as 0.
+
+    See also
+    --------
+    [indicator_ts](indicator.md): Indicator time series.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> from timecave.data_generation.time_series_functions import scaled_right_indicator_ts
+    >>> ts = scaled_right_indicator_ts(100, 30, 5);
+    >>> _ = plt.plot(np.arange(0, ts.shape[0]), ts);
+    >>> plt.show();
+
+    ![indicator](../../../images/Scaled_indicator.png)
     """
     _check_number_samples(number_samples)
     return constant * indicator_ts(number_samples, idx, number_samples - 1)
@@ -246,13 +336,24 @@ def scaled_unit_impulse_function_ts(
     idx : int
         The index at which the impulse occurs, marked as 1.
 
-    constant : float, optional
-        A scaling constant to multiply the array by, by default 1.
+    constant : float, default=1
+        A scaling constant to multiply the array by.
 
     Returns
     -------
     np.ndarray
         A scaled time series array where only the sample at the specified index is marked as 1 and the rest as 0.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> from timecave.data_generation.time_series_functions import scaled_unit_impulse_function_ts
+    >>> ts = scaled_unit_impulse_function_ts(1000, 250, 20);
+    >>> _ = plt.plot(np.arange(0, ts.shape[0]), ts);
+    >>> plt.show();
+
+    ![impulse](../../../images/Impulse.png)
     """
     _check_number_samples(number_samples)
     return constant * indicator_ts(number_samples, idx, idx)
@@ -278,16 +379,27 @@ def linear_ts(
     max_interval_size : float
         The maximum interval size for generating the time series array.
 
-    slope : float, optional
-        The slope of the linear pattern, by default 1.
+    slope : float, default=1
+        The slope of the linear pattern.
 
-    intercept : float, optional
-        The intercept of the linear pattern, by default 0.
+    intercept : float, default=0
+        The intercept of the linear pattern.
 
     Returns
     -------
     np.ndarray
         A time series array following a linear pattern determined by the slope and intercept parameters.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> from timecave.data_generation.time_series_functions import linear_ts
+    >>> ts = linear_ts(1000, 10);
+    >>> _ = plt.plot(np.arange(0, ts.shape[0]), ts);
+    >>> plt.show();
+
+    ![linear](../../../images/Linear.png)
     """
     _check_number_samples(number_samples)
     time = np.linspace(0, max_interval_size, number_samples)
@@ -315,16 +427,27 @@ def exponential_ts(
     max_interval_size : float
         The maximum interval size for generating the time series array.
 
-    decay_rate : float, optional
-        The rate at which the values decay over time, by default 1.
+    decay_rate : float, default=1
+        The rate at which the values decay over time.
 
-    initial_value : float, optional
-        The initial value of the time series array, by default 1.
+    initial_value : float, default=1
+        The initial value of the time series array.
 
     Returns
     -------
     np.ndarray
         An exponential decay time series array where values decay exponentially over time based on the specified decay rate and initial value.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> from timecave.data_generation.time_series_functions import exponential_ts
+    >>> ts = exponential_ts(1000, 10, initial_value=10);
+    >>> _ = plt.plot(np.arange(0, ts.shape[0]), ts);
+    >>> plt.show();
+
+    ![exponential](../../../images/Exponential.png)
     """
     _check_number_samples(number_samples)
     time = np.linspace(0, max_interval_size, number_samples)
@@ -347,8 +470,6 @@ def arma_ts(
     with specified parameters such as number of lags and maximum root. It generates
     samples using an ARMA process.
 
-    #TODO Reference Bergmeir
-
     Parameters
     ----------
     number_samples : int
@@ -360,17 +481,18 @@ def arma_ts(
     max_root : float
         The maximum root for the ARMA model. This value has to be larger than 1.1.
 
-    ar : bool, optional
-        Whether to include autoregressive (AR) component in the ARMA model, by default True.
+    ar : bool, default=True
+        Whether to include autoregressive (AR) component in the ARMA model.
 
-    ma : bool, optional
-        Whether to include moving average (MA) component in the ARMA model, by default True.
+    ma : bool, default=True
+        Whether to include moving average (MA) component in the ARMA model.
 
-    seed : int, optional
-        Random seed for reproducibility, by default 1.
+    seed : int, default=1
+        Random seed for reproducibility.
 
     **kwargs : dict
-        Additional keyword arguments to pass to the ARMA process generator.
+        Additional keyword arguments to pass to the ARMA process generator. 
+        See [ARMAProcess](https://www.statsmodels.org/stable/generated/statsmodels.tsa.arima_process.ArmaProcess.html) for more details.
 
     Returns
     -------
@@ -381,6 +503,48 @@ def arma_ts(
     -------
     ValueError
         If the maximum root is not larger than 1.1.
+
+    See also
+    --------
+    [nonlinear_ar_ts](nonlinear_ar.md): Generate data from a nonlinear autoregressive process.
+
+    Notes
+    -----
+    This method of generating synthetic time series data was first proposed by Bergmeir and Benitez (2012). 
+    Please refer to [[1]](#1) for more details on this method.
+
+    References
+    ----------
+    ##1
+    Christoph Bergmeir and José M Benítez. On the use of cross-validation for
+    time series predictor evaluation. Information Sciences, 191:192–213, 2012.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> from timecave.data_generation.time_series_functions import arma_ts
+    >>> ts = arma_ts(1000, 5, 2);
+    >>> _ = plt.plot(np.arange(0, ts.shape[0]), ts);
+    >>> plt.show();
+
+    ![arma](../../../images/ARMA.png)
+
+    Pure autoregressive processes can also be generated:
+
+    >>> ts2 = arma_ts(1000, 5, 2, ma=False);
+    >>> _ = plt.plot(np.arange(0, ts2.shape[0]), ts2);
+    >>> plt.show();
+
+    ![ar](../../../images/AR.png)
+
+    And so can pure moving average processes:
+
+    >>> ts3 = arma_ts(1000, 5, 2, ar=False);
+    >>> _ = plt.plot(np.arange(0, ts3.shape[0]), ts3);
+    >>> plt.show();
+
+    ![ma](../../../images/MA.png)
     """
     _check_number_samples(number_samples)
 
@@ -411,10 +575,8 @@ def nonlinear_ar_ts(
     """
     Generate a time series array based on a nonlinear autoregressive (AR) model.
 
-    This function creates a time series array of given length based on a nonlinear AR model
+    This function creates a time series array of a given length based on a nonlinear AR model
     with specified initial array, parameters, and function indices.
-
-    #TODO Reference Bergmeir
 
     Parameters
     ----------
@@ -439,6 +601,41 @@ def nonlinear_ar_ts(
     -------
     np.ndarray
         A time series array generated based on the specified nonlinear AR model parameters.
+
+    Warnings
+    --------
+    The lengths of `init_array`, `params` and `func_idxs` must match.
+
+    Notes
+    -----
+    This method of generating synthetic time series data was first proposed by Bergmeir and Benitez (2012). 
+    Please refer to [[1]](#1) for more details on this method.
+
+    References
+    ----------
+    ##1
+    Christoph Bergmeir, Rob J Hyndman, and Bonsoo Koo. A note on the validity 
+    of cross-validation for evaluating autoregressive time series prediction.
+    Computational Statistics & Data Analysis, 120:70–83, 2018.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> from timecave.data_generation.time_series_functions import nonlinear_ar_ts
+    >>> ts = nonlinear_ar_ts(1000, init_array=np.zeros(2), params=[0.5, -0.3], func_idxs=[0, 1]);
+    >>> _ = plt.plot(np.arange(0, ts.shape[0]), ts);
+    >>> plt.show();
+
+    ![ARsin](../../../images/Nonlinear_AR_sin.png)
+
+    Functions other than sinusoids can be used as well:
+
+    >>> ts2 = nonlinear_ar_ts(1000, init_array=np.zeros(4), params=[0.2, 0.6, -0.1, -0.4], func_idxs=[2, 3, 4, 3]);
+    >>> _ = plt.plot(np.arange(0, ts.shape[0]), ts2);
+    >>> plt.show();
+
+    ![ARother](../../../images/Nonlinear_AR_others.png)
     """
     _check_number_samples(number_samples)
     if len(params) != len(func_idxs):
@@ -458,3 +655,9 @@ def nonlinear_ar_ts(
     ts = x[init_len : (number_samples + init_len)]
 
     return ts
+
+if __name__ == "__main__":
+
+    import doctest
+
+    doctest.testmod(verbose=True);
