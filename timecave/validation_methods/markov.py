@@ -34,6 +34,39 @@ class MarkovCV(BaseSplitter):
     seed : int, default=1
         Random seed.
 
+    Attributes
+    ----------
+    n_splits
+        The number of splits.
+
+    sampling_freq
+        The series' sampling frequency (Hz).
+
+    Methods
+    -------
+    split()
+        Split the time series into training and validation sets.
+
+    info()            
+        Provide additional information on the validation method.
+
+    statistics() 
+        Compute relevant statistics for both training and validation sets.
+
+    plot(height: int, width: int)
+        Plot the partitioned time series.
+
+    Raises
+    ------
+    TypeError
+        If `seed` is not an integer.
+
+    TypeError
+        If `p` is not an integer.
+
+    ValueError
+        If `p` is not positive.
+
     Notes
     -----
     The Markov cross-validation method partitions the data so that every partition can be regarded as \
@@ -169,14 +202,52 @@ class MarkovCV(BaseSplitter):
 
     def split(self) -> Generator[tuple, None, None]:
         """
-        _summary_
+        Split the time series into training and validation sets.
 
-        _extended_summary_
+        This method splits the series' indices into disjoint sets containing the training and validation indices.
+        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
         ------
-        Generator[tuple, None, None]
-            _description_
+        np.ndarray
+            Array of training indices.
+
+        np.ndarray
+            Array of validation indices.
+
+        int
+            Used for compatibility reasons. Irrelevant for this method.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.markov import MarkovCV
+        >>> ts = np.ones(10);
+        >>> splitter = MarkovCV(ts, p=2);
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ... 
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Training set indices: {train}");
+        ...     print(f"Validation set indices: {val}");
+        Iteration 1
+        Training set indices: [8]
+        Validation set indices: [0 6]
+        Iteration 2
+        Training set indices: [0 6]
+        Validation set indices: [8]
+        Iteration 3
+        Training set indices: [3]
+        Validation set indices: [5]
+        Iteration 4
+        Training set indices: [5]
+        Validation set indices: [3]
+        Iteration 5
+        Training set indices: [1 2 7]
+        Validation set indices: [4 9]
+        Iteration 6
+        Training set indices: [4 9]
+        Validation set indices: [1 2 7]
         """
 
         self._markov_partitions()
@@ -188,9 +259,22 @@ class MarkovCV(BaseSplitter):
 
     def info(self) -> None:
         """
-        _summary_
+        Provide some basic information on the training and validation sets.
 
-        _extended_summary_
+        This method displays the number of splits and the number of observations per set.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.markov import MarkovCV
+        >>> ts = np.ones(10);
+        >>> splitter = MarkovCV(ts, p=2);
+        >>> splitter.info();
+        Markov CV method
+        ---------------
+        Time series size: 10 samples
+        Number of splits: 6
+        Number of observations per set: 1 to 3
         """
 
         self._markov_partitions()
@@ -208,19 +292,57 @@ class MarkovCV(BaseSplitter):
 
     def statistics(self) -> tuple[pd.DataFrame]:
         """
-        _summary_
+        Compute relevant statistics for both training and validation sets.
 
-        _extended_summary_
+        This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
+        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
+        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
 
         Returns
         -------
-        tuple[pd.DataFrame]
-            _description_
+        pd.DataFrame
+            Relevant features for the entire time series.
+
+        pd.DataFrame
+            Relevant features for the training set.
+
+        pd.DataFrame
+            Relevant features for the validation set.
 
         Raises
         ------
         ValueError
-            _description_
+            If the time series is composed of less than three samples.
+        
+        ValueError
+            If the folds comprise less than two samples.
+
+        Examples
+        --------
+
+        Frequency-domain features are not computed for the Markov CV method:
+
+        >>> import numpy as np
+        >>> from timecave.validation_methods.markov import MarkovCV
+        >>> ts = np.hstack((np.ones(5), np.zeros(5)));
+        >>> splitter = MarkovCV(ts, p=1);
+        >>> ts_stats, training_stats, validation_stats = splitter.statistics();
+        Frequency features are only meaningful if the correct sampling frequency is passed to the class.
+        >>> ts_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.5     0.5  0.0  1.0      0.25            1.0    -0.151515            1.59099            0.111111              0.111111
+        >>> training_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.5     0.5  0.0  1.0      0.25            1.0         -1.0                inf            1.000000              1.000000
+        0   0.5     0.5  0.0  1.0      0.25            1.0         -1.0                inf            1.000000              1.000000
+        0   0.5     0.5  0.0  1.0      0.25            1.0         -1.0                inf            1.000000              1.000000
+        0   0.5     0.5  0.0  1.0      0.25            1.0         -0.4            1.06066            0.333333              0.333333
+        >>> validation_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.5     0.5  0.0  1.0      0.25            1.0         -1.0                inf            1.000000              1.000000
+        0   0.5     0.5  0.0  1.0      0.25            1.0         -1.0                inf            1.000000              1.000000
+        0   0.5     0.5  0.0  1.0      0.25            1.0         -0.4            1.06066            0.333333              0.333333
+        0   0.5     0.5  0.0  1.0      0.25            1.0         -1.0                inf            1.000000              1.000000
         """
 
         columns = [
@@ -263,16 +385,28 @@ class MarkovCV(BaseSplitter):
 
     def plot(self, height: int, width: int) -> None:
         """
-        _summary_
+        Plot the partitioned time series.
 
-        _extended_summary_
+        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
+        [Different colours are used to plot the training and validation sets.]
 
         Parameters
         ----------
         height : int
-            _description_
+            The figure's height.
+
         width : int
-            _description_
+            The figure's width.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.markov import MarkovCV
+        >>> ts = np.ones(100);
+        >>> splitter = MarkovCV(ts, p=1);
+        >>> splitter.plot(10, 10);
+
+        ![markov_plot](../../../images/Markov_plot.png)
         """
 
         fig, axs = plt.subplots(self.n_splits, 1, sharex=True)
@@ -298,8 +432,12 @@ class MarkovCV(BaseSplitter):
 
 
 if __name__ == "__main__":
-    mcv = MarkovCV(ts=np.arange(50), p=1, seed=1)
-    mcv.split()
-    mcv.info()
-    mcv.plot(2, 10)
-    print()
+    #mcv = MarkovCV(ts=np.arange(50), p=1, seed=1)
+    #mcv.split()
+    #mcv.info()
+    #mcv.plot(2, 10)
+    #print()
+
+    import doctest
+
+    doctest.testmod(verbose=True);

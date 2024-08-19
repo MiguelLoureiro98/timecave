@@ -487,9 +487,6 @@ def arma_ts(
     ma : bool, default=True
         Whether to include moving average (MA) component in the ARMA model.
 
-    seed : int, default=1
-        Random seed for reproducibility.
-
     **kwargs : dict
         Additional keyword arguments to pass to the ARMA process generator. 
         See [ARMAProcess](https://www.statsmodels.org/stable/generated/statsmodels.tsa.arima_process.ArmaProcess.html) for more details.

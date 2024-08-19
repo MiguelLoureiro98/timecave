@@ -93,14 +93,14 @@ class BlockCV(BaseSplitter):
 
     See also
     --------
-    [hv Block CV](hv.md): A blend of Block CV and leave-one-out CV, although multiple training samples may be used.
+    [hv Block CV](hv.md): A blend of Block CV and leave-one-out CV.
 
     [Adapted hv Block CV](adapted_hv.md): Similar to Block CV, but the training samples that lie closest to the validation set are removed.
 
     Notes
     -----
     The Block Cross-validation method splits the data into $N$ different folds. Then, in [at] every iteration $i$, the model is validated on data
-    from the $i^{ith}$ folds and trained on data from the remaining folds. The average error on the validation sets 
+    from the $i^{th}$ folds and trained on data from the remaining folds. The average error on the validation sets 
     is then taken as the estimate of the model's true error. This method does not preserve the temporal order of the observations.
 
     ![block](../../../images/BlockCV.png)
@@ -468,9 +468,6 @@ class hvBlockCV(BaseSplitter):
 
     Parameters
     ----------
-    splits : int
-        The number of folds used to partition the data.
-
     ts : np.ndarray | pd.Series
         Univariate time series.
 
@@ -528,9 +525,9 @@ class hvBlockCV(BaseSplitter):
     Notes
     -----
     The hv Block Cross-validation method is essentially a leave-one-out version of the BlockCV method.
-    There are, however, two nuances: the first one is that the `h` samples immediately following and preceding the validation set 
+    There are, however, two nuances: the first one is that the $h$ samples immediately following and preceding the validation set 
     are removed from the training set; the second one is that more than one sample can be used for validation. More specifically, the validation set
-    comprises $2`v` + 1$ samples. Note that, if $h = v = 0$, the method boils down to the classic leave-one-out cross-validation procedure.
+    comprises $2v + 1$ samples. Note that, if $h = v = 0$, the method boils down to the classic leave-one-out cross-validation procedure.
     The average error on the validation sets is taken as the estimate of the model's true error. This method does not preserve the temporal order of the observations.
 
     !Add image here.
@@ -839,7 +836,7 @@ class hvBlockCV(BaseSplitter):
         >>> splitter = hvBlockCV(ts, h=1, v=1);
         >>> splitter.plot(10, 10);
 
-        ![hv](../../../images/hvBlock.png)
+        ![hv](../../../images/hvBlock_plot.png)
         """
 
         fig, axs = plt.subplots(self.n_splits, 1, sharex=True)
@@ -927,8 +924,8 @@ class AdaptedhvBlockCV(BaseSplitter):
     Notes
     -----
     The Adapted hv Block Cross-validation method splits the data into $N$ different folds. Then, in [at] every iteration $i$, the model is validated on data
-    from the $i^{ith}$ folds and trained on data from the remaining folds. There is, however, one subtle difference from the original Block Cross-validation 
-    method: the 'h' training samples that lie closest to the validation set are removed, thereby reducing the correlation between the training set and the 
+    from the $i^{th}$ folds and trained on data from the remaining folds. There is, however, one subtle difference from the original Block Cross-validation 
+    method: the $h$ training samples that lie closest to the validation set are removed, thereby reducing the correlation between the training set and the 
     validation set.
     The average error on the validation sets is then taken as the estimate of the model's true error. This method does not preserve the temporal order of the observations.
 
@@ -1099,8 +1096,7 @@ class AdaptedhvBlockCV(BaseSplitter):
         """
         Provide some basic information on the training and validation sets.
 
-        This method displays the number of splits, the fold size, 
-        and the weights that will be used to compute the error estimate.
+        This method displays the number of splits and the fold size.
 
         Examples
         --------
