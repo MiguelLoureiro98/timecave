@@ -1,6 +1,6 @@
 """
 This module contains the base class for all time series validation methods provided / supported by this package.
-This class is simply an abstract class and should not be used directly (i.e. should not be made available to the user).
+This class is simply an abstract class and should not be used directly.
 
 Classes
 -------

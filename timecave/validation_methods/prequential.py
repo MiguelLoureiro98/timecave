@@ -12,7 +12,7 @@ RollingWindow
 
 See also
 --------
-[Out-of-Sample methods](../prequential/index.md): Out-of-sample methods for time series data.
+[Out-of-Sample methods](../OOS/index.md): Out-of-sample methods for time series data.
 
 [Cross-validation methods](../CV/index.md): Cross-validation methods for time series data.
 
@@ -48,7 +48,7 @@ class GrowingWindow(BaseSplitter):
 
     This class implements the Growing Window method. It also supports every variant of this method, including Gap Growing Window and 
     Weighted Growing Window. The 'gap' parameter can be used to implement the former, while the 'weight_function' argument allows the user 
-    to ... .
+    to implement the latter in a convenient way.
 
     Parameters
     ----------
@@ -62,10 +62,11 @@ class GrowingWindow(BaseSplitter):
         Sampling frequency (Hz).
 
     gap : int, default=0
-        _description_
+        Number of folds separating the validation set from the training set. 
+        If this value is set to zero, the validation set will be adjacent to the training set.
 
     weight_function : callable, default=constant_weights
-        Fold weighting function. See the [weights](../weights/index.md) module for more details.
+        Fold weighting function. Check the [weights](../weights/index.md) module for more details.
 
     params : dict, optional
         Parameters to be passed to the weighting functions.
@@ -103,11 +104,25 @@ class GrowingWindow(BaseSplitter):
     ValueError
         If `gap` surpasses the limit imposed by the number of folds.
 
+    See also
+    --------
+    [Rolling Window](roll.md): Similar to Growing Window, but the amount of samples in the training set is kept constant.
+
     Notes
     -----
-    The Growing Window method splits the data into $N$ different folds.
+    The Growing Window method splits the data into $N$ different folds. Then, in [at] every iteration $i$, the model is trained on data
+    from the first $i$ folds and validated on the $i+1^{th}$ fold (assuming no gap is specified). The average error on the validation sets 
+    is then taken as the estimate of the model's true error. This method preserves the temporal 
+    order of observations, as the training set always precedes the validation set. If a gap is specified, the procedure runs for $N-1-N_{gap}$ 
+    iterations, where $N_{gap}$ is the number of folds separating the training and validation sets.
 
     ![grow](../../../images/GrowWindow.png)
+
+    Note that the amount of data used to train the model varies significantly from fold to fold. Therefore, it seems natural to assume that the models trained \
+    on more data will better mimic the situation where the model is trained using all the available data, thus yielding a more accurate estimate of the model's true error. 
+    To address this issue, one may use a weighted average to compute the final estimate of the error, with larger weights being assigned to the estimates obtained \
+    using models trained on larger amounts of data.
+    For more details on this method, the reader should refer to [[1]](#1).
     
     References
     ----------
@@ -191,14 +206,115 @@ class GrowingWindow(BaseSplitter):
 
     def split(self) -> Generator[tuple, None, None]:
         """
-        _summary_
+        Split the time series into training and validation sets.
 
-        _extended_summary_
+        This method splits the series' indices into disjoint sets containing the training and validation indices.
+        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
         ------
-        Generator[tuple, None, None]
-            _description_
+        np.ndarray
+            Array of training indices.
+
+        np.ndarray
+            Array of validation indices.
+
+        int
+            Weight of the error estimate.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.prequential import GrowingWindow
+        >>> ts = np.ones(10);
+        >>> splitter = GrowingWindow(5, ts); # Split the data into 5 different folds
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ... 
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Training set indices: {train}");
+        ...     print(f"Validation set indices: {val}");
+        Iteration 1
+        Training set indices: [0 1]
+        Validation set indices: [2 3]
+        Iteration 2
+        Training set indices: [0 1 2 3]
+        Validation set indices: [4 5]
+        Iteration 3
+        Training set indices: [0 1 2 3 4 5]
+        Validation set indices: [6 7]
+        Iteration 4
+        Training set indices: [0 1 2 3 4 5 6 7]
+        Validation set indices: [8 9]
+        
+        If the number of samples is not divisible by the number of folds, the first folds will contain more samples:
+
+        >>> ts2 = np.ones(17);
+        >>> splitter = GrowingWindow(5, ts2);
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ... 
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Training set indices: {train}");
+        ...     print(f"Validation set indices: {val}");
+        Iteration 1
+        Training set indices: [0 1 2 3]
+        Validation set indices: [4 5 6 7]
+        Iteration 2
+        Training set indices: [0 1 2 3 4 5 6 7]
+        Validation set indices: [ 8  9 10]
+        Iteration 3
+        Training set indices: [ 0  1  2  3  4  5  6  7  8  9 10]
+        Validation set indices: [11 12 13]
+        Iteration 4
+        Training set indices: [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13]
+        Validation set indices: [14 15 16]
+
+        If a gap is specified (Gap Growing Window), the validation set will no longer be adjacent to the training set.
+        Keep in mind that, the larger the gap between these two sets, the fewer iterations are run:
+
+        >>> splitter = GrowingWindow(5, ts, gap=1);
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ... 
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Training set indices: {train}");
+        ...     print(f"Validation set indices: {val}");
+        Iteration 1
+        Training set indices: [0 1]
+        Validation set indices: [4 5]
+        Iteration 2
+        Training set indices: [0 1 2 3]
+        Validation set indices: [6 7]
+        Iteration 3
+        Training set indices: [0 1 2 3 4 5]
+        Validation set indices: [8 9]
+
+        Weights can be assigned to the error estimates (Weighted Growing Window method). 
+        The parameters for the weighting functions must be passed to the class constructor:
+
+        >>> from timecave.validation_methods.weights import exponential_weights
+        >>> splitter = GrowingWindow(5, ts, weight_function=exponential_weights, params={"base": 2});
+        >>> for ind, (train, val, weight) in enumerate(splitter.split()):
+        ... 
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Training set indices: {train}");
+        ...     print(f"Validation set indices: {val}");
+        ...     print(f"Weight: {np.round(weight, 3)}");
+        Iteration 1
+        Training set indices: [0 1]
+        Validation set indices: [2 3]
+        Weight: 0.067
+        Iteration 2
+        Training set indices: [0 1 2 3]
+        Validation set indices: [4 5]
+        Weight: 0.133
+        Iteration 3
+        Training set indices: [0 1 2 3 4 5]
+        Validation set indices: [6 7]
+        Weight: 0.267
+        Iteration 4
+        Training set indices: [0 1 2 3 4 5 6 7]
+        Validation set indices: [8 9]
+        Weight: 0.533
         """
 
         for i, (ind, weight) in enumerate(zip(self._splitting_ind[:-1], self._weights)):
@@ -213,9 +329,27 @@ class GrowingWindow(BaseSplitter):
 
     def info(self) -> None:
         """
-        _summary_
+        Provide some basic information on the training and validation sets.
 
-        _extended_summary_
+        This method displays the number of splits, the fold size, the maximum and minimum training set sizes, the gap, 
+        and the weights that will be used to compute the error estimate.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.prequential import GrowingWindow
+        >>> ts = np.ones(10);
+        >>> splitter = GrowingWindow(5, ts);
+        >>> splitter.info();
+        Growing Window method
+        ---------------------
+        Time series size: 10 samples
+        Number of splits: 5
+        Fold size: 2 to 2 samples (20.0 to 20.0 %)
+        Minimum training set size: 2 samples (20.0 %)
+        Maximum training set size: 8 samples (80.0 %)
+        Gap: 0
+        Weights: [1. 1. 1. 1.]
         """
 
         min_fold_size = int(np.floor(self._n_samples / self.n_splits))
@@ -253,19 +387,54 @@ class GrowingWindow(BaseSplitter):
 
     def statistics(self) -> tuple[pd.DataFrame]:
         """
-        _summary_
+        Compute relevant statistics for both training and validation sets.
 
-        _extended_summary_
+        This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
+        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
+        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
 
         Returns
         -------
-        tuple[pd.DataFrame]
-            _description_
+        pd.DataFrame
+            Relevant features for the entire time series.
+
+        pd.DataFrame
+            Relevant features for the training set.
+
+        pd.DataFrame
+            Relevant features for the validation set.
 
         Raises
         ------
         ValueError
-            _description_
+            If the time series is composed of less than three samples.
+        
+        ValueError
+            If the folds comprise less than two samples.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.prequential import GrowingWindow
+        >>> ts = np.hstack((np.ones(5), np.zeros(5)));
+        >>> splitter = GrowingWindow(5, ts);
+        >>> ts_stats, training_stats, validation_stats = splitter.statistics();
+        Frequency features are only meaningful if the correct sampling frequency is passed to the class.
+        >>> ts_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.5     0.5  0.0  1.0      0.25            1.0    -0.151515           0.114058               0.5           0.38717            1.59099            0.111111              0.111111
+        >>> training_stats
+               Mean  Median  Min  Max  Variance  P2P_amplitude   Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0  1.000000     1.0  1.0  1.0  0.000000            0.0 -7.850462e-17           0.000000               0.0          0.000000                inf            0.000000              0.000000
+        0  1.000000     1.0  1.0  1.0  0.000000            0.0 -8.214890e-17           0.000000               0.0          0.000000                inf            0.000000              0.000000
+        0  0.833333     1.0  0.0  1.0  0.138889            1.0 -1.428571e-01           0.125000               0.5          0.792481           0.931695            0.200000              0.200000
+        0  0.625000     1.0  0.0  1.0  0.234375            1.0 -1.785714e-01           0.122818               0.5          0.600876           1.383496            0.142857              0.142857
+        >>> validation_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude   Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   1.0     1.0  1.0  1.0      0.00            0.0 -7.850462e-17               0.00               0.0               0.0                inf                 0.0                   0.0
+        0   0.5     0.5  0.0  1.0      0.25            1.0 -1.000000e+00               0.25               0.5               0.0                inf                 1.0                   1.0
+        0   0.0     0.0  0.0  0.0      0.00            0.0  0.000000e+00               0.00               0.0               0.0                inf                 0.0                   0.0
+        0   0.0     0.0  0.0  0.0      0.00            0.0  0.000000e+00               0.00               0.0               0.0                inf                 0.0                   0.0
         """
 
         if self._n_samples <= 2:
@@ -301,9 +470,10 @@ class GrowingWindow(BaseSplitter):
 
     def plot(self, height: int, width: int) -> None:
         """
-        _summary_
+        Plot the partitioned time series.
 
-        _extended_summary_
+        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
+        [Different colours are used to plot the training and validation sets.]
 
         Parameters
         ----------
@@ -312,6 +482,16 @@ class GrowingWindow(BaseSplitter):
 
         width : int
             The figure's width.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.prequential import GrowingWindow
+        >>> ts = np.ones(100);
+        >>> splitter = GrowingWindow(5, ts);
+        >>> splitter.plot(10, 10);
+
+        ![grow_plot](../../../images/Grow_plot.png)
         """
 
         fig, axs = plt.subplots(self.n_splits - self._gap - 1, 1, sharex=True)
@@ -352,32 +532,92 @@ class GrowingWindow(BaseSplitter):
 
 class RollingWindow(BaseSplitter):
     """
-    RollingWindow(splits: int, ts: np.ndarray | pd.Series, fs: float | int, gap: int = 0, weight_function: callable = constant_weights, params: dict = None)
-    --------------------------------------------------------------------------------------------------------------------------------------------------------
+    Implements every variant of the Rolling Window method.
 
-    _summary_
-
-    _extended_summary_
+    This class implements the Rolling Window method. It also supports every variant of this method, including Gap Rolling Window and 
+    Weighted Rolling Window. The `gap` parameter can be used to implement the former, while the 'weight_function' argument allows the user 
+    to implement the latter in a convenient way.
 
     Parameters
     ----------
     splits : int
-        Number of splits.
+        The number of folds used to partition the data.
 
     ts : np.ndarray | pd.Series
         Univariate time series.
 
-    fs : float | int
+    fs : float | int, default=1
         Sampling frequency (Hz).
 
     gap : int, default=0
-        __description__
+        Number of folds separating the validation set from the training set. 
+        If this value is set to zero, the validation set will be adjacent to the training set.
 
     weight_function : callable, default=constant_weights
-        __description__
+        Fold weighting function. Check the [weights](../weights/index.md) module for more details.
 
     params : dict, optional
-        __description__
+        Parameters to be passed to the weighting functions.
+
+    Attributes
+    ----------
+    n_splits
+        The number of splits.
+
+    sampling_freq
+        The series' sampling frequency (Hz).
+
+    Methods
+    -------
+    split()
+        Split the time series into training and validation sets.
+
+    info()            
+        Provide additional information on the validation method.
+
+    statistics() 
+        Compute relevant statistics for both training and validation sets.
+
+    plot(height: int, width: int)
+        Plot the partitioned time series.
+
+    Raises
+    ------
+    TypeError
+        If `gap` is not an integer.
+
+    ValueError
+        If `gap` is a negative number.
+
+    ValueError
+        If `gap` surpasses the limit imposed by the number of folds.
+
+    See also
+    --------
+    [Growing Window](roll.md): Similar to Rolling Window, but the training set size gradually increases.
+
+    Notes
+    -----
+    The Rolling Window method splits the data into $N$ different folds. Then, in [at] every iteration $i$, the model is trained on data
+    from the $i^{th}$ fold and validated on the $i+1^{th}$ fold (assuming no gap is specified). The average error on the validation sets 
+    is then taken as the estimate of the model's true error. This method preserves the temporal 
+    order of observations, as the training set always precedes the validation set. If a gap is specified, the procedure runs for $N-1-N_{gap}$ 
+    iterations, where $N_{gap}$ is the number of folds separating the training and validation sets.
+
+    ![roll](../../../images/RollWindow.png)
+
+    Note that, even though the size of the training set is kept constant throughout the validation procedure, the models from the last iterations are trained on more 
+    recent data. It is therefore reasonable to assume that these models will have an advantage over the ones trained on older data, yielding a less biased estimate of the 
+    model's true error. 
+    To address this issue, one may use a weighted average to compute the final estimate of the error, with larger weights being assigned to the estimates obtained \
+    using models trained on more recent data.
+    For more details on this method, the reader should refer to [[1]](#1).
+    
+    References
+    ----------
+    ##1
+    Vitor Cerqueira, Luis Torgo, and Igor Mozetiˇc. Evaluating time series forecasting models: An empirical study on performance estimation methods.
+    Machine Learning, 109(11):1997–2028, 2020.
     """
 
     def __init__(
@@ -458,14 +698,115 @@ class RollingWindow(BaseSplitter):
 
     def split(self) -> Generator[tuple, None, None]:
         """
-        _summary_
+        Split the time series into training and validation sets.
 
-        _extended_summary_
+        This method splits the series' indices into disjoint sets containing the training and validation indices.
+        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
         ------
-        Generator[tuple, None, None]
-            _description_
+        np.ndarray
+            Array of training indices.
+
+        np.ndarray
+            Array of validation indices.
+
+        int
+            Weight of the error estimate.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.prequential import RollingWindow
+        >>> ts = np.ones(10);
+        >>> splitter = RollingWindow(5, ts); # Split the data into 5 different folds
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ... 
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Training set indices: {train}");
+        ...     print(f"Validation set indices: {val}");
+        Iteration 1
+        Training set indices: [0 1]
+        Validation set indices: [2 3]
+        Iteration 2
+        Training set indices: [2 3]
+        Validation set indices: [4 5]
+        Iteration 3
+        Training set indices: [4 5]
+        Validation set indices: [6 7]
+        Iteration 4
+        Training set indices: [6 7]
+        Validation set indices: [8 9]
+        
+        If the number of samples is not divisible by the number of folds, the first folds will contain more samples:
+
+        >>> ts2 = np.ones(17);
+        >>> splitter = RollingWindow(5, ts2);
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ... 
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Training set indices: {train}");
+        ...     print(f"Validation set indices: {val}");
+        Iteration 1
+        Training set indices: [0 1 2 3]
+        Validation set indices: [4 5 6 7]
+        Iteration 2
+        Training set indices: [4 5 6 7]
+        Validation set indices: [ 8  9 10]
+        Iteration 3
+        Training set indices: [ 8  9 10]
+        Validation set indices: [11 12 13]
+        Iteration 4
+        Training set indices: [11 12 13]
+        Validation set indices: [14 15 16]
+
+        If a gap is specified (Gap Rolling Window), the validation set will no longer be adjacent to the training set.
+        Keep in mind that, the larger the gap between these two sets, the fewer iterations are run:
+
+        >>> splitter = RollingWindow(5, ts, gap=1);
+        >>> for ind, (train, val, _) in enumerate(splitter.split()):
+        ... 
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Training set indices: {train}");
+        ...     print(f"Validation set indices: {val}");
+        Iteration 1
+        Training set indices: [0 1]
+        Validation set indices: [4 5]
+        Iteration 2
+        Training set indices: [2 3]
+        Validation set indices: [6 7]
+        Iteration 3
+        Training set indices: [4 5]
+        Validation set indices: [8 9]
+
+        Weights can be assigned to the error estimates (Weighted Rolling Window method). 
+        The parameters for the weighting functions must be passed to the class constructor:
+
+        >>> from timecave.validation_methods.weights import exponential_weights
+        >>> splitter = RollingWindow(5, ts, weight_function=exponential_weights, params={"base": 2});
+        >>> for ind, (train, val, weight) in enumerate(splitter.split()):
+        ... 
+        ...     print(f"Iteration {ind+1}");
+        ...     print(f"Training set indices: {train}");
+        ...     print(f"Validation set indices: {val}");
+        ...     print(f"Weight: {np.round(weight, 3)}");
+        Iteration 1
+        Training set indices: [0 1]
+        Validation set indices: [2 3]
+        Weight: 0.067
+        Iteration 2
+        Training set indices: [2 3]
+        Validation set indices: [4 5]
+        Weight: 0.133
+        Iteration 3
+        Training set indices: [4 5]
+        Validation set indices: [6 7]
+        Weight: 0.267
+        Iteration 4
+        Training set indices: [6 7]
+        Validation set indices: [8 9]
+        Weight: 0.533
         """
 
         #print(self._splitting_ind)
@@ -487,9 +828,25 @@ class RollingWindow(BaseSplitter):
 
     def info(self) -> None:
         """
-        _summary_
+        Provide some basic information on the training and validation sets.
 
-        _extended_summary_
+        This method displays the number of splits, the fold size, the gap, 
+        and the weights that will be used to compute the error estimate.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.prequential import RollingWindow
+        >>> ts = np.ones(10);
+        >>> splitter = RollingWindow(5, ts);
+        >>> splitter.info();
+        Rolling Window method
+        ---------------------
+        Time series size: 10 samples
+        Number of splits: 5
+        Fold size: 2 to 2 samples (20.0 to 20.0 %)
+        Gap: 0
+        Weights: [1. 1. 1. 1.]
         """
 
         min_fold_size = int(np.floor(self._n_samples / self.n_splits))
@@ -518,19 +875,54 @@ class RollingWindow(BaseSplitter):
 
     def statistics(self) -> tuple[pd.DataFrame]:
         """
-        _summary_
+        Compute relevant statistics for both training and validation sets.
 
-        _extended_summary_
+        This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
+        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
+        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
 
         Returns
         -------
-        tuple[pd.DataFrame]
-            _description_
+        pd.DataFrame
+            Relevant features for the entire time series.
+
+        pd.DataFrame
+            Relevant features for the training set.
+
+        pd.DataFrame
+            Relevant features for the validation set.
 
         Raises
         ------
         ValueError
-            _description_
+            If the time series is composed of less than three samples.
+        
+        ValueError
+            If the folds comprise less than two samples.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.prequential import RollingWindow
+        >>> ts = np.hstack((np.ones(5), np.zeros(5)));
+        >>> splitter = RollingWindow(5, ts);
+        >>> ts_stats, training_stats, validation_stats = splitter.statistics();
+        Frequency features are only meaningful if the correct sampling frequency is passed to the class.
+        >>> ts_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude  Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   0.5     0.5  0.0  1.0      0.25            1.0    -0.151515           0.114058               0.5           0.38717            1.59099            0.111111              0.111111
+        >>> training_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude   Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   1.0     1.0  1.0  1.0      0.00            0.0 -7.850462e-17               0.00               0.0               0.0                inf                 0.0                   0.0
+        0   1.0     1.0  1.0  1.0      0.00            0.0 -7.850462e-17               0.00               0.0               0.0                inf                 0.0                   0.0
+        0   0.5     0.5  0.0  1.0      0.25            1.0 -1.000000e+00               0.25               0.5               0.0                inf                 1.0                   1.0
+        0   0.0     0.0  0.0  0.0      0.00            0.0  0.000000e+00               0.00               0.0               0.0                inf                 0.0                   0.0
+        >>> validation_stats
+           Mean  Median  Min  Max  Variance  P2P_amplitude   Trend_slope  Spectral_centroid  Spectral_rolloff  Spectral_entropy  Strength_of_trend  Mean_crossing_rate  Median_crossing_rate
+        0   1.0     1.0  1.0  1.0      0.00            0.0 -7.850462e-17               0.00               0.0               0.0                inf                 0.0                   0.0
+        0   0.5     0.5  0.0  1.0      0.25            1.0 -1.000000e+00               0.25               0.5               0.0                inf                 1.0                   1.0
+        0   0.0     0.0  0.0  0.0      0.00            0.0  0.000000e+00               0.00               0.0               0.0                inf                 0.0                   0.0
+        0   0.0     0.0  0.0  0.0      0.00            0.0  0.000000e+00               0.00               0.0               0.0                inf                 0.0                   0.0
         """
 
         if self._n_samples <= 2:
@@ -566,9 +958,10 @@ class RollingWindow(BaseSplitter):
 
     def plot(self, height: int, width: int) -> None:
         """
-        _summary_
+        Plot the partitioned time series.
 
-        _extended_summary_
+        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
+        [Different colours are used to plot the training and validation sets.]
 
         Parameters
         ----------
@@ -577,6 +970,16 @@ class RollingWindow(BaseSplitter):
 
         width : int
             The figure's width.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from timecave.validation_methods.prequential import RollingWindow
+        >>> ts = np.ones(100);
+        >>> splitter = RollingWindow(5, ts);
+        >>> splitter.plot(10, 10);
+
+        ![roll_plot](../../../images/Roll_plot.png)
         """
 
         fig, axs = plt.subplots(self.n_splits - self._gap - 1, 1, sharex=True)
@@ -613,3 +1016,9 @@ class RollingWindow(BaseSplitter):
         plt.show()
 
         return
+
+if __name__ == "__main__":
+
+    import doctest
+
+    doctest.testmod(verbose=True);

@@ -1,3 +1,8 @@
+---
+hide:
+    - toc
+---
+
 ::: timecave.validation_methods.base
     options:
             show_root_heading: true

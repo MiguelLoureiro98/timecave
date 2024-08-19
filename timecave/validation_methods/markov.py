@@ -21,7 +21,7 @@ class MarkovCV(BaseSplitter):
     """
     Implements the Markov cross-validation method.
 
-    _extended_summary_
+    This class implements the Markov cross-validation method.
 
     Parameters
     ----------
@@ -29,10 +29,10 @@ class MarkovCV(BaseSplitter):
         Univariate time series.
 
     p : int
-        _description_
+        p-order autocorrelation.
 
     seed : int, default=1
-        _description_
+        Random seed.
 
     Notes
     -----

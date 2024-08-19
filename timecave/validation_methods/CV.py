@@ -14,7 +14,7 @@ AdaptedhvBlockCV
 
 See also
 --------
-[Out-of-Sample methods](../prequential/index.md): Out-of-sample methods for time series data.
+[Out-of-Sample methods](../OOS/index.md): Out-of-sample methods for time series data.
 
 [Prequential methods](../prequential/index.md): Prequential or forward validation methods for time series data.
 
