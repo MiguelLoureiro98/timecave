@@ -72,7 +72,7 @@ def read_tables(
         stats_train = pd.read_csv(stats_train_file)
         stats_val = pd.read_csv(stats_val_file)
     else:
-        stats_total, stats_train, stats_val = None, None, None
+        stats_total, stats_train, stats_val = pd.DataFrame([]), pd.DataFrame([]), pd.DataFrame([])
 
     return table_A, table_B, stats_total, stats_train, stats_val
 

@@ -1,2 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/processed_data/mechanical_gear_vibration_data.csv,0,LSTM,3.445715645874664e-06,0.0015373056829251948,0.0018562638944596924

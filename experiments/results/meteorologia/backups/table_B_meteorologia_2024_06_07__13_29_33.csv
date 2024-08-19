@@ -1,5 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/processed_data/aire_discharge_weather_data.csv,0,Tree,1.7818951612903224,0.994758064516129,1.334876459186513
-datasets/processed_data/aire_discharge_weather_data.csv,0,ARMA,4.019557645131242,1.655538635747216,2.004883449263633
-datasets/processed_data/aire_discharge_weather_data.csv,1,Tree,102.24004032258065,7.578629032258063,10.111381721732231
-datasets/processed_data/aire_discharge_weather_data.csv,1,ARMA,108.67866031642657,8.290277404449455,10.424905770146154

@@ -1,2 +1,0 @@
-filename,column_index,model,mse,mae,rmse
-datasets/processed_data/power_consumption_data.csv,0,LSTM,0.043786935346134995,0.13265765452617043,0.20925328037126442
