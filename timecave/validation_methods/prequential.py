@@ -47,7 +47,7 @@ class GrowingWindow(BaseSplitter):
     Implements every variant of the Growing Window method.
 
     This class implements the Growing Window method. It also supports every variant of this method, including Gap Growing Window and 
-    Weighted Growing Window. The 'gap' parameter can be used to implement the former, while the 'weight_function' argument allows the user 
+    Weighted Growing Window. The 'gap' parameter can be used to implement the former, while the `weight_function` argument allows the user 
     to implement the latter in a convenient way.
 
     Parameters
@@ -221,7 +221,7 @@ class GrowingWindow(BaseSplitter):
             Array of validation indices.
 
         int
-            Weight of the error estimate.
+            Weight assigned to the error estimate.
 
         Examples
         --------
@@ -535,7 +535,7 @@ class RollingWindow(BaseSplitter):
     Implements every variant of the Rolling Window method.
 
     This class implements the Rolling Window method. It also supports every variant of this method, including Gap Rolling Window and 
-    Weighted Rolling Window. The `gap` parameter can be used to implement the former, while the 'weight_function' argument allows the user 
+    Weighted Rolling Window. The `gap` parameter can be used to implement the former, while the `weight_function` argument allows the user 
     to implement the latter in a convenient way.
 
     Parameters
@@ -713,7 +713,7 @@ class RollingWindow(BaseSplitter):
             Array of validation indices.
 
         int
-            Weight of the error estimate.
+            Weight assigned to the error estimate.
 
         Examples
         --------
