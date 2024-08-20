@@ -88,6 +88,6 @@ The package was developed by Beatriz Lourenço and Miguel Loureiro, two graduate
 This project would not have seen the light of day without the support of the Mechanical Engineering Institute ([IDMEC](https://www.idmec.tecnico.ulisboa.pt/)) and the 
 Laboratory of Intelligent Systems for Data Analysis, Modeling and Optimization ([IS4](https://is4.tecnico.ulisboa.pt/)).
 
-![IST_Logo](images/IST_Logo_2_resized.png)
+![IST_Logo](docs/images/IST_Logo_2_resized.png)
 
-![IDMEC Logo](images/IDMEC_PNG_resized.png)
+![IDMEC Logo](docs/images/IDMEC_PNG_resized.png)
