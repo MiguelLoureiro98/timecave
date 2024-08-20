@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "timecave"
-version = "0.2.0"
+version = "0.3.0"
 authors=[  
     {name = "Miguel Santos Loureiro", email = "miguel.santos.loureiro@tecnico.ulisboa.pt"},
     {name = "Beatriz Pereira Lourenço", email = "beatriz.p.lourenco@tecnico.ulisboa.pt"}
@@ -34,7 +34,16 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["black>=24.4.2"]
+dev = [
+    "black>=24.4.2",
+    "mkdocs>=1.6.0",
+    "mkdocs-material>=9.5.30",
+    "mkdocs-material-extensions>=1.3.1",
+    "mkdocstrings>=0.25.1",
+    "mkdocstrings[python]>=1.10.5",
+    "mkdocs-autorefs>=1.0.1",
+    "pymdown-extensions>=10.8.1"
+]
 exp = [
     "tensorflow>=2.16.1",
     "keras>=3.3.3",
