@@ -2,6 +2,8 @@
 
 ## Installation
 
+### Using pip
+
 TimeCaVe can be directly installed from PyPi using pip:
 
 ```
@@ -15,6 +17,27 @@ pip install "timecave[dev]"
 ```
 
 This will install dependencies that have been used to develop TimeCaVe and its documentation, such as Black and MKDocs.
+
+### Using git
+
+TimeCaVe can also be installed using git. To do so, clone the repository:
+
+```
+git clone https://github.com/MiguelLoureiro98/timecave.git
+```
+
+Then, move into the cloned repository and install the package using pip:
+
+```
+cd timecave
+pip install .
+```
+
+Again, to install development dependencies, simply type:
+
+```
+pip install ".[dev]"
+```
 
 ## Basic Usage
 
