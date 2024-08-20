@@ -1,12 +1,12 @@
 """
-A module for generating time series data using provided functions.
+A module for generating time series data using the functions provided by this package.
 
 This module provides a class for generating time series data based on provided functions, with optional noise and weights.
 
 Classes
 -------
 TimeSeriesGenerator
-    A class for generating time series data using the functions provided by the time_series_functions module.
+    A class for generating time series data using the functions provided by the [time_series_functions](../time_series_functions/index.md) module.
 """
 
 import numpy as np
@@ -48,7 +48,7 @@ class TimeSeriesGenerator:
 
     Attributes
     ----------
-    time_series
+    time_series : list [np.ndarray]
         The generated time series.
 
     Methods

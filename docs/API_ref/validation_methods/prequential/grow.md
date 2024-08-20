@@ -3,7 +3,7 @@ hide:
     - toc
 ---
 
-# Growing Window
+# Growing Window method
 
 ::: timecave.validation_methods.prequential.GrowingWindow
     options:

@@ -31,8 +31,8 @@ splitter = BlockCV(5, ts);
 
 for train, test in splitter.split():
 
-    training_data = data[train];
-    validation_data = data[test];
+    training_data = ts[train];
+    validation_data = ts[test];
 
     # Train and validate your model
 ```

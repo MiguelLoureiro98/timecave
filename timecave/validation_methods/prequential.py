@@ -47,7 +47,7 @@ class GrowingWindow(BaseSplitter):
     Implements every variant of the Growing Window method.
 
     This class implements the Growing Window method. It also supports every variant of this method, including Gap Growing Window and 
-    Weighted Growing Window. The 'gap' parameter can be used to implement the former, while the `weight_function` argument allows the user 
+    Weighted Growing Window. The `gap` parameter can be used to implement the former, while the `weight_function` argument allows the user 
     to implement the latter in a convenient way.
 
     Parameters
@@ -73,10 +73,10 @@ class GrowingWindow(BaseSplitter):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
 
     Methods
@@ -110,7 +110,7 @@ class GrowingWindow(BaseSplitter):
 
     Notes
     -----
-    The Growing Window method splits the data into $N$ different folds. Then, in [at] every iteration $i$, the model is trained on data
+    The Growing Window method splits the data into $N$ different folds. Then, in every iteration $i$, the model is trained on data
     from the first $i$ folds and validated on the $i+1^{th}$ fold (assuming no gap is specified). The average error on the validation sets 
     is then taken as the estimate of the model's true error. This method preserves the temporal 
     order of observations, as the training set always precedes the validation set. If a gap is specified, the procedure runs for $N-1-N_{gap}$ 
@@ -204,12 +204,12 @@ class GrowingWindow(BaseSplitter):
 
         return split_ind
 
-    def split(self) -> Generator[tuple, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
         This method splits the series' indices into disjoint sets containing the training and validation indices.
-        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        At every iteration, an array of training indices and another one containing the validation indices are generated.
         Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
@@ -220,7 +220,7 @@ class GrowingWindow(BaseSplitter):
         np.ndarray
             Array of validation indices.
 
-        int
+        float
             Weight assigned to the error estimate.
 
         Examples
@@ -390,8 +390,8 @@ class GrowingWindow(BaseSplitter):
         Compute relevant statistics for both training and validation sets.
 
         This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
-        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
-        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
+        It can and should be used to ensure that the characteristics of both the training and validation sets are, statistically speaking, similar to those of the time series one wishes to forecast.
+        If this is not the case, using the validation method will most likely lead to a poor assessment of the model's performance.
 
         Returns
         -------
@@ -472,8 +472,7 @@ class GrowingWindow(BaseSplitter):
         """
         Plot the partitioned time series.
 
-        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
-        [Different colours are used to plot the training and validation sets.]
+        This method allows the user to plot the partitioned time series. The training and validation sets are plotted using different colours.
 
         Parameters
         ----------
@@ -561,10 +560,10 @@ class RollingWindow(BaseSplitter):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
 
     Methods
@@ -598,7 +597,7 @@ class RollingWindow(BaseSplitter):
 
     Notes
     -----
-    The Rolling Window method splits the data into $N$ different folds. Then, in [at] every iteration $i$, the model is trained on data
+    The Rolling Window method splits the data into $N$ different folds. Then, in every iteration $i$, the model is trained on data
     from the $i^{th}$ fold and validated on the $i+1^{th}$ fold (assuming no gap is specified). The average error on the validation sets 
     is then taken as the estimate of the model's true error. This method preserves the temporal 
     order of observations, as the training set always precedes the validation set. If a gap is specified, the procedure runs for $N-1-N_{gap}$ 
@@ -696,12 +695,12 @@ class RollingWindow(BaseSplitter):
 
         return split_ind
 
-    def split(self) -> Generator[tuple, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
         This method splits the series' indices into disjoint sets containing the training and validation indices.
-        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        At every iteration, an array of training indices and another one containing the validation indices are generated.
         Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
@@ -712,7 +711,7 @@ class RollingWindow(BaseSplitter):
         np.ndarray
             Array of validation indices.
 
-        int
+        float
             Weight assigned to the error estimate.
 
         Examples
@@ -878,8 +877,8 @@ class RollingWindow(BaseSplitter):
         Compute relevant statistics for both training and validation sets.
 
         This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
-        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
-        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
+        It can and should be used to ensure that the characteristics of both the training and validation sets are, statistically speaking, similar to those of the time series one wishes to forecast.
+        If this is not the case, using the validation method will most likely lead to a poor assessment of the model's performance.
 
         Returns
         -------
@@ -960,8 +959,7 @@ class RollingWindow(BaseSplitter):
         """
         Plot the partitioned time series.
 
-        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
-        [Different colours are used to plot the training and validation sets.]
+        This method allows the user to plot the partitioned time series. The training and validation sets are plotted using different colours.
 
         Parameters
         ----------

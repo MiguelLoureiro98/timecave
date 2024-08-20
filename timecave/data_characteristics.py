@@ -51,13 +51,13 @@ def get_features(ts: np.ndarray | pd.Series, fs: float | int) -> pd.DataFrame:
     Raises
     ------
     TypeError
-        If 'ts' is neither an Numpy array nor a Pandas series.
+        If `ts` is neither an Numpy array nor a Pandas series.
 
     TypeError
-        If 'fs' is neither a float nor an integer.
+        If `fs` is neither a float nor an integer.
 
     ValueError
-        If 'fs' is negative.
+        If `fs` is negative.
 
     Examples
     --------
@@ -148,7 +148,7 @@ def strength_of_trend(ts: np.ndarray | pd.Series) -> float:
     Raises
     ------
     TypeError
-        If 'ts' is neither a Numpy array nor a Pandas series.
+        If `ts` is neither a Numpy array nor a Pandas series.
 
     Notes
     -----
@@ -244,7 +244,7 @@ def mean_crossing_rate(ts: np.ndarray | pd.Series) -> float:
     Raises
     ------
     TypeError
-        If 'ts' is neither a Numpy array nor a Pandas series.
+        If `ts` is neither a Numpy array nor a Pandas series.
 
     See also
     --------
@@ -253,7 +253,7 @@ def mean_crossing_rate(ts: np.ndarray | pd.Series) -> float:
 
     Notes
     -----
-    The mean-crossing rate is defined as the fraction of times a mean-crossing takes place [the mean is crossed] in the whole time series. \
+    The mean-crossing rate is defined as the fraction of times a mean-crossing takes place in the whole time series. \
     A mean-crossing occurs when two adjacent values have different signs with respect to the mean \
     (i.e. the first one is below the mean while the second one is above it, and vice-versa).
 
@@ -329,7 +329,7 @@ def median_crossing_rate(ts: np.ndarray | pd.Series) -> float:
     Raises
     ------
     TypeError
-        If 'ts' is neither a Numpy array nor a Pandas series.
+        If `ts` is neither a Numpy array nor a Pandas series.
 
     See also
     --------

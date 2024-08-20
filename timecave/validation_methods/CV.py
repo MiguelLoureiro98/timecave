@@ -71,10 +71,10 @@ class BlockCV(BaseSplitter):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
 
     Methods
@@ -99,7 +99,7 @@ class BlockCV(BaseSplitter):
 
     Notes
     -----
-    The Block Cross-validation method splits the data into $N$ different folds. Then, in [at] every iteration $i$, the model is validated on data
+    The Block Cross-validation method splits the data into $N$ different folds. Then, in every iteration $i$, the model is validated on data
     from the $i^{th}$ folds and trained on data from the remaining folds. The average error on the validation sets 
     is then taken as the estimate of the model's true error. This method does not preserve the temporal order of the observations.
 
@@ -166,12 +166,12 @@ class BlockCV(BaseSplitter):
 
         return split_ind
 
-    def split(self) -> Generator[tuple, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
         This method splits the series' indices into disjoint sets containing the training and validation indices.
-        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        At every iteration, an array of training indices and another one containing the validation indices are generated.
         Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
@@ -182,7 +182,7 @@ class BlockCV(BaseSplitter):
         np.ndarray
             Array of validation indices.
 
-        int
+        float
             Weight assigned to the error estimate.
 
         Examples
@@ -329,8 +329,8 @@ class BlockCV(BaseSplitter):
         Compute relevant statistics for both training and validation sets.
 
         This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
-        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
-        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
+        It can and should be used to ensure that the characteristics of both the training and validation sets are, statistically speaking, similar to those of the time series one wishes to forecast.
+        If this is not the case, using the validation method will most likely lead to a poor assessment of the model's performance.
 
         Returns
         -------
@@ -413,8 +413,7 @@ class BlockCV(BaseSplitter):
         """
         Plot the partitioned time series.
 
-        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
-        [Different colours are used to plot the training and validation sets.]
+        This method allows the user to plot the partitioned time series. The training and validation sets are plotted using different colours.
 
         Parameters
         ----------
@@ -479,14 +478,14 @@ class hvBlockCV(BaseSplitter):
         The `h` samples immediately following and preceding the validation set are not used for training.
 
     v : int, default=1
-        Controls the size of the validation set. $2`v` + 1$ samples will be used for validation.
+        Controls the size of the validation set. $2v + 1$ samples will be used for validation.
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
 
     Methods
@@ -529,8 +528,6 @@ class hvBlockCV(BaseSplitter):
     are removed from the training set; the second one is that more than one sample can be used for validation. More specifically, the validation set
     comprises $2v + 1$ samples. Note that, if $h = v = 0$, the method boils down to the classic leave-one-out cross-validation procedure.
     The average error on the validation sets is taken as the estimate of the model's true error. This method does not preserve the temporal order of the observations.
-
-    !Add image here.
 
     The method was first proposed by Racine [[1]](#1).
     
@@ -577,12 +574,12 @@ class hvBlockCV(BaseSplitter):
 
         return
 
-    def split(self) -> Generator[tuple, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
         This method splits the series' indices into disjoint sets containing the training and validation indices.
-        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        At every iteration, an array of training indices and another one containing the validation indices are generated.
         Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
@@ -593,7 +590,7 @@ class hvBlockCV(BaseSplitter):
         np.ndarray
             Array of validation indices.
 
-        int
+        float
             Weight assigned to the error estimate.
 
         Examples
@@ -711,8 +708,8 @@ class hvBlockCV(BaseSplitter):
         Compute relevant statistics for both training and validation sets.
 
         This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
-        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
-        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
+        It can and should be used to ensure that the characteristics of both the training and validation sets are, statistically speaking, similar to those of the time series one wishes to forecast.
+        If this is not the case, using the validation method will most likely lead to a poor assessment of the model's performance.
 
         Returns
         -------
@@ -817,8 +814,7 @@ class hvBlockCV(BaseSplitter):
         """
         Plot the partitioned time series.
 
-        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
-        [Different colours are used to plot the training and validation sets.]
+        This method allows the user to plot the partitioned time series. The training and validation sets are plotted using different colours.
 
         Parameters
         ----------
@@ -886,10 +882,10 @@ class AdaptedhvBlockCV(BaseSplitter):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
 
     Methods
@@ -923,7 +919,7 @@ class AdaptedhvBlockCV(BaseSplitter):
 
     Notes
     -----
-    The Adapted hv Block Cross-validation method splits the data into $N$ different folds. Then, in [at] every iteration $i$, the model is validated on data
+    The Adapted hv Block Cross-validation method splits the data into $N$ different folds. Then, in every iteration $i$, the model is validated on data
     from the $i^{th}$ folds and trained on data from the remaining folds. There is, however, one subtle difference from the original Block Cross-validation 
     method: the $h$ training samples that lie closest to the validation set are removed, thereby reducing the correlation between the training set and the 
     validation set.
@@ -1006,12 +1002,12 @@ class AdaptedhvBlockCV(BaseSplitter):
 
         return split_ind
 
-    def split(self) -> Generator[tuple, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
         This method splits the series' indices into disjoint sets containing the training and validation indices.
-        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        At every iteration, an array of training indices and another one containing the validation indices are generated.
         Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
@@ -1022,7 +1018,7 @@ class AdaptedhvBlockCV(BaseSplitter):
         np.ndarray
             Array of validation indices.
 
-        int
+        float
             Weight assigned the error estimate.
 
         Examples
@@ -1139,8 +1135,8 @@ class AdaptedhvBlockCV(BaseSplitter):
         Compute relevant statistics for both training and validation sets.
 
         This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
-        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
-        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
+        It can and should be used to ensure that the characteristics of both the training and validation sets are, statistically speaking, similar to those of the time series one wishes to forecast.
+        If this is not the case, using the validation method will most likely lead to a poor assessment of the model's performance.
 
         Returns
         -------
@@ -1220,8 +1216,7 @@ class AdaptedhvBlockCV(BaseSplitter):
         """
         Plot the partitioned time series.
 
-        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
-        [Different colours are used to plot the training and validation sets.]
+        This method allows the user to plot the partitioned time series. The training and validation sets are plotted using different colours.
 
         Parameters
         ----------

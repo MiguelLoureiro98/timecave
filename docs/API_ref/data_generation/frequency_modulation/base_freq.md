@@ -3,7 +3,7 @@ hide:
     - toc
 ---
 
-# Base Frequency
+# Base Frequency class
 
 ::: timecave.data_generation.frequency_modulation.BaseFrequency
     options:

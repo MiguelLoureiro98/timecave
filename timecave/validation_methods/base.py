@@ -1,5 +1,5 @@
 """
-This module contains the base class for all time series validation methods provided / supported by this package.
+This module contains the base class for all time series validation methods supported by this package.
 This class is simply an abstract class and should not be used directly.
 
 Classes
@@ -36,10 +36,10 @@ class BaseSplitter(ABC):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
 
     Methods
@@ -248,7 +248,7 @@ class BaseSplitter(ABC):
         return self._n_splits
 
     @abstractmethod
-    def split(self) -> Generator[tuple[np.ndarray, np.ndarray], None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
@@ -261,6 +261,9 @@ class BaseSplitter(ABC):
 
         np.ndarray
             Array of validation indices.
+
+        float
+            Weight assigned to the error estimate.
         """
 
         pass

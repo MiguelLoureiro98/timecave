@@ -3,7 +3,7 @@ hide:
     - toc
 ---
 
-# Rolling Window
+# Rolling Window method
 
 ::: timecave.validation_methods.prequential.RollingWindow
     options:

@@ -36,10 +36,10 @@ class MarkovCV(BaseSplitter):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
 
     Methods
@@ -200,12 +200,12 @@ class MarkovCV(BaseSplitter):
             self._suo[u] = Su[u * 2 - 1]
             self._sue[u] = Su[u * 2]
 
-    def split(self) -> Generator[tuple, None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
         This method splits the series' indices into disjoint sets containing the training and validation indices.
-        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        At every iteration, an array of training indices and another one containing the validation indices are generated.
         Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
@@ -216,7 +216,7 @@ class MarkovCV(BaseSplitter):
         np.ndarray
             Array of validation indices.
 
-        int
+        float
             Used for compatibility reasons. Irrelevant for this method.
 
         Examples
@@ -295,8 +295,8 @@ class MarkovCV(BaseSplitter):
         Compute relevant statistics for both training and validation sets.
 
         This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
-        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
-        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
+        It can and should be used to ensure that the characteristics of both the training and validation sets are, statistically speaking, similar to those of the time series one wishes to forecast.
+        If this is not the case, using the validation method will most likely lead to a poor assessment of the model's performance.
 
         Returns
         -------
@@ -387,8 +387,7 @@ class MarkovCV(BaseSplitter):
         """
         Plot the partitioned time series.
 
-        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
-        [Different colours are used to plot the training and validation sets.]
+        This method allows the user to plot the partitioned time series. The training and validation sets are plotted using different colours.
 
         Parameters
         ----------

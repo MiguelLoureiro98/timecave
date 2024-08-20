@@ -3,7 +3,7 @@ hide:
     - toc
 ---
 
-# Markov method
+# Markov Cross-validation method
 
 ::: timecave.validation_methods.markov
     options:

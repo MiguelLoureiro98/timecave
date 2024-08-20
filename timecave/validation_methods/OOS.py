@@ -70,10 +70,10 @@ class Holdout(BaseSplitter):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
 
     Methods
@@ -141,7 +141,7 @@ class Holdout(BaseSplitter):
 
         return
 
-    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
@@ -156,7 +156,7 @@ class Holdout(BaseSplitter):
         np.ndarray
             Array of validation indices.
 
-        int
+        float
             Used for compatibility reasons. Irrelevant for this method.
 
         Examples
@@ -224,8 +224,8 @@ class Holdout(BaseSplitter):
         Compute relevant statistics for both training and validation sets.
 
         This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
-        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
-        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
+        It can and should be used to ensure that the characteristics of both the training and validation sets are, statistically speaking, similar to those of the time series one wishes to forecast.
+        If this is not the case, using the validation method will most likely lead to a poor assessment of the model's performance.
 
         Returns
         -------
@@ -299,8 +299,7 @@ class Holdout(BaseSplitter):
         """
         Plot the partitioned time series.
 
-        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
-        [Different colours are used to plot the training and validation sets.]
+        This method allows the user to plot the partitioned time series. The training and validation sets are plotted using different colours. 
 
         Parameters
         ----------
@@ -367,10 +366,10 @@ class RepeatedHoldout(BaseSplitter):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
     
     Methods
@@ -390,10 +389,10 @@ class RepeatedHoldout(BaseSplitter):
     Raises
     ------
     TypeError
-        If the 'iterations' parameter is not an integer.
+        If the `iterations` parameter is not an integer.
 
     ValueError
-        If the 'iterations' parameter is not positive.
+        If the `iterations` parameter is not positive.
 
     TypeError
         If the splitting interval is not a list.
@@ -525,12 +524,12 @@ class RepeatedHoldout(BaseSplitter):
 
         return rand_ind
 
-    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
         This method splits the series' indices into disjoint sets containing the training and validation indices.
-        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        At every iteration, an array of training indices and another one containing the validation indices are generated.
         Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
@@ -541,7 +540,7 @@ class RepeatedHoldout(BaseSplitter):
         np.ndarray
             Array of validation indices.
 
-        int
+        float
             Used for compatibility reasons. Irrelevant for this method.
 
         Examples
@@ -647,8 +646,8 @@ class RepeatedHoldout(BaseSplitter):
         Compute relevant statistics for both training and validation sets.
 
         This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
-        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
-        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
+        It can and should be used to ensure that the characteristics of both the training and validation sets are, statistically speaking, similar to those of the time series one wishes to forecast.
+        If this is not the case, using the validation method will most likely lead to a poor assessment of the model's performance.
 
         Returns
         -------
@@ -748,8 +747,7 @@ class RepeatedHoldout(BaseSplitter):
         """
         Plot the partitioned time series.
 
-        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
-        [Different colours are used to plot the training and validation sets.]
+        This method allows the user to plot the partitioned time series. The training and validation sets are plotted using different colours. 
 
         Parameters
         ----------
@@ -814,10 +812,10 @@ class RollingOriginUpdate(BaseSplitter):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
     
     Methods
@@ -837,13 +835,13 @@ class RollingOriginUpdate(BaseSplitter):
     Raises
     ------
     TypeError
-        If 'origin' is neither an integer nor a float.
+        If `origin` is neither an integer nor a float.
 
     ValueError
-        If 'origin' is a float that does not lie in the ]0, 1[ interval.
+        If `origin` is a float that does not lie in the ]0, 1[ interval.
 
     ValueError
-        If 'origin' is an integer that does not lie in the ]0, n_samples[ interval.
+        If `origin` is an integer that does not lie in the ]0, n_samples[ interval.
 
     Warning
     -------
@@ -860,7 +858,7 @@ class RollingOriginUpdate(BaseSplitter):
     Then, at every iteration, a single data point (the one closest to the training set) is dropped from the \
     validation set, and the model's performance is assessed using the new validation set. This process ends once \
     the validation set consists of a single data point. The estimate of the true model error is the average validation \
-    error across [over] all iterations.
+    error.
     
     ![RollUpdate](../../../images/RollUpdate.png)
 
@@ -922,12 +920,12 @@ class RollingOriginUpdate(BaseSplitter):
 
         return origin
 
-    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
         This method splits the series' indices into disjoint sets containing the training and validation indices.
-        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        At every iteration, an array of training indices and another one containing the validation indices are generated.
         Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
@@ -938,7 +936,7 @@ class RollingOriginUpdate(BaseSplitter):
         np.ndarray
             Array of validation indices.
 
-        int
+        float
             Used for compatibility reasons. Irrelevant for this method.
 
         Examples
@@ -1015,8 +1013,8 @@ class RollingOriginUpdate(BaseSplitter):
         Compute relevant statistics for both training and validation sets.
 
         This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
-        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
-        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
+        It can and should be used to ensure that the characteristics of both the training and validation sets are, statistically speaking, similar to those of the time series one wishes to forecast.
+        If this is not the case, using the validation method will most likely lead to a poor assessment of the model's performance.
 
         Returns
         -------
@@ -1095,8 +1093,7 @@ class RollingOriginUpdate(BaseSplitter):
         """
         Plot the partitioned time series.
 
-        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
-        [Different colours are used to plot the training and validation sets.]
+        This method allows the user to plot the partitioned time series. The training and validation sets are plotted using different colours.
 
         Parameters
         ----------
@@ -1162,10 +1159,10 @@ class RollingOriginRecalibration(BaseSplitter):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
     
     Methods
@@ -1185,13 +1182,13 @@ class RollingOriginRecalibration(BaseSplitter):
     Raises
     ------
     TypeError
-        If 'origin' is neither an integer nor a float.
+        If `origin` is neither an integer nor a float.
 
     ValueError
-        If 'origin' is a float that does not lie in the ]0, 1[ interval.
+        If `origin` is a float that does not lie in the ]0, 1[ interval.
 
     ValueError
-        If 'origin' is an integer that does not lie in the ]0, n_samples[ interval.
+        If `origin` is an integer that does not lie in the ]0, n_samples[ interval.
 
     Warning
     -------
@@ -1269,12 +1266,12 @@ class RollingOriginRecalibration(BaseSplitter):
 
         return origin
 
-    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
         This method splits the series' indices into disjoint sets containing the training and validation indices.
-        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        At every iteration, an array of training indices and another one containing the validation indices are generated.
         Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
@@ -1285,7 +1282,7 @@ class RollingOriginRecalibration(BaseSplitter):
         np.ndarray
             Array of validation indices.
 
-        int
+        float
             Used for compatibility reasons. Irrelevant for this method.
 
         Examples
@@ -1372,8 +1369,8 @@ class RollingOriginRecalibration(BaseSplitter):
         Compute relevant statistics for both training and validation sets.
 
         This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
-        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
-        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
+        It can and should be used to ensure that the characteristics of both the training and validation sets are, statistically speaking, similar to those of the time series one wishes to forecast.
+        If this is not the case, using the validation method will most likely lead to a poor assessment of the model's performance.
 
         Returns
         -------
@@ -1453,8 +1450,7 @@ class RollingOriginRecalibration(BaseSplitter):
         """
         Plot the partitioned time series.
 
-        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
-        [Different colours are used to plot the training and validation sets.]
+        This method allows the user to plot the partitioned time series. The training and validation sets are plotted using different colours.
 
         Parameters
         ----------
@@ -1520,10 +1516,10 @@ class FixedSizeRollingWindow(BaseSplitter):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
     
     Methods
@@ -1543,13 +1539,13 @@ class FixedSizeRollingWindow(BaseSplitter):
     Raises
     ------
     TypeError
-        If 'origin' is neither an integer nor a float.
+        If `origin` is neither an integer nor a float.
 
     ValueError
-        If 'origin' is a float that does not lie in the ]0, 1[ interval.
+        If `origin` is a float that does not lie in the ]0, 1[ interval.
 
     ValueError
-        If 'origin' is an integer that does not lie in the ]0, n_samples[ interval.
+        If `origin` is an integer that does not lie in the ]0, n_samples[ interval.
     
     Warning
     -------
@@ -1559,10 +1555,10 @@ class FixedSizeRollingWindow(BaseSplitter):
     -----
     The Fixed Size Rolling Origin method consists of splitting the data into a training set and a validation set, \
     with the former preceding the latter. At every iteration, a single data point (the one closest to the training set) is dropped from the \
-    validation set and added to the training set. Additionaly, the oldest data point belonging to the training set is discarded, so that the amount of training samples remains constant. \
+    validation set and added to the training set. Additionally, the oldest data point belonging to the training set is discarded, so that the amount of training samples remains constant. \
     The model is then trained on the new training set and tested on the new validation set. This process ends once \
     the validation set consists of a single data point. The estimate of the true model error is the average validation \
-    error across [over] all iterations.
+    error.
     
     ![FixedSizeRoll](../../../images/FixedRoll.png)
 
@@ -1624,12 +1620,12 @@ class FixedSizeRollingWindow(BaseSplitter):
 
         return origin
 
-    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, int], None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
         This method splits the series' indices into disjoint sets containing the training and validation indices.
-        In every iteration, an array of training indices and another one containing the validation indices are generated.
+        At every iteration, an array of training indices and another one containing the validation indices are generated.
         Note that this method is a generator. To access the indices, use the `next()` method or a `for` loop.
 
         Yields
@@ -1640,7 +1636,7 @@ class FixedSizeRollingWindow(BaseSplitter):
         np.ndarray
             Array of validation indices.
 
-        int
+        float
             Used for compatibility reasons. Irrelevant for this method.
 
         Examples
@@ -1718,8 +1714,8 @@ class FixedSizeRollingWindow(BaseSplitter):
         Compute relevant statistics for both training and validation sets.
 
         This method computes relevant time series features, such as mean, strength-of-trend, etc. for both the whole time series, the training set and the validation set.
-        It can and should be used to ensure that the characteristics of both the training and validation sets are [, statistically speaking,] similar to [those of] the time series one wishes to forecast.
-        If this is not the case, the validation method will most likely yield a poor estimate [assessment] of the model's performance [accuracy].
+        It can and should be used to ensure that the characteristics of both the training and validation sets are, statistically speaking, similar to those of the time series one wishes to forecast.
+        If this is not the case, using the validation method will most likely lead to a poor assessment of the model's performance.
 
         Returns
         -------
@@ -1799,8 +1795,7 @@ class FixedSizeRollingWindow(BaseSplitter):
         """
         Plot the partitioned time series.
 
-        This method allows the user to plot the partitioned time series. The training and validation sets will be shown [are marked] in different colours. 
-        [Different colours are used to plot the training and validation sets.]
+        This method allows the user to plot the partitioned time series. The training and validation sets are plotted using different colours.
 
         Parameters
         ----------
