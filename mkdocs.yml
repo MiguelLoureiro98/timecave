@@ -136,6 +136,7 @@ nav:
           - Module Overview: API_ref/data_generation/time_series_generation/index.md
           - Classes:
             - Time Series Generator: API_ref/data_generation/time_series_generation/gen.md
+  - Changelog: ChangeLog.md
   - About: about.md
 
 not_in_nav: |
