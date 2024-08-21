@@ -1,4 +1,4 @@
-# Welcome to TimeCaVe
+# Welcome to TimeCaVe :chart_with_upwards_trend:
 
 TimeCaVe is a Python package that provides off-the-shelf model validation methods for time series modelling tasks.
 These methods were conceived with time series forecasting in mind, though, in principle, they could also be applied to other time series related tasks.
@@ -69,7 +69,7 @@ ts = np.arange(0, 10)
 # Split the data into 5 folds
 splitter = BlockCV(5, ts);
 
-for train, test in splitter.split():
+for train, test, _ in splitter.split():
 
     training_data = ts[train];
     validation_data = ts[test];
