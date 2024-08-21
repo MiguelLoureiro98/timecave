@@ -3,7 +3,7 @@ hide:
     - toc
 ---
 
-# Linear Frequency
+# Linear Frequency modulation
 
 ::: timecave.data_generation.frequency_modulation.FrequencyModulationLinear
     options:

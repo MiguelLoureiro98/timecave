@@ -3,7 +3,7 @@ hide:
     - toc
 ---
 
-# Weight functions
+# Weighting functions
 
 ::: timecave.validation_methods.weights
     options:

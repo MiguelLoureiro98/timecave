@@ -1,7 +1,21 @@
+#   Copyright 2024 Beatriz Lourenço, Miguel Loureiro, IS4
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 """
 This module contains utility functions to help the users make the most of their data. \
-More specifically, it provides routines to aid users in [on / with] their [during the] data collection process and \
-their validation procedures.
+More specifically, it provides routines to aid users during the data collection process and \
+validation procedures.
 
 Functions
 ---------
@@ -25,11 +39,11 @@ def Nyquist_min_samples(fs: float | int, freq_limit: float | int) -> int:
 
     This function computes the minimum series length for capturing a given frequency,
     assuming the time series was sampled at
-    a frequency of 'fs' Hertz and the largest frequency of interest
-    for modelling purposes is 'freq_limit' Hertz. Additionally,
+    a frequency of `fs` Hertz and the largest frequency of interest
+    for modelling purposes is `freq_limit` Hertz. Additionally,
     the function computes the largest frequency that can be captured
-    using 'fs' as the sampling frequency, as well as the smallest sampling 
-    frequency that would be required to capture 'freq_limit'. Both of these 
+    using `fs` as the sampling frequency, as well as the smallest sampling 
+    frequency that would be required to capture `freq_limit`. Both of these 
     results are directly derived from the Nyquist sampling theorem.
 
     Parameters
@@ -43,20 +57,20 @@ def Nyquist_min_samples(fs: float | int, freq_limit: float | int) -> int:
     Returns
     -------
     int
-        Minimum number of samples required to capture freq_limit
-        with a sampling frequency of fs, according to the Nyquist
+        Minimum number of samples required to capture `freq_limit`
+        with a sampling frequency of `fs`, according to the Nyquist
         sampling theorem.
 
     Raises
     ------
     TypeError
-        If either 'fs' or 'freq_limit' is neither a float nor an integer.
+        If either `fs` or `freq_limit` is neither a float nor an integer.
 
     ValueError
-        If either 'fs' or 'freq_limit' are non-positive.
+        If either `fs` or `freq_limit` are non-positive.
 
     Warning
-        If the choice of 'fs' and 'freq_limit' does not satisfy the Nyquist sampling theorem.
+        If the choice of `fs` and `freq_limit` does not satisfy the Nyquist sampling theorem.
 
     See also
     --------
@@ -67,8 +81,8 @@ def Nyquist_min_samples(fs: float | int, freq_limit: float | int) -> int:
     -----
     The Nyquist sampling theorem is a fundamental result in digital signal processing. It states that, \
     for one to be able to reconstruct a continuous-time signal from its discrete counterpart, the sampling \
-    frequency should be at least twice as high as the largest frequency of interest [the signal should be sampled at a rate / frequency at least twice as high as ...].
-    Mathematically speaking, the sampling frequency should be [is] given by:
+    frequency should be at least twice as high as the largest frequency of interest.
+    Mathematically speaking, the condition on the sampling frequency is:
     
     $$
     f_s >= 2 \cdot f
@@ -147,9 +161,9 @@ def heuristic_min_samples(fs: float | int, freq_limit: float | int) -> dict:
 
     This function computes the minimum and maximum lengths for capturing a given frequency, 
     assuming the time series was 
-    sampled at a frequency of 'fs' Hertz and the largest frequency 
-    of interest for modelling purposes is 'freq_limit' Hertz. The
-    interval in which the sampling frequency should lie for 'freq_limit' 
+    sampled at a frequency of `fs` Hertz and the largest frequency 
+    of interest for modelling purposes is `freq_limit` Hertz. The
+    interval in which the sampling frequency should lie for `freq_limit` 
     to be effectively captured is also derived. The 10 / 20 sampling 
     heuristic is used to derive both results.
 
@@ -171,13 +185,13 @@ def heuristic_min_samples(fs: float | int, freq_limit: float | int) -> dict:
     Raises
     ------
     TypeError
-        If either 'fs' or 'freq_limit' is neither a float nor an integer.
+        If either `fs` or `freq_limit` is neither a float nor an integer.
 
     ValueError
-        If either 'fs' or 'freq_limit' are non-positive.
+        If either `fs` or `freq_limit` are non-positive.
 
     Warning
-        If the choice of 'fs' and 'freq_limit' does not abide by the 10 / 20 heuristic.
+        If the choice of `fs` and `freq_limit` does not abide by the 10 / 20 heuristic.
 
     See also
     --------
@@ -187,7 +201,7 @@ def heuristic_min_samples(fs: float | int, freq_limit: float | int) -> dict:
     Notes
     -----
     Under certain circumstances, the conditions of the Nyquist theorem might not be enough to guarantee that the reconstruction of the signal is possible.
-    [To address this isssue,] A heuristic has been developed in the field of control engineering, whereby [according to which] the sampling frequency should be 10 to 20 times higher than the largest \
+    To address this isssue, a heuristic has been developed in the field of control engineering, according to which the sampling frequency should be 10 to 20 times higher than the largest \
     frequency of interest:
     
     $$
@@ -320,13 +334,13 @@ def true_test_indices(test_ind: np.ndarray, model_order: int) -> np.ndarray:
     Raises
     ------
     TypeError
-        If 'model_order' is not an integer.
+        If `model_order` is not an integer.
 
     ValueError
-        If 'model_order' is not positive.
+        If `model_order` is not positive.
 
     ValueError
-        If 'model_order' is larger than the amount of samples in the training set, assuming it precedes the validation set.
+        If `model_order` is larger than the amount of samples in the training set, assuming it precedes the validation set.
 
     Examples
     --------

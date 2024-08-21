@@ -3,7 +3,7 @@ hide:
     - toc
 ---
 
-# Adapted hv Block CV
+# Adapted hv Block Cross-validation method
 
 ::: timecave.validation_methods.CV.AdaptedhvBlockCV
     options:

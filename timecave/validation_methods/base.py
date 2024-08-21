@@ -1,6 +1,20 @@
+#   Copyright 2024 Beatriz Lourenço, Miguel Loureiro, IS4
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 """
-This module contains the base class for all time series validation methods provided / supported by this package.
-This class is simply an abstract class and should not be used directly (i.e. should not be made available to the user).
+This module contains the base class for all time series validation methods supported by this package.
+This class is simply an abstract class and should not be used directly.
 
 Classes
 -------
@@ -12,9 +26,6 @@ from abc import ABC, abstractmethod
 from typing import Generator
 import numpy as np
 import pandas as pd
-
-# This should work with sklearn's Hyperparameter Search algorithms. If not, install sklearn and inherit from the BaseCrossValidator class (maybe?).
-# For now, leave it as it is, as this approach will most likely work with said search algorithms and leads to fewer requirements.
 
 
 class BaseSplitter(ABC):
@@ -36,10 +47,10 @@ class BaseSplitter(ABC):
 
     Attributes
     ----------
-    n_splits
+    n_splits : int
         The number of splits.
 
-    sampling_freq
+    sampling_freq : int | float
         The series' sampling frequency (Hz).
 
     Methods
@@ -248,7 +259,7 @@ class BaseSplitter(ABC):
         return self._n_splits
 
     @abstractmethod
-    def split(self) -> Generator[tuple[np.ndarray, np.ndarray], None, None]:
+    def split(self) -> Generator[tuple[np.ndarray, np.ndarray, float], None, None]:
         """
         Split the time series into training and validation sets.
 
@@ -261,6 +272,9 @@ class BaseSplitter(ABC):
 
         np.ndarray
             Array of validation indices.
+
+        float
+            Weight assigned to the error estimate.
         """
 
         pass

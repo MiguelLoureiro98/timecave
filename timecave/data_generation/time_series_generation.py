@@ -1,12 +1,26 @@
+#   Copyright 2024 Beatriz Lourenço, Miguel Loureiro, IS4
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 """
-A module for generating time series data using provided functions.
+A module for generating time series data using the functions provided by this package.
 
 This module provides a class for generating time series data based on provided functions, with optional noise and weights.
 
 Classes
 -------
 TimeSeriesGenerator
-    A class for generating time series data using the functions provided by the time_series_functions module.
+    A class for generating time series data using the functions provided by the [time_series_functions](../time_series_functions/index.md) module.
 """
 
 import numpy as np
@@ -48,7 +62,7 @@ class TimeSeriesGenerator:
 
     Attributes
     ----------
-    time_series
+    time_series : list [np.ndarray]
         The generated time series.
 
     Methods

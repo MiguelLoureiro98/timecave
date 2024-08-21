@@ -1,3 +1,17 @@
+#   Copyright 2024 Beatriz Lourenço, Miguel Loureiro, IS4
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 """
 This module contains several metrics to evaluate the performance of model validation methods.
 
@@ -22,7 +36,7 @@ MC_metric
     Statistical summary for Monte Carlo experiments regarding validation methods.
 
 under_over_estimation
-    Separate statistical summaries for [the] underestimation and overestimation cases.
+    Separate statistical summaries for the underestimation and overestimation cases.
 
 Notes
 -----
@@ -80,7 +94,7 @@ def PAE(estimated_error: float | int, test_error: float | int) -> float:
     PAE = \hat{L}_m - L_m
     $$ 
     
-    One can infer from the sign [The sign is important / relevant to determine ...] whether the validation method is overestimating or underestimating the model's true error:\
+    The sign allows one to determine whether the validation method is overestimating or underestimating the model's true error:\
     a negative value denotes an underestimation, while a positive value corresponds to an overestimation.\
     
     Note that, in all likelihood, the true error will not be known. It is usually estimated using an independent test set. For more details, please refer to [[1]](#1).
@@ -150,7 +164,7 @@ def APAE(estimated_error: float | int, test_error: float | int) -> float:
     APAE = |\hat{L}_m - L_m| = |PAE|
     $$ 
     
-    Since the APAE is always non-negative, this metric does not measure [cannot be used to determine] whether the validation method is overestimating or underestimating\
+    Since the APAE is always non-negative, this metric cannot be used to determine whether the validation method is overestimating or underestimating\
     the model's true error.
     
     Note that, in all likelihood, the true error will not be known. It is usually estimated using an independent test set. For more details, please refer to [[1]](#1).
@@ -199,7 +213,7 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
     Raises
     ------
     ValueError
-        If 'test_error' is zero.
+        If `test_error` is zero.
 
     See also
     --------
@@ -223,9 +237,8 @@ def RPAE(estimated_error: float | int, test_error: float | int) -> float:
     RPAE = \\frac{\hat{L}_m - L_m}{L_m} = \\frac{PAE}{L_m}
     $$ 
     
-    [By doing so, the metric is made ... .]
     This makes this metric scale-independent with respect to the model's true error, which in turn makes it useful for comparing validation methods \
-    [that have been applied on different ...] across different time series and/or forecasting models. Since this is essentially a scaled version of the PAE, \
+    across different time series and/or forecasting models. Since this is essentially a scaled version of the PAE, \
     the sign retains its significance (negative sign for underestimation, positive sign for overestimation). \
     However, it should be noted that the RPAE is asymmetric: in case of an underestimation, its values will be contained in the interval of $[-1, 0[$; if the error is \
     overestimated, however, the RPAE can take any value in the range of $]0, \infty[$. A value of zero denotes a perfect estimate.
@@ -280,7 +293,7 @@ def sMPAE(estimated_error: float | int, test_error: float | int) -> float:
     Raises
     ------
     ValueError
-        If 'test_error' is zero.
+        If `test_error` is zero.
 
     See also
     --------
@@ -366,7 +379,7 @@ def RAPAE(estimated_error: float | int, test_error: float | int) -> float:
     Raises
     ------
     ValueError
-        If 'test_error' is zero.
+        If `test_error` is zero.
 
     See also
     --------
@@ -426,8 +439,8 @@ def MC_metric(estimated_error_list: list[float | int], test_error_list: list[flo
     """
     Compute validation strategy metrics for N different experiments (MC stands for Monte Carlo).
 
-    This function processes the results of a Monte Carlo experiment and outputs [relevant statistics...] a statistical summary of the results. \
-    This [it] can be useful if one needs to analyse the performance of a given validation method on several different time series or using different models.  
+    This function processes the results of a Monte Carlo experiment and outputs a statistical summary of the results. \
+    This can be useful if one needs to analyse the performance of a given validation method on several different time series or using different models.  
     Users may provide a custom metric if they so desire, but it must have the same function signature as the metrics provided by this package.
 
     Parameters
@@ -508,7 +521,7 @@ def under_over_estimation(estimated_error_list: list[float | int], test_error_li
     This function processes the results of a Monte Carlo experiment and outputs two separate
     sets of summary statistics: one for cases where the true error is underestimated, and another one for cases 
     where the validation method overestimates the error.
-    This [it] can be useful if one needs to analyse the performance of a given validation method on several different time series or using different models.  
+    This can be useful if one needs to analyse the performance of a given validation method on several different time series or using different models.  
     Users may provide a custom metric if they so desire, but it must have the same function signature as the metrics provided by this package.
 
     Parameters

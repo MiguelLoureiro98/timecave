@@ -3,7 +3,7 @@ hide:
     - toc
 ---
 
-# Step Frequency
+# Step Frequency modulation
 
 ::: timecave.data_generation.frequency_modulation.FrequencyModulationWithStep
     options:
