@@ -52,7 +52,7 @@ ts = np.arange(0, 10)
 # Split the data into 5 folds
 splitter = BlockCV(5, ts);
 
-for train, test in splitter.split():
+for train, test, _ in splitter.split():
 
     training_data = ts[train];
     validation_data = ts[test];
