@@ -4,6 +4,7 @@ site_url: http://timecave.com
 repo_url: https://github.com/MiguelLoureiro98/timecave
 
 theme:
+  logo: images/cave_logo_temp_no_stones.png
   icon:
     repo: fontawesome/brands/github
   name: material
