@@ -79,7 +79,7 @@ for train, test, _ in splitter.split():
 
 Methods to plot the partitioned time series and compute relevant statistics are also provided. 
 
-For more information on how to use the package, check TimeCaVe's **DOCUMENTATION LINK**.
+For more information on how to use the package, check TimeCaVe's [documentation](https://miguelloureiro98.github.io/timecave/).
 
 # Authors
 The package was developed by Beatriz Lourenço and Miguel Loureiro, two graduate research assistants at [IST](https://tecnico.ulisboa.pt/en/), University of Lisbon, Portugal.
