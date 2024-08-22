@@ -7,7 +7,7 @@ Welcome to TimeCaVe's documentation! The package that helps you validate your ti
 TimeCaVe is a Python package that provides several off-the-shelf validation methods for time series modelling tasks.
 These methods were conceived with time series forecasting in mind, though, in principle, they could also be applied to other time series related tasks.
 
-The methods' generic implementation is flexible enough for them to be used with **ANY** kind of time series model, including classical time series forecasting 
+Our generic implementation is flexible enough for them to be used with **ANY** kind of time series model, including classical time series forecasting 
 models (e.g. AR models), classical machine learning models (e.g. decision trees) and deep learning models specifically tailored to handle sequence data (e.g. LSTMs).
 
 In addition to the validation methods themselves, TimeCaVe provides several utility functions and classes. These include specific metrics to measure the performance of a validation method, data generation methods, functions to aid in the data collection process, and functions to extract important features from the data.

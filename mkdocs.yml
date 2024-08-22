@@ -51,6 +51,9 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/BeatrizPLourenco
       name: Beatriz Lourenço's GitHub page
+  analytics:
+    provider: google
+    property: G-GpropMiguel
 
 copyright: Copyright &copy; 2024 Miguel Loureiro, Beatriz Lourenço, IS4
 

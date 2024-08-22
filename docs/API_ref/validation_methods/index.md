@@ -5,7 +5,7 @@ hide:
 
 # Validation methods
 
-This subpackage contains all the model validation methods provided by this package. When importing a validation method, make sure you specify [be sure to specify] the correct module, like so:
+This subpackage contains all the model validation methods provided by this package. When importing a validation method, be sure to specify the correct module, like so:
 
 ``` py
 from timecave.validation_methods.OOS import Holdout
